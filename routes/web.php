@@ -36,6 +36,32 @@ Route::middleware(['role:adm-01'])->group(function () {
     Route::get('/admin/dashboard', [WilayahController::class, 'dashboard'])->name('admin.dashboard');
     // master
     Route::get('/admin/master/wilayah', [WilayahController::class, 'masterWilayah'])->name('admin.master.wilayah');
+
+     // Kota
+    Route::get('/kota/data', [WilayahController::class, 'getKotaData'])->name('wilayah.kota.data');
+    Route::post('/kota/insert', [WilayahController::class, 'insertKota'])->name('wilayah.kota.insert');
+    Route::post('/kota/update', [WilayahController::class, 'updateKota'])->name('wilayah.kota.update');
+    Route::post('/kota/delete', [WilayahController::class, 'deleteKota'])->name('wilayah.kota.delete');
+    Route::get('/kota/options', [WilayahController::class, 'getKotaOptions'])->name('wilayah.kota.options');
+    
+    // Daerah
+    Route::get('/daerah/data', [WilayahController::class, 'getDaerahData'])->name('wilayah.daerah.data');
+    Route::post('/daerah/insert', [WilayahController::class, 'insertDaerah'])->name('wilayah.daerah.insert');
+    Route::post('/daerah/update', [WilayahController::class, 'updateDaerah'])->name('wilayah.daerah.update');
+    Route::post('/daerah/delete', [WilayahController::class, 'deleteDaerah'])->name('wilayah.daerah.delete');
+    
+    // Desa
+    Route::get('/desa/data', [WilayahController::class, 'getDesaData'])->name('wilayah.desa.data');
+    Route::post('/desa/insert', [WilayahController::class, 'insertDesa'])->name('wilayah.desa.insert');
+    Route::post('/desa/update', [WilayahController::class, 'updateDesa'])->name('wilayah.desa.update');
+    Route::post('/desa/delete', [WilayahController::class, 'deleteDesa'])->name('wilayah.desa.delete');
+    Route::get('/desa/options', [WilayahController::class, 'getDesaOptions'])->name('wilayah.desa.options');
+    
+    // Kelompok
+    Route::get('/kelompok/data', [WilayahController::class, 'getKelompokData'])->name('wilayah.kelompok.data');
+    Route::post('/kelompok/insert', [WilayahController::class, 'insertKelompok'])->name('wilayah.kelompok.insert');
+    Route::post('/kelompok/update', [WilayahController::class, 'updateKelompok'])->name('wilayah.kelompok.update');
+    Route::post('/kelompok/delete', [WilayahController::class, 'deleteKelompok'])->name('wilayah.kelompok.delete');
    
 });
 
