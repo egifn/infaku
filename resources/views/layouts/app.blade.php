@@ -1116,49 +1116,7 @@
                         class="menu-item {{ request()->routeIs('admin.master.wilayah') ? 'active' : '' }}">
                         <span class="menu-text">Wilayah</span>
                     </a>
-                    {{-- <a href="{{ route('admin.achievment.supplier') }}"
-                        class="menu-item {{ request()->routeIs('admin.achievment.supplier') ? 'active' : '' }}">
-                        <span class="menu-text">Supplier</span>
-                    </a>
-                    <a href="{{ route('admin.achievment.principle') }}"
-                        class="menu-item {{ request()->routeIs('admin.achievment.principle') ? 'active' : '' }}">
-                        <span class="menu-text">Principle</span>
-                    </a>
-                    <a href="{{ route('admin.achievment.depo') }}"
-                        class="menu-item {{ request()->routeIs('admin.achievment.depo') ? 'active' : '' }}">
-                        <span class="menu-text">Depo</span>
-                    </a> --}}
                 </div>
-                {{-- <a href="{{ route('admin.historymovement') }}"
-                    class="menu-item {{ request()->routeIs('admin.historymovement') ? 'active' : '' }}">
-                    <i class="eg-document"></i>
-                    <span class="menu-text">History Movement</span>
-                </a>
-                <a href="{{ route('admin.servicelevel') }}"
-                    class="menu-item {{ request()->routeIs('admin.servicelevel') ? 'active' : '' }}">
-                    <i class="eg-document"></i>
-                    <span class="menu-text">Service Level</span>
-                </a>
-                <a href="{{ route('admin.leadtime') }}"
-                    class="menu-item {{ request()->routeIs('admin.leadtime') ? 'active' : '' }}">
-                    <i class="eg-document"></i>
-                    <span class="menu-text">Lead Time</span>
-                </a> --}}
-                {{-- <div class="menu-item">
-            <i class="eg-inbox"></i><span class="menu-text">Inbox</span>
-            </div>
-            <div class="menu-item">
-            <i class="eg-document"></i><span class="menu-text">Docs</span>
-            </div>
-            <div class="menu-item">
-            <i class="eg-file"></i><span class="menu-text">Clips</span>
-            </div>
-            <div class="menu-item">
-            <i class="eg-disk"></i><span class="menu-text">Timesheets</span>
-            </div>
-            <div class="menu-item">
-            <i class="eg-apps"></i><span class="menu-text">More</span>
-            </div> --}}
             </div>
         </div>
         {{-- @yield('sidebar') --}}

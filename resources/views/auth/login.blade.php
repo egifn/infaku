@@ -20,8 +20,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                  url('https://images.unsplash.com/photo-1543168256-418811576931?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed; */
             background-color: #0b8360;
             background-size: cover;
             color: #333;
@@ -83,6 +81,7 @@
 
         .form-group {
             position: relative;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
@@ -239,6 +238,39 @@
             text-decoration: underline;
         }
 
+        /* toast */
+        .toast {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: #ff4757;
+            color: #fff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast .close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 max-width: 100%;
@@ -255,6 +287,11 @@
             .social-login {
                 flex-direction: column;
             }
+
+            .toast {
+                left: 20px;
+                right: 20px;
+            }
         }
     </style>
 </head>
@@ -268,13 +305,18 @@
         </div>
 
         <div class="login-body">
-            <form action="{{ route('login') }}" method="POST">
+            <!--
+                Perbaikan route:
+                - gunakan url('/login') untuk memastikan POST dikirim ke endpoint /login
+                - link register diarahkan ke /register via url('/register')
+            -->
+            <form action="{{ url('/login') }}" method="POST" novalidate>
                 @csrf
                 <div class="form-group">
                     <label for="email">Email</label>
                     <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="email" name="email" placeholder="alamat.email@contoh.com"
-                        required />
+                    <input type="email" id="email" name="email" placeholder="alamat.email@contoh.com" required
+                        value="{{ old('email') }}" />
                 </div>
 
                 <div class="form-group">
@@ -284,16 +326,71 @@
                 </div>
 
                 <div class="forgot-password">
-                    <a href="#">Lupa kata sandi?</a>
+                    <a href="{{ url('/password/reset') }}">Lupa kata sandi?</a>
                 </div>
 
                 <button type="submit" class="login-button">Masuk</button>
             </form>
             <div class="register-link">
-                Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
+                Belum punya akun? <a href="{{ url('/register') }}">Daftar di sini</a>
             </div>
         </div>
     </div>
+
+    <!-- Toast container -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="display:none;">
+        <div id="toast-message">Pesan</div>
+        <button id="toast-close" class="close" aria-label="Tutup">&times;</button>
+    </div>
+
+    <script>
+        (function() {
+            // Ambil pesan error dari session atau validasi password
+            var message = null;
+
+            // Jika ada flash session error (contoh: session()->flash('error', 'Password salah'))
+            @if (session('error'))
+                message = {!! json_encode(session('error')) !!};
+            @elseif (session('status'))
+                // optional: pesan status lain
+                message = {!! json_encode(session('status')) !!};
+            @elseif ($errors->has('password'))
+                message = {!! json_encode($errors->first('password')) !!};
+            @elseif ($errors->any())
+                // fallback: gabungkan semua pesan
+                message = {!! json_encode(implode(' | ', $errors->all())) !!};
+            @endif
+
+            if (message) {
+                var toast = document.getElementById('toast');
+                var toastMessage = document.getElementById('toast-message');
+                var closeBtn = document.getElementById('toast-close');
+
+                toastMessage.textContent = message;
+                toast.style.display = 'flex';
+
+                // small delay to allow transition
+                setTimeout(function() {
+                    toast.classList.add('show');
+                }, 10);
+
+                // auto hide after 5s
+                var hideTimer = setTimeout(hideToast, 5000);
+
+                closeBtn.addEventListener('click', function() {
+                    clearTimeout(hideTimer);
+                    hideToast();
+                });
+
+                function hideToast() {
+                    toast.classList.remove('show');
+                    setTimeout(function() {
+                        toast.style.display = 'none';
+                    }, 250);
+                }
+            }
+        })();
+    </script>
 </body>
 
 </html>

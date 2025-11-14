@@ -14,11 +14,9 @@ class WilayahController extends Controller
     {
         return view('admin.dashboard');
     }
-    
+
     public function masterWilayah()
     {
         return view('admin.master.wilayah');
     }
-
-    
 }

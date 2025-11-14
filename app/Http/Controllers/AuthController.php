@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -7,10 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function showLogin() {
+    public function showLogin()
+    {
         return view('auth.login');
     }
 
@@ -40,21 +43,33 @@ class AuthController extends Controller
         // Simpan user ke session
         session(['user' => $user]);
 
-        // Redirect berdasarkan role
-        return match ($user->role) {
-            'adm-01' => redirect('/admin/dashboard'),
-            'cashier' => redirect('/cashier'),
-            'confirmator' => redirect('/confirmator'),
-            'member' => redirect('/member'),
-            default => redirect('/login')->withErrors(['access' => 'Role tidak dikenali.'])
-        };
+        // Redirect berdasarkan role — gunakan map agar mudah dikelola
+        $redirectMap = [
+            'ku-01'      => '/admin/dashboard',
+            'cashier'    => '/cashier',
+            'confirmator' => '/confirmator',
+            'member'     => '/member',
+        ];
+
+        $role = $user->role ?? null;
+
+        if ($role && array_key_exists($role, $redirectMap)) {
+            return redirect()->to($redirectMap[$role]);
+        }
+
+        // Log role tidak dikenali dan kembali ke login dengan error
+        Log::warning('Login attempt with unknown role', ['email' => $user->email ?? null, 'role' => $role]);
+
+        return redirect('/login')->withErrors(['access' => 'Role tidak dikenali.']);
     }
 
-    public function showRegister() {
+    public function showRegister()
+    {
         return view('auth.register');
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
