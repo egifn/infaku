@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi - @yield('title')</title>
     <link rel="stylesheet" href="https://egifn.github.io/got-style/icon.css" />
+    <link rel="stylesheet" href="{{  }}">
     @stack('style')
     <style>
         * {

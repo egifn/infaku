@@ -1,0 +1,648 @@
+/* Base button styles */
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    /* transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; */
+    cursor: pointer;
+}
+
+.btn:hover {
+    opacity: 0.7;
+}
+
+/* Button colors */
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-success {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-warning {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-light {
+    color: #212529;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.btn-dark {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+/* Outline buttons */
+.btn-outline-primary {
+    color: #007bff;
+    background-color: transparent;
+    border-color: #007bff;
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    background-color: transparent;
+    border-color: #6c757d;
+}
+
+/* Add more outline styles for other colors as needed */
+
+/* Button sizes */
+.btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: 0.3rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+/* Block button */
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Disabled button */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Rounded button */
+.btn-rounded {
+    border-radius: 50px;
+}
+
+/* Icon button */
+.btn-icon {
+    padding: 0.375rem;
+    line-height: 1;
+}
+
+/* Hover effects */
+
+
+/* Add hover effects for other button types */
+
+/* Focus styles */
+.btn:focus,
+.btn.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Active styles */
+.btn:active,
+.btn.active {
+    background-image: none;
+}
+
+/* Link button */
+.btn-link {
+    font-weight: 400;
+    color: #007bff;
+    background-color: transparent;
+    border: none;
+}
+
+.btn-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+/* Gradient buttons */
+.btn-gradient-primary {
+    background-image: linear-gradient(to right, #007bff, #0056b3);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-success {
+    background-image: linear-gradient(to right, #28a745, #1e7e34);
+    border: none;
+    color: white;
+}
+
+/* 3D button */
+.btn-3d {
+    position: relative;
+    top: 0;
+    box-shadow: 0 4px 0 #0056b3;
+}
+
+.btn-3d:active {
+    top: 3px;
+    box-shadow: 0 1px 0 #0056b3;
+}
+
+.card {
+    border: 1.7px solid #ddd;
+    /* border-radius: 0.25rem; */
+    /* width: 200px; */
+    box-shadow: 0 0px 1px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
+.card-img-crop {
+    width: 250px;
+    height: auto;
+    max-height: 150px;
+    /* atau sesuaikan dengan kebutuhan Anda */
+    object-fit: cover;
+    /* agar gambar memenuhi container tanpa mengubah rasio aspek */
+    border-bottom: 1px solid #ddd;
+    /* memberikan garis bawah pada gambar */
+}
+
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-title {
+    font-size: 14px;
+    margin-bottom: 0.75rem;
+}
+
+.card-text {
+    margin-bottom: 12px;
+    color: #6c757d;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    /* justify-content: start; */
+    align-items: center;
+    background-color: #ffffff;
+    color: #000000;
+    border: #000000;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.navbar a:hover {
+    color: #d4d4d4;
+}
+
+.navbar ul{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.main-nav {
+    float: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.main-nav .nav-links {
+    display: inline;
+    color: #000000;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+.main-nav .nav-links:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Navbar Background Color Classes */
+.navbar.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.navbar.bg-dark {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+}
+
+.navbar.bg-primary {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+}
+
+/* Navbar Menu */
+.navbar-menu {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 20px;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+    }
+
+    .navbar .toggle-menu {
+        display: block;
+    }
+}
+
+.toggle-menu {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+/* Dropdown */
+/* Basic Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    /* background-color: #4CAF50; */
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Hover Dropdown */
+.hover-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Click Dropdown */
+.click-dropdown .dropdown-content.show {
+    display: block;
+}
+
+/* Animated Dropdown */
+.animated-dropdown .dropdown-content {
+    transition: all 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.animated-dropdown .dropdown-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Toasts */
+.toast {
+    position: fixed;
+    min-width: 300px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100%);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    z-index: 1050;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(3, 3, 3, 0.1);
+}
+
+.toast-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.toast-body {
+    padding: 10px;
+}
+
+/* Close Button */
+.toast .close {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.toast .close:hover {
+    color: #aaa;
+}
+
+/* Positions */
+.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+/* Positions */
+.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a {
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background-color: #ddd;
+}
+
+/* Carousel */
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
+}
+
+.carousel-item {
+    min-width: 100%;
+    height: auto;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Ensure images cover the full width of the container */
+.carousel-item img {
+    width: 100%;
+    height: auto;
+}
+
+.carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.carousel-controls button {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    pointer-events: all;
+    outline: none;
+    border-radius: 25%;
+    transition: background-color 0.3s;
+}
+
+.carousel-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.carousel-indicators li {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    pointer-events: all;
+    transition: background-color 0.3s;
+}
+
+.carousel-indicators li.active {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Media queries for responsive design */
+@media (max-width: 576px) {
+    .carousel-item {
+        max-height: 200px;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .carousel-item {
+        max-height: 300px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .carousel-item {
+        max-height: 350px;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1200px) {
+    .carousel-item {
+        max-height: 400px;
+    }
+}
+
+@media (min-width: 1201px) and (max-width: 1400px) {
+    .carousel-item {
+        max-height: 450px;
+    }
+}
+
+@media (min-width: 1401px) and (max-width: 1600px) {
+    .carousel-item {
+        max-height: 500px;
+    }
+}
+
+@media (min-width: 1601px) and (max-width: 1800px) {
+    .carousel-item {
+        max-height: 550px;
+    }
+}
+
+@media (min-width: 1801px) and (max-width: 1900px) {
+    .carousel-item {
+        max-height: 600px;
+    }
+}
+
+@media (min-width: 1901px) {
+    .carousel-item {
+        max-height: 1080px;
+    }
+}
