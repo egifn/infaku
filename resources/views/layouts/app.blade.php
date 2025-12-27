@@ -4,1172 +4,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi - @yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'Infaqu') }} - @yield('title')</title>
+
+    <!-- External CSS -->
     <link rel="stylesheet" href="https://egifn.github.io/got-style/icon.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    @stack('style')
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <!-- Internal CSS Files -->
+    <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+
+    @stack('styles')
 
-        body {
-            font-family: 'Inter', sans-serif !important;
-            font-weight: 400;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background-color: #ffffff;
-        }
-
-        .header {
-            position: fixed;
-            align-items: center;
-            width: 100%;
-            display: flex;
-            background-color: #105a44;
-            /* background-color: #395772; */
-            padding: 5px 14px;
-            color: #ecf0f1;
-            z-index: 2;
-        }
-
-        .header-logo-frame {
-            width: 20px;
-            height: 20px;
-            /* background-color: #ebebeb; */
-            background-color: #21ad32;
-            color: #ffffff;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 1px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .header-logo img {
-            height: 40px;
-            ` margin-left: 6px;
-        }
-
-        .search {
-            display: flex;
-            flex-grow: 1;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search input {
-            width: 30%;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: none;
-            font-size: 14px;
-            text-align: left;
-            background-color: rgba(255, 255, 255, 0.197);
-            outline: #ffffff;
-            color: #d5d5d5;
-        }
-
-        .search input::placeholder {
-            color: white;
-            opacity: 0.7;
-        }
-
-        .search-btn {
-            background-image: linear-gradient(to right, #21ad32, #12820f);
-            color: #ffffff;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin: 1px;
-        }
-
-        .search-btn:hover {
-            opacity: 70%;
-        }
-
-        .profile {
-            display: flex;
-            align-items: center;
-        }
-
-        .profile-img-wrapper {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
-
-        .profile-img-wrapper img {
-            width: 20px;
-            height: 20px;
-        }
-
-
-        .icon {
-            margin-right: 10px;
-            /* margin-left: 10px; */
-            font-size: 18px;
-            cursor: pointer;
-            width: 15px;
-            height: auto;
-        }
-
-        .container {
-            display: flex;
-            /* min-height: 100vh; */
-            flex-direction: column;
-        }
-
-        .logo {
-            font-size: 16px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .user-profile img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-left: 15px;
-        }
-
-        /* Class of Sidebar */
-        .sidebar {
-            /* border-right: 1px solid #cbcbcb; */
-            background-color: #ffffff;
-            color: #000000;
-            border-right: 1px solid #bababa;
-            width: 230px;
-            height: 100%;
-            transition: all 0.3s;
-            position: fixed;
-            top: 40px;
-            z-index: 1;
-            overflow-y: auto;
-            overflow: visible !important;
-        }
-
-        .sidebar-logo {
-            padding: 4px 4px;
-            /* background-color: #515151bd; */
-            background-color: #21ad32;
-            color: #ffffff;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 5px;
-            margin-right: 4px;
-            min-width: 20px;
-        }
-
-        .sidebar.collapsed {
-            width: 50px;
-            overflow: visible;
-        }
-
-        .sidebar-header {
-            display: flex;
-            padding: 10px;
-            border-bottom: 1px solid #bababa;
-            transition: all 0.3s;
-            display: flex;
-            align-items: stretch;
-            height: 43px;
-        }
-
-        .sidebar-header.collapsed {
-            justify-content: left;
-            width: 100%;
-            height: 43px;
-        }
-
-        .sidebar-toggle {
-            display: flex;
-            width: 15px;
-            align-items: center;
-            margin-left: auto;
-        }
-
-        .sidebar-toggle-btn {
-            border: none;
-            cursor: pointer;
-            color: #000000;
-            width: 15px;
-            margin-top: 3px;
-        }
-
-        .sidebar-toggle-btn:hover {
-            opacity: 70%;
-        }
-
-        .sidebar-toggle.sidebar-toggle-btn.collapsed {
-            display: none;
-        }
-
-        .sidebar-header .icon {
-            display: flex;
-            /* font-size: 21px; */
-            padding: 2px;
-            cursor: pointer;
-        }
-
-        .sidebar-header.collapsed .icon {
-            display: block;
-        }
-
-        .sidebar-toggle.collapsed {
-            display: none;
-        }
-
-        .sidebar-header.collapsed p {
-            display: none;
-        }
-
-        .sidebar-menu {
-            padding: 4px 0;
-        }
-
-        .sidebar-menu a {
-            text-decoration: none !important;
-        }
-
-        .menu-item {
-            display: flex;
-            color: rgb(91, 86, 86);
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            font-size: 13px;
-            font-weight: 500;
-            margin: 5px;
-            border-radius: 3px;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .menu-item i {
-            flex-shrink: 0;
-            width: 15px;
-            /* height: 15px; */
-            margin: 0px 3px;
-        }
-
-        .menu-item:hover {
-            background-color: #dddddd;
-        }
-
-        .menu-item.active {
-            background-color: #dcdcdc;
-        }
-
-        .menu-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* .menu-text .active {
-        color: #bfbfbf;
-      } */
-
-        .collapsed .menu-text {
-            display: none;
-        }
-
-        /* Tooltip for menu-item when collapsed */
-        .collapsed .menu-item:hover::after {
-            content: attr(title);
-            position: absolute;
-            left: 45px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #333;
-            color: #fff;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 10;
-            opacity: 0.95;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            pointer-events: none;
-        }
-
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            margin-left: 10px;
-        }
-
-        .submenu.open {
-            max-height: 200px;
-        }
-
-        .submenu .menu-item {
-            font-size: 12px;
-            padding: 5px 8px 3px 36px;
-            margin: 0px 0;
-        }
-
-        .dropdown-toggle {
-            margin-left: auto;
-            transition: transform 0.3s;
-            font-size: 10px;
-        }
-
-        .menu-item.open .dropdown-toggle {
-            transform: rotate(90deg);
-        }
-
-        /* Class of Main Content */
-        .main-content {
-            color: rgb(66, 66, 66);
-            margin-left: 230px;
-            margin-top: 83px;
-            padding: 5px 15px;
-            transition: all 0.3s;
-        }
-
-        .main-content.expanded {
-            margin-left: 50px;
-        }
-
-        /* Class of Navbar */
-
-        .navbar {
-            display: flex;
-            align-items: center;
-            background-color: #ffffff;
-            border-bottom: 1px solid #bababa;
-            color: rgb(91, 86, 86);
-            justify-content: space-between;
-            position: fixed;
-            transition: all 0.3s;
-            font-size: 15px;
-            padding: 0px 15px;
-            top: 40px;
-            left: 230px;
-            right: 0;
-            height: 43px;
-            z-index: 1;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-button {
-            padding: 4px 10px;
-            background-color: #ffffff;
-            color: rgb(91, 86, 86);
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-            /* margin: 1px; */
-            border: 1px solid rgb(91, 86, 86);
-        }
-
-        .navbar-button:hover {
-            opacity: 70%;
-            /* box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);    */
-        }
-
-        .navbar-title {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-        }
-
-        .navbar-title i {
-            margin-left: 10px;
-        }
-
-        .navbar.expanded {
-            display: flex;
-            left: 50px;
-            align-items: center;
-        }
-
-        .navbar-toggle-btn {
-            display: none;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
-            color: #2c3e50;
-            margin-right: 10px;
-        }
-
-        .navbar-toggle-btn.collapsed {
-            display: inline;
-            width: 15px;
-        }
-
-        .navbar-toggle-btn:hover {
-            opacity: 70%;
-        }
-
-        /* Class of Card */
-
-        .card {
-            background-color: #ffffff;
-            border-radius: 5px;
-            border: 1px solid #cdcdcd;
-            margin-top: 10px;
-        }
-
-        .card-header {
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            border-bottom: 1px solid #cdcdcd;
-            background-color: #f8f9fa;
-            padding: 2px 10px;
-        }
-
-        .card-title {
-            padding: 5px 10px;
-        }
-
-        .card-content {
-            padding: 5px 10px;
-            text-align: justify;
-        }
-
-        .card-header h2 {
-            color: #2c3e50;
-        }
-
-        .card-body {
-            padding: 10px;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            background-color: #ffffff;
-        }
-
-        .card-footer {
-            padding: 2px 5px;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            border-top: 1px solid #cdcdcd;
-            background-color: #ffffff;
-            text-align: right;
-        }
-
-        .card:hover {
-            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .button-card {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .button-card:hover {
-            opacity: 70%;
-        }
-
-        /* CLASS DROPDOWN */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropbtn {
-            color: white;
-            padding: 10px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .hover-dropdown img {
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 200px;
-            border-radius: 3px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            z-index: 2;
-            overflow: auto;
-            right: 10px;
-            top: 7px;
-        }
-
-        .dropdown-content a {
-            color: black;
-            font-size: small;
-            padding: 7px 15px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
-
-        .dropdown-content i {
-            margin-right: 10px;
-        }
-
-        .dropdown-content img {
-            width: 15px;
-            height: 15px;
-            margin-right: 10px;
-            border-radius: 0;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Hover Dropdown */
-        .hover-dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        /* Click Dropdown */
-        .click-dropdown .dropdown-content.show {
-            display: block;
-        }
-
-        /* Animated Dropdown */
-        .animated-dropdown .dropdown-content {
-            transition: all 0.5s ease-in-out;
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-
-        .animated-dropdown .dropdown-content.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Toasts */
-        .toast {
-            position: fixed;
-            min-width: 300px;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(100%);
-            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-            z-index: 1050;
-        }
-
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .toast-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid rgba(3, 3, 3, 0.1);
-        }
-
-        .toast-title {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .toast-body {
-            padding: 10px;
-        }
-
-        /* Close Button */
-        .toast .close {
-            background: none;
-            border: none;
-            color: #000000;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .toast .close:hover {
-            color: #aaa;
-        }
-
-        /* Positions */
-        .top-right {
-            top: 20px;
-            right: 20px;
-        }
-
-        .bottom-right {
-            bottom: 20px;
-            right: 20px;
-        }
-
-        /* Positions */
-        .top-right {
-            top: 20px;
-            right: 20px;
-        }
-
-        .bottom-right {
-            bottom: 20px;
-            right: 20px;
-        }
-
-        /* card-status */
-        .crad-status {
-            display: flex;
-            padding: 10px 0px;
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        .card-stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            padding: 5px 0px;
-        }
-
-        .card-status-item {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px,
-                rgba(0, 0, 0, 0.24) 0px 1px 2px;
-            text-align: left;
-            transition: transform 0.3s ease;
-        }
-
-        .card-status-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-status-content {
-            border-radius: 10px;
-            text-align: justify;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 10px;
-        }
-
-        .calendar-icon {
-            background-color: #6c63ff;
-        }
-
-        .cart-icon {
-            background-color: #6fdc6f;
-        }
-
-        .user-icon {
-            background-color: #63b3ff;
-        }
-
-        .chat-icon {
-            background-color: #ff6b6b;
-        }
-
-        .icon::before {
-            content: "";
-            display: block;
-            width: 100%;
-            height: 100%;
-            background: url("https://via.placeholder.com/40") no-repeat center;
-            background-size: contain;
-        }
-
-        .card-status-content h2 {
-            font-size: 1.2rem;
-            margin: 0;
-            color: #333;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .status-change {
-            font-size: 12px;
-        }
-
-        .positive {
-            color: green;
-        }
-
-        .negative {
-            color: red;
-        }
-
-        /* News */
-        .news-container {
-            margin: 0 auto;
-        }
-
-        .news-item {
-            display: flex;
-            align-items: center;
-            border-radius: 5px;
-            border: 1px solid #cdcdcd;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-
-        .news-item:hover {
-            opacity: 75%;
-            cursor: pointer;
-        }
-
-        .news-image {
-            width: 120px;
-            height: 80px;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-
-        .news-content {
-            flex: 1;
-        }
-
-        .news-category {
-            font-size: 12px;
-            color: #ff6600;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .news-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .news-meta {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .news-tag {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-
-        /* Media Queries */
-        @media (max-width: 768px) {
-            .search-bar {
-                width: 200px;
-            }
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .sidebar.collapsed {
-                width: 50px;
-            }
-
-            .navbar {
-                left: 200px;
-            }
-
-            .navbar.expanded {
-                left: 50px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-            }
-
-            .main-content.expanded {
-                margin-left: 50px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .sidebar {
-                width: 250px;
-            }
-
-            .sidebar.collapsed {
-                width: 0px;
-            }
-
-            .top-header {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .search-bar {
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .navbar {
-                display: flex;
-                left: 0;
-                top: 37px;
-                width: 100%;
-                height: 42px;
-                flex-direction: row;
-                align-items: center;
-                /* padding: 10px 20px; */
-            }
-
-            .navbar-toggle-btn {
-                display: flex;
-                background: none;
-                border: none;
-                font-size: 14px;
-                cursor: pointer;
-                color: #2c3e50;
-                margin-right: 10px;
-                width: 15px;
-            }
-
-            .navbar.expanded {
-                left: 0px;
-            }
-
-            .main-content.expanded {
-                margin-left: 0px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                margin-top: 80px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .card {
-                background-color: #ffffff;
-                border-radius: 8px;
-                /* padding: 20px;  */
-                margin-bottom: 10px;
-                border: 1px solid #cdcdcd;
-            }
-
-            .card:hover {
-                box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-            }
-
-            .card h2 {
-                margin-bottom: 5px;
-                color: #2c3e50;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .sidebar.collapsed {
-                width: 0px;
-            }
-
-            .top-header {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .search-bar {
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .navbar {
-                display: flex;
-                left: 0;
-                top: 37px;
-                width: 100%;
-                height: 42px;
-                align-items: center;
-            }
-
-            .navbar-toggle-btn {
-                display: flex;
-                background: none;
-                border: none;
-                font-size: 14px;
-                cursor: pointer;
-                color: #2c3e50;
-                margin-right: 10px;
-                width: 15px;
-            }
-
-            .navbar.expanded {
-                left: 0px;
-            }
-
-            .main-content.expanded {
-                margin-left: 0px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                margin-top: 80px;
-            }
-        }
-    </style>
-    <style>
-        /* Tambahan CSS untuk distributor */
-        .card-stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card-status-item {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .status-change {
-            font-size: 14px;
-        }
-
-        .status-change.positive {
-            color: #28a745;
-        }
-
-        .status-change.negative {
-            color: #dc3545;
-        }
-
-        .order-list,
-        .stock-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .order-item,
-        .stock-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .order-id,
-        .stock-product {
-            flex: 2;
-        }
-
-        .order-customer,
-        .stock-quantity {
-            flex: 3;
-        }
-
-        .order-amount,
-        .stock-status {
-            flex: 2;
-        }
-
-        .order-status,
-        .stock-action {
-            flex: 1;
-        }
-
-        .order-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        .order-status.delivered {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .order-status.processing {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .stock-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .stock-status.warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .stock-status.critical {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .stock-action {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .view-all {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .button-card {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .menu-header {
-            margin-top: 20px;
-            margin-bottom: 8px;
-            padding-left: 15px;
-            font-size: 10px;
-            color: #999;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-
-        .collapsed .menu-header {
-            padding-left: 0;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            font-size: 10px;
-            color: #999;
-            text-transform: uppercase;
-            width: 100%;
-            text-align: center;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
-
-        /* conten */
-        .empty-state h4,
-        p {
-            font-size: 13px;
-        }
-    </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- Header Section -->
         <header class="header">
-            <div class="header-brand">
-                <div class="header-logo">
-                    <span class="header-logo-frame">I</span>
-                </div>
-            </div>
-            <div class="search">
-                <input type="text" placeholder="Search" />
-                <button class="search-btn btn-gradient-primary">Cari</button>
-            </div>
-            <div class="header-right">
-                <div class="profile">
-                    <div class="profile-img-wrapper">
-                        <div class="dropdown hover-dropdown">
-                            <img src="/img/example.png" width="20" />
-                            <div class="dropdown-content">
-                                <a href="#"><i class="bi bi-person"></i>Profil</a>
-                                <a href="#"><i class="bi bi-gear"></i>Setting</a>
-                                <a href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="bi bi-box-arrow-right"></i>Logout
-                                </a>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                </form>
+            <div class="search">
+                <div class="header-brand">
+                    <div class="header-logo">
+                        <span class="header-logo-frame">I</span>
+                    </div>
+                </div>
+                <form action="#" method="GET" class="search-form" style="display: flex">
+                    @csrf
+                    <input type="text" name="q" placeholder="Search..." value="{{ request('q') }}"
+                        class="search-input" id="global-search">
+                    <button type="submit" class="search-btn btn-gradient-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+                <div class="header-right">
+                    <h5>{{ session('user.username') }}</h5>
+                    <div class="profile">
+                        <div class="profile-img-wrapper">
+                            <div class="dropdown hover-dropdown">
+                                <img src="{{ asset('img/default-avatar.png') }}" width="20"
+                                    height="20">
+                                <div class="dropdown-content">
+                                    <div style="padding: 8px 16px; font-weight: 600; color: #333;">
+                                        {{ session('user.username')  ?? '-' }}
+                                    </div>
+                                    <a href="#">
+                                        <i class="bi bi-person"></i>Profil
+                                    </a>
+                                    <a href="#">
+                                        <i class="bi bi-gear"></i>Setting
+                                    </a>
+                                    <a href="#"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="bi bi-box-arrow-right"></i>Logout
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                style="display: none;">
+                @csrf
+            </form>
         </header>
-        <div class="sidebar">
+
+        <!-- Sidebar Section -->
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span class="sidebar-logo">I</span>
-                <p style="color: #5b5656;margin-top: -5px;margin-left: 5px;font-size: 20px;"><b>Infaqu</b></p>
+                <p style="color: #5b5656;margin-top: -5px;margin-left: 5px;font-size: 20px;">
+                    <b>Infaqu</b>
+                </p>
                 <div class="sidebar-toggle">
                     <i class="bi bi-grid sidebar-toggle-btn" id="toggleSidebar"></i>
                 </div>
             </div>
 
             <div class="sidebar-menu">
-
                 <!-- Dashboard -->
                 <a href="{{ route('admin.kelompok.dashboard') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.dashboard') ? 'active' : '' }}"
                     data-name="Dashboards" title="Dashboards">
-                    <i class="bi bi-bar-chart"></i><span class="menu-text">Dashboards</span>
+                    <i class="bi bi-bar-chart"></i>
+                    <span class="menu-text">Dashboards</span>
                 </a>
 
-                <!-- Header Menu -->
+                <!-- Header Menu: MASTER JAMAAH -->
                 <div class="menu-header">
                     <span class="full-text">MASTER JAMAAH</span>
                     <span class="short-text" style="display:none;">MJ</span>
@@ -1178,16 +107,18 @@
                 <a href="{{ route('admin.kelompok.data-jamaah.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.data-jamaah.*') ? 'active' : '' }}"
                     data-name="Data Jamaah" title="Data Jamaah">
-                    <i class="bi bi-file-earmark-text"></i><span class="menu-text">Data Jamaah</span>
+                    <i class="bi bi-people"></i>
+                    <span class="menu-text">Data Jamaah</span>
                 </a>
 
                 <a href="{{ route('admin.kelompok.data-keluarga.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.data-keluarga.*') ? 'active' : '' }}"
                     data-name="Data Keluarga" title="Data Keluarga">
-                    <i class="bi bi-file-earmark-text"></i><span class="menu-text">Data Keluarga</span>
+                    <i class="bi bi-person-vcard"></i>
+                    <span class="menu-text">Data Keluarga</span>
                 </a>
 
-                <!-- Header Menu -->
+                <!-- Header Menu: MASTER KONTRIBUSI -->
                 <div class="menu-header">
                     <span class="full-text">MASTER KONTRIBUSI</span>
                     <span class="short-text" style="display:none;">MK</span>
@@ -1196,16 +127,18 @@
                 <a href="{{ route('admin.kelompok.master-kontribusi.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.master-kontribusi.*') ? 'active' : '' }}"
                     data-name="Data Kontribusi" title="Data Kontribusi">
-                    <i class="bi bi-file-earmark-text"></i><span class="menu-text">Data Kontribusi</span>
+                    <i class="bi bi-cash-stack"></i>
+                    <span class="menu-text">Data Kontribusi</span>
                 </a>
 
                 <a href="{{ route('admin.kelompok.sub-kontribusi.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.sub-kontribusi.*') ? 'active' : '' }}"
                     data-name="Data Sub Kontribusi" title="Data Sub Kontribusi">
-                    <i class="bi bi-file-earmark-text"></i><span class="menu-text">Data Sub Kontribusi</span>
+                    <i class="bi bi-list-nested"></i>
+                    <span class="menu-text">Data Sub Kontribusi</span>
                 </a>
 
-                <!-- Header Menu -->
+                <!-- Header Menu: TRANSAKSI -->
                 <div class="menu-header">
                     <span class="full-text">TRANSAKSI</span>
                     <span class="short-text" style="display:none;">TR</span>
@@ -1214,14 +147,18 @@
                 <a href="{{ route('admin.kelompok.input-pembayaran.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.input-pembayaran.*') ? 'active' : '' }}"
                     data-name="Transaksi" title="Transaksi">
-                    <i class="bi bi-wallet"></i><span class="menu-text">Transaksi</span>
-                </a>
-                <a href="{{ route('admin.kelompok.riwayat-transaksi.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.kelompok.riwayat-transaksi.*') ? 'active' : '' }}"
-                    data-name="Transaksi" title="Transaksi">
-                    <i class="bi bi-wallet"></i><span class="menu-text">Riwayat Transaksi</span>
+                    <i class="bi bi-wallet2"></i>
+                    <span class="menu-text">Input Pembayaran</span>
                 </a>
 
+                <a href="{{ route('admin.kelompok.riwayat-transaksi.index') }}"
+                    class="menu-item {{ request()->routeIs('admin.kelompok.riwayat-transaksi.*') ? 'active' : '' }}"
+                    data-name="Riwayat Transaksi" title="Riwayat Transaksi">
+                    <i class="bi bi-clock-history"></i>
+                    <span class="menu-text">Riwayat Transaksi</span>
+                </a>
+
+                <!-- Header Menu: LAPORAN -->
                 <div class="menu-header">
                     <span class="full-text">LAPORAN</span>
                     <span class="short-text" style="display:none;">LP</span>
@@ -1229,34 +166,173 @@
 
                 <a href="{{ route('admin.kelompok.laporan.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.laporan.*') ? 'active' : '' }}"
-                    data-name="Transaksi" title="Transaksi">
-                    <i class="bi bi-wallet"></i><span class="menu-text">Laporan </span>
+                    data-name="Laporan" title="Laporan">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span class="menu-text">Laporan</span>
                 </a>
+
+                <!-- Additional Menu Items with Submenus (Example) -->
+                @if(isset($hasSubmenu) && $hasSubmenu)
+                    <div class="menu-item has-submenu" data-submenu="submenu-extra">
+                        <i class="bi bi-gear"></i>
+                        <span class="menu-text">Pengaturan</span>
+                        <span class="dropdown-toggle">
+                            <i class="bi bi-chevron-right"></i>
+                        </span>
+                    </div>
+
+                    <div class="submenu" id="submenu-extra">
+                        <a href="#" class="menu-item">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="menu-text">Pengguna</span>
+                        </a>
+                        <a href="#" class="menu-item">
+                            <i class="bi bi-shield-check"></i>
+                            <span class="menu-text">Hak Akses</span>
+                        </a>
+                    </div>
+                @endif
             </div>
         </div>
 
-        {{-- @yield('sidebar') --}}
-        <div class="navbar">
+        <!-- Navbar Section -->
+        <div class="navbar" id="navbar">
             <div class="navbar-brand">
                 <i class="bi bi-grid navbar-toggle-btn" id="toggleNavbar"></i>
             </div>
-            <div class="navbar-title">@yield('page-title') <i class="@yield('icon-page-title')"></i></div>
+            <div class="navbar-title">
+                @yield('page-title', 'Dashboard')
+                <i class="@yield('icon-page-title', 'bi bi-house')"></i>
+            </div>
+
+            <div class="navbar-actions">
+                @hasSection('navbar-actions')
+                    @yield('navbar-actions')
+                @else
+
+                @endif
+            </div>
         </div>
-        <main class="main-content">
-            <!-- Konten dashboard -->
-            @yield('content')
+
+        <!-- Main Content Section -->
+        <main class="main-content" id="mainContent">
+            <!-- Breadcrumb -->
+            @hasSection('breadcrumb')
+                <nav class="breadcrumb">
+                    @yield('breadcrumb')
+                </nav>
+            @endif
+
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div class="toast-container">
+                    <div class="toast success show d-flex align-items-center justify-content-between gap-2 px-3 py-2 shadow rounded mb-2"
+                        id="successToast" style="min-width:280px;max-width:400px;">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="toast-icon text-success fs-4"><i class="bi bi-check-circle"></i></span>
+                            <div class="toast-content">
+                                <div class="toast-title fw-bold mb-1">Sukses</div>
+                                <div class="toast-message small">{{ session('success') }}</div>
+                            </div>
+                        </div>
+                        <button type="button"
+                            class="btn btn-sm btn-light border-0 p-1 ms-2 toast-close d-flex align-items-center justify-content-center"
+                            aria-label="Close" onclick="this.closest('.toast').classList.remove('show')">
+                            <i class="bi bi-x fs-5"></i>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="toast-container">
+                    <div class="toast error show d-flex align-items-center justify-content-between gap-2 px-3 py-2 shadow rounded mb-2"
+                        id="errorToast" style="min-width:280px;max-width:400px;">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="toast-icon text-danger fs-4"><i class="bi bi-exclamation-circle"></i></span>
+                            <div class="toast-content">
+                                <div class="toast-title fw-bold mb-1">Error</div>
+                                <div class="toast-message small">{{ session('error') }}</div>
+                            </div>
+                        </div>
+                        <button type="button"
+                            class="btn btn-sm btn-light border-0 p-1 ms-2 toast-close d-flex align-items-center justify-content-center"
+                            aria-label="Close" onclick="this.closest('.toast').classList.remove('show')">
+                            <i class="bi bi-x fs-5"></i>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Page Content -->
+            <div class="master-container">
+                @yield('content')
+            </div>
+
+            <!-- Modal Container -->
+            <div id="modalContainer"></div>
         </main>
     </div>
 
-    {{-- <script src="https://egifn.github.io/got-style/dashboard.js"></script>   --}}
+    <!-- JavaScript Files -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/sidebar.js') }}"></script>
+    <script src="{{ asset('js/modals.js') }}"></script>
+    <script src="{{ asset('js/toasts.js') }}"></script>
+
+    <!-- Inline JavaScript -->
     <script>
-        // Sidebar menu-header text toggle
+        // CSRF Token setup for AJAX requests
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set CSRF token for all AJAX requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Global search functionality
+            const searchInput = document.getElementById('global-search');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function (e) {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        if (this.value.length >= 3) {
+                            performSearch(this.value);
+                        }
+                    }, 500);
+                });
+            }
+
+            // Initialize sidebar state from localStorage
+            const sidebarState = localStorage.getItem('sidebarCollapsed');
+            if (sidebarState === 'true') {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.querySelector('.main-content').classList.add('expanded');
+                document.querySelector('.navbar').classList.add('expanded');
+                updateMenuHeaderText();
+            }
+        });
+
+        // Global search function
+
+
+        // Show search results in dropdown
+        function showSearchResults(results) {
+            // Implementation for showing search results
+            console.log('Search results:', results);
+        }
+
+        // Update menu header text based on sidebar state
         function updateMenuHeaderText() {
             const sidebar = document.querySelector('.sidebar');
             const menuHeaders = document.querySelectorAll('.menu-header');
+
             menuHeaders.forEach(header => {
                 const fullText = header.querySelector('.full-text');
                 const shortText = header.querySelector('.short-text');
+
                 if (sidebar.classList.contains('collapsed')) {
                     if (fullText) fullText.style.display = 'none';
                     if (shortText) shortText.style.display = 'inline';
@@ -1266,164 +342,62 @@
                 }
             });
         }
-        document.addEventListener('DOMContentLoaded', function() {
-            updateMenuHeaderText();
-            const toggleBtn = document.getElementById('toggleSidebar');
-            const navbartoggleBtn = document.getElementById('toggleNavbar');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', updateMenuHeaderText);
-            }
-            if (navbartoggleBtn) {
-                navbartoggleBtn.addEventListener('click', updateMenuHeaderText);
-            }
-        });
-        const toggleBtn = document.getElementById('toggleSidebar');
-        const navbartoggleBtn = document.getElementById('toggleNavbar');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarHeader = document.querySelector('.sidebar-header');
-        const sidebarToggle = document.querySelector('.sidebar-toggle');
-        const navbarToggle = document.querySelector('.navbar-toggle-btn');
-        const mainContent = document.querySelector('.main-content');
-        const navbar = document.querySelector('.navbar');
-        const dropdownIcon = document.getElementById('dropdownIcon');
-        const dropdownContent = document.getElementById('dropdownContent');
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                sidebarHeader.classList.toggle('collapsed');
-                sidebarToggle.classList.toggle('collapsed');
-                navbarToggle.classList.toggle('collapsed');
-                navbarToggle.classList.toggle('expanded');
-                mainContent.classList.toggle('expanded');
-                navbar.classList.toggle('expanded');
+        // Export data function
+        function exportData(type, url) {
+            const exportUrl = `${url}?export=${type}&${new URLSearchParams(window.location.search).toString()}`;
+            window.open(exportUrl, '_blank');
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            const loader = document.createElement('div');
+            loader.className = 'loading-overlay';
+            loader.innerHTML = `
+                <div class="loading-spinner">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span>Loading...</span>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            const loader = document.querySelector('.loading-overlay');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        // Confirm dialog
+        function confirmAction(message, callback) {
+            if (confirm(message)) {
+                callback();
+            }
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
             });
         }
 
-        if (navbartoggleBtn) {
-            navbartoggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                sidebarHeader.classList.toggle('collapsed');
-                sidebarToggle.classList.toggle('collapsed');
-                navbarToggle.classList.toggle('collapsed');
-                navbarToggle.classList.toggle('expanded');
-                mainContent.classList.toggle('expanded');
-                navbar.classList.toggle('expanded');
-            });
-        }
-
-        // Add a click event to toggle the dropdown
-        const dropbtn = document.querySelector('.dropbtn');
-        if (dropbtn) {
-            dropbtn.addEventListener('click', function() {
-                const dropdownContent = document.querySelector('.dropdown-content');
-                if (dropdownContent) {
-                    dropdownContent.classList.toggle('show');
-                }
-            });
-        }
-
-        // Close the dropdown if the user clicks outside of it
-        window.onclick = function(event) {
-            if (!event.target.matches('.dropbtn')) {
-                var dropdowns = document.getElementsByClassName("dropdown-content");
-                for (var i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
-                    }
-                }
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Click dropdown
-            const clickDropdowns = document.querySelectorAll('.click-dropdown .dropbtn');
-            clickDropdowns.forEach(dropdown => {
-                dropdown.addEventListener('click', () => {
-                    const dropdownContent = dropdown.nextElementSibling;
-                    dropdownContent.classList.toggle('show');
-                });
-            });
-
-            // Animated dropdown
-            const animatedDropdowns = document.querySelectorAll('.animated-dropdown .dropbtn');
-            animatedDropdowns.forEach(dropdown => {
-                dropdown.addEventListener('click', () => {
-                    const dropdownContent = dropdown.nextElementSibling;
-                    dropdownContent.classList.toggle('show');
-                });
-            });
-
-            // Close the dropdown if the user clicks outside of it
-            window.onclick = function(event) {
-                if (!event.target.matches('.dropbtn')) {
-                    const dropdowns = document.querySelectorAll('.dropdown-content');
-                    dropdowns.forEach(dropdown => {
-                        if (dropdown.classList.contains('show')) {
-                            dropdown.classList.remove('show');
-                        }
-                    });
-                }
-            };
-        });
     </script>
-    <script>
-        /* 1. AUTO-ATTACH semua dropdown ------------------------------ */
-        document.addEventListener('DOMContentLoaded', () => {
-            /* bind click */
-            document.querySelectorAll('.has-submenu').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.dataset.submenu;
-                    if (!id) return;
-                    toggleSub(btn, id);
-                });
-            });
 
-            /* buka dropdown kalau ada child .active */
-            document.querySelectorAll('.submenu .menu-item.active').forEach(a => {
-                const sub = a.closest('.submenu');
-                const btn = sub?.previousElementSibling;
-                if (btn) {
-                    sub.classList.add('open');
-                    btn.classList.add('open');
-                }
-            });
-        });
-
-        /* 2. BUKA / TUTUP dropdown ---------------------------------- */
-        function toggleSub(btn, id) {
-            const sub = document.getElementById(id);
-            const openNow = sub.classList.contains('open');
-
-            /* kalau sidebar collapsed : force tutup & stop */
-            if (document.querySelector('.sidebar').classList.contains('collapsed')) {
-                closeAllSub(); // tutup semua
-                return;
-            }
-
-            closeAllSub(); // tutup yang lain
-            if (!openNow) { // buka yang dipilih
-                sub.classList.add('open');
-                btn.classList.add('open');
-            }
-        }
-
-        /* 3. TUTUP SEMUA dropdown ----------------------------------- */
-        function closeAllSub() {
-            document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
-            document.querySelectorAll('.has-submenu').forEach(b => b.classList.remove('open'));
-        }
-
-        /* 4. COLLAPSED SIDEBAR --> auto tutup ----------------------- */
-        const sb = document.querySelector('.sidebar');
-        new MutationObserver(() => {
-            if (sb.classList.contains('collapsed')) closeAllSub();
-        }).observe(sb, {
-            attributes: true,
-            attributeFilter: ['class']
-        });
-    </script>
     @stack('scripts')
 </body>
 

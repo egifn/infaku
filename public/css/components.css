@@ -1,0 +1,864 @@
+/* components.css */
+/* Button Styles */
+.search-btn {
+    background-image: linear-gradient(to right, #21ad32, #12820f);
+    color: #ffffff;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 1px;
+}
+
+.search-btn:hover {
+    opacity: 70%;
+}
+
+.navbar-button {
+    padding: 4px 10px;
+    background-color: #ffffff;
+    color: rgb(91, 86, 86);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    border: 1px solid rgb(91, 86, 86);
+}
+
+.navbar-button:hover {
+    opacity: 70%;
+}
+
+.button-card {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-card:hover {
+    opacity: 70%;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: #105a44;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0d8b66;
+}
+
+.btn-print {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-print:hover {
+    background: #138496;
+}
+
+.btn-edit {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn-edit:hover {
+    background: #e0a800;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+/* Card Styles */
+.card {
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: 1px solid #cdcdcd;
+    margin-top: 10px;
+}
+
+.card:hover {
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 1px solid #cdcdcd;
+    background-color: #f8f9fa;
+    padding: 2px 10px;
+}
+
+.card-title {
+    padding: 5px 10px;
+}
+
+.card-content {
+    padding: 5px 10px;
+    text-align: justify;
+}
+
+.card-header h2 {
+    color: #2c3e50;
+}
+
+.card-body {
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #ffffff;
+}
+
+.card-footer {
+    padding: 2px 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top: 1px solid #cdcdcd;
+    background-color: #ffffff;
+    text-align: right;
+}
+
+/* Enhanced Card Styles */
+.card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.hover-dropdown img {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    border-radius: 3px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    overflow: auto;
+    right: 10px;
+    top: 20px;
+}
+
+.dropdown-content a {
+    color: black;
+    font-size: small;
+    padding: 7px 15px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-content i {
+    margin-right: 10px;
+}
+
+.dropdown-content img {
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    border-radius: 0;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Hover Dropdown */
+.hover-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Click Dropdown */
+.click-dropdown .dropdown-content.show {
+    display: block;
+}
+
+/* Animated Dropdown */
+.animated-dropdown .dropdown-content {
+    transition: all 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.animated-dropdown .dropdown-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Toast Styles */
+.toast {
+    position: fixed;
+    min-width: 300px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100%);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    z-index: 1050;
+}
+
+.toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(3, 3, 3, 0.1);
+}
+
+.toast-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.toast-body {
+    padding: 10px;
+}
+
+/* Close Button */
+.toast .close {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.toast .close:hover {
+    color: #aaa;
+}
+
+/* Enhanced Toast Styles */
+.toast-container {
+    position: fixed;
+    top: 90px;
+    right: 325px;
+    z-index: 1060;
+    max-width: 400px;
+}
+
+.toast {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    border-left: 4px solid #17a2b8;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    min-width: 300px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.hide {
+    transform: translateX(100%);
+}
+
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.toast.success {
+    border-left: 4px solid #28a745;
+}
+
+.toast.success .toast-icon {
+    background: #d4edda;
+    color: #155724;
+}
+
+.toast.error {
+    border-left: 4px solid #dc3545;
+}
+
+.toast.error .toast-icon {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.toast.warning {
+    border-left: 4px solid #ffc107;
+}
+
+.toast.warning .toast-icon {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.toast.info {
+    border-left: 4px solid #17a2b8;
+}
+
+.toast.info .toast-icon {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.toast-message {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 12px;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #666;
+}
+
+/* Positions */
+.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+    font-size: 13px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: border-color 0.2s ease;
+    color: #4d4d4d;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #105a44;
+    box-shadow: 0 0 0 2px rgba(16, 90, 68, 0.1);
+}
+
+.form-select {
+    width: 100%;
+    padding: 5px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    color: #4d4d4d;
+}
+
+.form-text {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-dialog {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.page-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: #f8f9fa;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Add these to your existing components.css */
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loading-spinner i {
+    font-size: 24px;
+    color: #105a44;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tooltips */
+.tooltip {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+}
+
+/* Form Validation */
+.form-error {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.is-invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    padding: 10px 0;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #105a44;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span:last-child {
+    color: #666;
+}
+
+/* Table Actions */
+.table-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.table-actions .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* Navbar Actions */
+.navbar-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 15px;
+}
+
+.empty-state h4 {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Pagination Enhancements */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #105a44;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.pagination .page-link:hover {
+    background: #f8f9fa;
+}
+
+.pagination .page-item.active .page-link {
+    background: #105a44;
+    color: white;
+    border-color: #105a44;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background: #f8f9fa;
+}
+
+/* Badge Variants */
+.badge-primary {
+    background: #105a44;
+    color: white;
+}
+
+.badge-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+/* Form Controls */
+.form-control-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.form-control-lg {
+    padding: 8px 16px;
+    font-size: 16px;
+}
+
+/* Custom Checkbox and Radio */
+.custom-checkbox,
+.custom-radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.custom-checkbox input,
+.custom-radio input {
+    display: none;
+}
+
+.custom-checkbox .checkmark,
+.custom-radio .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+}
+
+.custom-radio .checkmark {
+    border-radius: 50%;
+}
+
+.custom-checkbox input:checked+.checkmark {
+    background: #105a44;
+    border-color: #105a44;
+}
+
+.custom-checkbox input:checked+.checkmark::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.custom-radio input:checked+.checkmark::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #105a44;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

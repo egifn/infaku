@@ -336,6 +336,12 @@
             font-size: 0.8rem;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
         .none {
             display: none;
         }
@@ -550,13 +556,6 @@
                 <form id="kontribusiForm">
                     <input type="hidden" id="editId">
 
-                    {{-- <div class="form-group">
-                        <label class="form-label" for="kode_kontribusi">Kode Kategori *</label>
-                        <input type="text" class="form-control" id="kode_kontribusi" name="kode_kontribusi" maxlength="30"
-                            required placeholder="Contoh: INF, SOD, ZKT">
-                        <div class="form-text">Kode unik untuk kategori (maksimal 30 karakter)</div>
-                    </div> --}}
-
                     <div class="form-group">
                         <label class="form-label" for="nama_kontribusi">Nama Kategori *</label>
                         <input type="text" class="form-control" id="nama_kontribusi" name="nama_kontribusi"
@@ -743,6 +742,9 @@
                     const item = data.data;
                     document.getElementById('modalTitle').textContent = 'Edit Kategori Kontribusi';
                     document.getElementById('editId').value = item.master_kontribusi_id;
+
+                    // Load dapuan options first
+                    await loadDapuanOptions();
 
                     // Fill form fields
                     document.getElementById('nama_kontribusi').value = item.nama_kontribusi;
