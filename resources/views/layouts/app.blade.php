@@ -283,12 +283,21 @@
     <script>
         // CSRF Token setup for AJAX requests
         document.addEventListener('DOMContentLoaded', function () {
-            // Set CSRF token for all AJAX requests
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+
+            // Set CSRF token for all fetch requests (tanpa jQuery)
+            window.getCsrfToken = function () {
+                const meta = document.querySelector('meta[name="csrf-token"]');
+                return meta ? meta.getAttribute('content') : '';
+            };
+
+            // Helper fetch wrapper with CSRF
+            window.csrfFetch = function (url, options = {}) {
+                options.headers = options.headers || {};
+                if (!options.headers['X-CSRF-TOKEN']) {
+                    options.headers['X-CSRF-TOKEN'] = getCsrfToken();
                 }
-            });
+                return fetch(url, options);
+            };
 
             // Global search functionality
             const searchInput = document.getElementById('global-search');

@@ -324,10 +324,12 @@
         // ============================================================================
         let currentPage = 1;
         let totalPages = 1;
+        let totalRecords = 0;
         let searchQuery = '';
         let aktifFilter = '';
         let perPage = 10;
         let dapuanOptions = [];
+        let isLoading = false;
 
         const API_ROUTES = {
             data: '{{ route('admin.kelompok.api.jamaah.index') }}',
@@ -343,28 +345,55 @@
         // ============================================================================
 
         // Fungsi untuk memuat data jamaah
-        async function loadJamaahData() {
+        async function loadJamaahData(page = null) {
+            if (isLoading) return;
+
+            if (page !== null && page >= 1) {
+                currentPage = page;
+            }
+
             showLoadingState();
+            isLoading = true;
 
             try {
-                let url =
-                    `${API_ROUTES.data}?page=${currentPage}&search=${encodeURIComponent(searchQuery)}&per_page=${perPage}`;
-                if (aktifFilter !== '') {
-                    url += `&is_aktif=${aktifFilter}`;
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    per_page: perPage
+                });
+
+                if (searchQuery) {
+                    params.append('search', searchQuery);
                 }
+
+                if (aktifFilter !== '') {
+                    params.append('is_aktif', aktifFilter);
+                }
+
+                const url = `${API_ROUTES.data}?${params.toString()}`;
 
                 const response = await fetch(url);
                 const result = await response.json();
+
 
                 if (result.success) {
                     renderTable(result.data);
                     updatePagination(result);
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(result.message || 'Gagal memuat data');
                 }
             } catch (error) {
                 console.error('Error loading data:', error);
-                window.showToast ? window.showToast(error.message, 'error') : alert(error.message);
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                } else {
+                    alert(error.message);
+                }
+                // Reset ke halaman 1 jika error
+                currentPage = 1;
+                showEmptyState();
+            } finally {
+                hideLoadingState();
+                isLoading = false;
             }
         }
 
@@ -375,68 +404,103 @@
             const loadingState = document.getElementById('loadingState');
             const pagination = document.getElementById('pagination');
 
-            if (data.length === 0) {
-                tableBody.innerHTML = '';
-                emptyState.style.display = 'block';
-                loadingState.style.display = 'none';
-                pagination.style.display = 'none';
+            if (!data || data.length === 0) {
+                showEmptyState();
                 return;
             }
 
-            emptyState.style.display = 'none';
-            loadingState.style.display = 'none';
-            pagination.style.display = 'flex';
+            // Hide loading and empty state
+            if (loadingState) loadingState.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'none';
+            if (pagination) pagination.style.display = 'flex';
 
             // Format data untuk tabel
-            const tableRows = data.map((item, index) => `
-        <tr>
-            <td>${index + 1 + ((currentPage - 1) * perPage)}</td>
-            <td>${item.nama_lengkap}</td>
-            <td>${item.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td>
-            <td>
-                ${item.tempat_lahir || '-'},
-                ${item.tanggal_lahir ? formatDate(item.tanggal_lahir) : '-'}
-            </td>
-            <td>${item.telepon || '-'}</td>
-            <td>${item.pekerjaan || '-'}</td>
-            <td><span class="badge badge-info">${formatStatus(item.status_menikah)}</span></td>
-            <td>${item.nama_role || '-'}</td>
-            <td>
-                ${item.is_aktif ? 
-                    '<span class="badge badge-success">Aktif</span>' : 
-                    '<span class="badge badge-danger">Tidak Aktif</span>'
-                }
-            </td>
-            <td>
-                <button class="btn btn-edit btn-sm" onclick="showEditModal('${item.jamaah_id}')" title="Edit">
-                    <i class="bi-pencil"></i>
-                </button>
-                <button class="btn btn-primary btn-sm" onclick="showDetailModal('${item.jamaah_id}')" title="Detail">
-                    <i class="bi-eye"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
+            const startNumber = ((currentPage - 1) * perPage) + 1;
+            const tableRows = data.map((item, index) => {
+                const rowNumber = startNumber + index;
+                return `
+            <tr>
+                <td>${rowNumber}</td>
+                <td>${escapeHtml(item.nama_lengkap || '')}</td>
+                <td>${item.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</td>
+                <td>
+                    ${item.tempat_lahir || '-'}, 
+                    ${item.tanggal_lahir ? formatDate(item.tanggal_lahir) : '-'}
+                </td>
+                <td>${item.telepon || '-'}</td>
+                <td>${escapeHtml(item.pekerjaan || '-')}</td>
+                <td><span class="badge badge-info">${formatStatus(item.status_menikah)}</span></td>
+                <td>${item.nama_role || '-'}</td>
+                <td>
+                    ${item.is_aktif ? 
+                        '<span class="badge badge-success">Aktif</span>' : 
+                        '<span class="badge badge-danger">Tidak Aktif</span>'
+                    }
+                </td>
+                <td>
+                    <button class="btn btn-edit btn-sm" onclick="showEditModal('${item.jamaah_id}')" title="Edit">
+                        <i class="bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="showDetailModal('${item.jamaah_id}')" title="Detail">
+                        <i class="bi-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+            }).join('');
 
             tableBody.innerHTML = tableRows;
         }
 
+        // Tampilkan empty state
+        function showEmptyState() {
+            const tableBody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            const loadingState = document.getElementById('loadingState');
+            const pagination = document.getElementById('pagination');
+
+            if (tableBody) tableBody.innerHTML = '';
+            if (emptyState) emptyState.style.display = 'block';
+            if (loadingState) loadingState.style.display = 'none';
+            if (pagination) pagination.style.display = 'none';
+        }
+
         // Fungsi untuk update pagination
         function updatePagination(data) {
-            currentPage = data.current_page;
-            totalPages = data.last_page;
+            currentPage = parseInt(data.current_page) || 1;
+            totalPages = parseInt(data.last_page) || 1;
+            totalRecords = parseInt(data.total) || 0;
 
-            document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = currentPage === totalPages;
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            // Update info
+            if (pageInfo) {
+                pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+            }
+
+            // Update prev button
+            if (prevBtn) {
+                const isDisabled = currentPage <= 1;
+                prevBtn.disabled = isDisabled;
+                prevBtn.classList.toggle('disabled', isDisabled);
+            }
+
+            // Update next button
+            if (nextBtn) {
+                const isDisabled = currentPage >= totalPages;
+                nextBtn.disabled = isDisabled;
+                nextBtn.classList.toggle('disabled', isDisabled);
+            }
         }
 
         // Fungsi untuk ganti halaman
-        function changePage(page) {
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                loadJamaahData();
+        function goToPage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) {
+                return;
             }
+            loadJamaahData(page);
         }
 
         // ============================================================================
@@ -445,13 +509,8 @@
 
         // Modal Create
         function showCreateModal() {
-            // Reset form
             document.getElementById('createForm').reset();
-
-            // Isi dropdown dapuan
             fillDapuanDropdown('createDapuanSelect');
-
-            // Tampilkan modal
             document.getElementById('createModal').classList.add('show');
         }
 
@@ -462,24 +521,20 @@
         // Modal Edit
         async function showEditModal(jamaahId) {
             try {
-                showLoadingState();
-
                 const response = await fetch(`${API_ROUTES.detail}/${jamaahId}`);
                 const result = await response.json();
 
                 if (result.success) {
                     const jamaah = result.data;
 
-                    // Isi form dengan data jamaah
+                    // Isi form
                     document.getElementById('editJamaahId').value = jamaah.jamaah_id;
                     document.getElementById('editNamaLengkap').value = jamaah.nama_lengkap;
                     document.getElementById('editTempatLahir').value = jamaah.tempat_lahir || '';
 
-                    // Format tanggal lahir untuk input type="date"
+                    // Format tanggal lahir
                     if (jamaah.tanggal_lahir && jamaah.tanggal_lahir !== '0000-01-01') {
-                        const date = new Date(jamaah.tanggal_lahir);
-                        const formattedDate = date.toISOString().split('T')[0];
-                        document.getElementById('editTanggalLahir').value = formattedDate;
+                        document.getElementById('editTanggalLahir').value = jamaah.tanggal_lahir.split('T')[0];
                     } else {
                         document.getElementById('editTanggalLahir').value = '';
                     }
@@ -491,10 +546,9 @@
                     document.getElementById('editTelepon').value = jamaah.telepon || '';
                     document.getElementById('editEmail').value = jamaah.email || '';
                     document.getElementById('editAlamat').value = jamaah.alamat || '';
-                    document.getElementById('editDapuanSelect').value = jamaah.dapuan_id || '';
                     document.getElementById('editIsAktif').value = jamaah.is_aktif ? '1' : '0';
 
-                    // Isi dropdown dapuan dengan value yang dipilih
+                    // Isi dropdown dapuan
                     fillDapuanDropdown('editDapuanSelect', jamaah.dapuan_id);
 
                     // Tampilkan modal
@@ -504,9 +558,9 @@
                 }
             } catch (error) {
                 console.error('Error loading edit data:', error);
-                window.showToast ? window.showToast(error.message, 'error') : alert(error.message);
-            } finally {
-                hideLoadingState();
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                }
             }
         }
 
@@ -517,52 +571,35 @@
         // Modal Detail
         async function showDetailModal(jamaahId) {
             try {
-                showLoadingState();
-
                 const response = await fetch(`${API_ROUTES.detail}/${jamaahId}`);
                 const result = await response.json();
 
                 if (result.success) {
                     const jamaah = result.data;
-
-                    // Format data untuk ditampilkan
                     const detailHtml = `
                 <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px;">
                     <div style="font-weight: 500;">Nama Lengkap</div>
-                    <div>${jamaah.nama_lengkap}</div>
-                    
+                    <div>${escapeHtml(jamaah.nama_lengkap)}</div>
                     <div style="font-weight: 500;">Jenis Kelamin</div>
                     <div>${jamaah.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</div>
-                    
                     <div style="font-weight: 500;">Tempat, Tanggal Lahir</div>
-                    <div>
-                        ${jamaah.tempat_lahir || '-'}, 
-                        ${jamaah.tanggal_lahir ? formatDate(jamaah.tanggal_lahir) : '-'}
-                    </div>
-                    
+                    <div>${jamaah.tempat_lahir || '-'}, ${jamaah.tanggal_lahir ? formatDate(jamaah.tanggal_lahir) : '-'}</div>
                     <div style="font-weight: 500;">Telepon</div>
                     <div>${jamaah.telepon || '-'}</div>
-                    
                     <div style="font-weight: 500;">Email</div>
                     <div>${jamaah.email || '-'}</div>
-                    
                     <div style="font-weight: 500;">Pekerjaan</div>
-                    <div>${jamaah.pekerjaan || '-'}</div>
-                    
+                    <div>${escapeHtml(jamaah.pekerjaan || '-')}</div>
                     <div style="font-weight: 500;">Status Menikah</div>
                     <div>${formatStatus(jamaah.status_menikah)}</div>
-                    
                     <div style="font-weight: 500;">Dapuan</div>
                     <div>${jamaah.nama_role || '-'}</div>
-                    
                     <div style="font-weight: 500;">Status Aktif</div>
                     <div>${jamaah.is_aktif ? 'Aktif' : 'Tidak Aktif'}</div>
-                    
                     <div style="font-weight: 500;">Alamat</div>
-                    <div>${jamaah.alamat || '-'}</div>
+                    <div>${escapeHtml(jamaah.alamat || '-')}</div>
                 </div>
             `;
-
                     document.getElementById('detailBody').innerHTML = detailHtml;
                     document.getElementById('detailModal').classList.add('show');
                 } else {
@@ -570,9 +607,9 @@
                 }
             } catch (error) {
                 console.error('Error loading detail:', error);
-                window.showToast ? window.showToast(error.message, 'error') : alert(error.message);
-            } finally {
-                hideLoadingState();
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                }
             }
         }
 
@@ -589,7 +626,6 @@
             const form = document.getElementById('createForm');
             const formData = new FormData(form);
 
-            // Konversi ke object
             const data = {
                 nama_lengkap: formData.get('nama_lengkap'),
                 tempat_lahir: formData.get('tempat_lahir'),
@@ -605,10 +641,11 @@
                 is_aktif: formData.get('is_aktif') === '1'
             };
 
-            // Validasi sederhana
+            // Validasi
             if (!data.nama_lengkap || !data.jenis_kelamin || !data.status_menikah || !data.dapuan_id) {
-                window.showToast ? window.showToast('Harap isi semua field yang wajib diisi', 'error') : alert(
-                    'Harap isi semua field yang wajib diisi');
+                if (window.showToast) {
+                    window.showToast('Harap isi semua field yang wajib diisi', 'error');
+                }
                 return;
             }
 
@@ -626,15 +663,19 @@
 
                 if (result.success) {
                     hideCreateModal();
+                    currentPage = 1; // Kembali ke halaman 1
                     loadJamaahData();
-                    window.showToast ? window.showToast('Data jamaah berhasil ditambahkan', 'success') : alert(
-                        'Data jamaah berhasil ditambahkan');
+                    if (window.showToast) {
+                        window.showToast('Data jamaah berhasil ditambahkan', 'success');
+                    }
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(result.message || 'Gagal menambahkan data');
                 }
             } catch (error) {
                 console.error('Error creating jamaah:', error);
-                window.showToast ? window.showToast(error.message, 'error') : alert(error.message);
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                }
             }
         }
 
@@ -644,7 +685,6 @@
             const form = document.getElementById('editForm');
             const formData = new FormData(form);
 
-            // Konversi ke object
             const data = {
                 nama_lengkap: formData.get('nama_lengkap'),
                 tempat_lahir: formData.get('tempat_lahir'),
@@ -660,10 +700,11 @@
                 is_aktif: formData.get('is_aktif') === '1'
             };
 
-            // Validasi sederhana
+            // Validasi
             if (!data.nama_lengkap || !data.jenis_kelamin || !data.status_menikah || !data.dapuan_id) {
-                window.showToast ? window.showToast('Harap isi semua field yang wajib diisi', 'error') : alert(
-                    'Harap isi semua field yang wajib diisi');
+                if (window.showToast) {
+                    window.showToast('Harap isi semua field yang wajib diisi', 'error');
+                }
                 return;
             }
 
@@ -681,15 +722,18 @@
 
                 if (result.success) {
                     hideEditModal();
-                    loadJamaahData();
-                    window.showToast ? window.showToast('Data jamaah berhasil diupdate', 'success') : alert(
-                        'Data jamaah berhasil diupdate');
+                    loadJamaahData(); // Reload data di halaman yang sama
+                    if (window.showToast) {
+                        window.showToast('Data jamaah berhasil diupdate', 'success');
+                    }
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(result.message || 'Gagal mengupdate data');
                 }
             } catch (error) {
                 console.error('Error updating jamaah:', error);
-                window.showToast ? window.showToast(error.message, 'error') : alert(error.message);
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                }
             }
         }
 
@@ -699,7 +743,7 @@
 
         // Format tanggal
         function formatDate(dateString) {
-            if (!dateString) return '-';
+            if (!dateString || dateString === '0000-01-01') return '-';
             try {
                 const date = new Date(dateString);
                 return date.toLocaleDateString('id-ID', {
@@ -714,7 +758,16 @@
 
         // Format status
         function formatStatus(status) {
-            return status ? status.replace('_', ' ') : '-';
+            if (!status) return '-';
+            return status.replace('_', ' ');
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Load dapuan options
@@ -722,12 +775,12 @@
             try {
                 const response = await fetch(API_ROUTES.dapuan);
                 const result = await response.json();
-
                 if (result.success) {
-                    dapuanOptions = result.data;
+                    dapuanOptions = result.data || [];
                 }
             } catch (error) {
                 console.error('Error loading dapuan options:', error);
+                dapuanOptions = [];
             }
         }
 
@@ -739,21 +792,23 @@
             let options = '<option value="">Pilih Dapuan</option>';
             dapuanOptions.forEach(dapuan => {
                 const selected = String(dapuan.role_id) === String(selectedValue) ? 'selected' : '';
-                options += `<option value="${dapuan.role_id}" ${selected}>${dapuan.nama_role}</option>`;
+                options +=
+                    `<option value="${dapuan.role_id}" ${selected}>${escapeHtml(dapuan.nama_role)}</option>`;
             });
-
             dropdown.innerHTML = options;
         }
 
         // Loading state
         function showLoadingState() {
-            document.getElementById('loadingState').style.display = 'block';
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('pagination').style.display = 'none';
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            if (loadingState) loadingState.style.display = 'block';
+            if (emptyState) emptyState.style.display = 'none';
         }
 
         function hideLoadingState() {
-            document.getElementById('loadingState').style.display = 'none';
+            const loadingState = document.getElementById('loadingState');
+            if (loadingState) loadingState.style.display = 'none';
         }
 
         // ============================================================================
@@ -767,8 +822,8 @@
             document.getElementById('searchInput').addEventListener('input', function (e) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
-                    searchQuery = e.target.value;
-                    currentPage = 1;
+                    searchQuery = e.target.value.trim();
+                    currentPage = 1; // Reset ke halaman 1
                     loadJamaahData();
                 }, 500);
             });
@@ -776,29 +831,27 @@
             // Filter aktif
             document.getElementById('filterAktif').addEventListener('change', function (e) {
                 aktifFilter = e.target.value;
-                currentPage = 1;
+                currentPage = 1; // Reset ke halaman 1
                 loadJamaahData();
             });
 
             // Per page
             document.getElementById('perPageSelect').addEventListener('change', function (e) {
-                perPage = parseInt(e.target.value);
-                currentPage = 1;
+                perPage = parseInt(e.target.value) || 10;
+                currentPage = 1; // Reset ke halaman 1
                 loadJamaahData();
             });
 
             // Pagination buttons
             document.getElementById('prevPage').addEventListener('click', function () {
                 if (currentPage > 1) {
-                    currentPage--;
-                    loadJamaahData();
+                    goToPage(currentPage - 1);
                 }
             });
 
             document.getElementById('nextPage').addEventListener('click', function () {
                 if (currentPage < totalPages) {
-                    currentPage++;
-                    loadJamaahData();
+                    goToPage(currentPage + 1);
                 }
             });
 
@@ -818,38 +871,28 @@
 
         // Initialize aplikasi
         async function initializeApp() {
-            // Load dapuan options dulu
             await loadDapuanOptions();
-
-            // Setup event listeners
             setupEventListeners();
-
-            // Load data pertama kali
-            loadJamaahData();
+            await loadJamaahData(1); // Mulai dari halaman 1
         }
 
         // ============================================================================
-        // PUBLIC API (JamaahApp) - Untuk dipanggil dari HTML
+        // PUBLIC API (JamaahApp)
         // ============================================================================
         const JamaahApp = {
-            // Data & Table
             printData() {
                 window.open(API_ROUTES.print, '_blank');
             },
             reloadData() {
-                loadJamaahData();
+                loadJamaahData(1);
             },
-            changePage: changePage,
-
-            // Modals
+            goToPage: goToPage,
             showCreateModal: showCreateModal,
             hideCreateModal: hideCreateModal,
             showEditModal: showEditModal,
             hideEditModal: hideEditModal,
             showDetailModal: showDetailModal,
             hideDetailModal: hideDetailModal,
-
-            // Forms
             submitCreateForm: submitCreateForm,
             submitEditForm: submitEditForm
         };
@@ -864,6 +907,18 @@
             window.JamaahApp = JamaahApp;
             window.showEditModal = showEditModal;
             window.showDetailModal = showDetailModal;
+
+            // Debug
+            window.debugPagination = function () {
+                console.log('Pagination State:', {
+                    currentPage,
+                    totalPages,
+                    totalRecords,
+                    perPage,
+                    searchQuery,
+                    aktifFilter
+                });
+            };
         });
 
     </script>
