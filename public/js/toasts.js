@@ -16,12 +16,13 @@ class ToastManager {
         // Auto-remove toasts after 5 seconds
         setInterval(() => {
             this.removeExpiredToasts();
-        }, 5000);
+        }, 10000);
     }
 
     show(message, type = 'info', title = null) {
         const toast = document.createElement('div');
         toast.className = `toast ${type} show`;
+        toast.dataset.created = Date.now();
         toast.innerHTML = `
             <div class="toast-icon">
                 <i class="bi ${this.getIcon(type)}"></i>
@@ -40,7 +41,7 @@ class ToastManager {
         // Auto-remove after 5 seconds
         setTimeout(() => {
             this.removeToast(toast);
-        }, 5000);
+        }, 10000);
 
         // Add close event
         const closeBtn = toast.querySelector('.toast-close');
@@ -98,7 +99,7 @@ class ToastManager {
         const toasts = this.container.querySelectorAll('.toast');
         toasts.forEach(toast => {
             const created = parseInt(toast.dataset.created) || 0;
-            if (Date.now() - created > 5000) {
+            if (Date.now() - created > 10000) {
                 this.removeToast(toast);
             }
         });

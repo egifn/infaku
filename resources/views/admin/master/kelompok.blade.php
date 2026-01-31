@@ -287,14 +287,13 @@
             animation: loading 1.5s infinite;
         }
 
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
+        <blade keyframes|%20loading%20%7B%0D>0% {
+            background-position: 200% 0;
+        }
 
-            100% {
-                background-position: -200% 0;
-            }
+        100% {
+            background-position: -200% 0;
+        }
         }
 
         /* Search and Filter */
@@ -359,138 +358,139 @@
             background: #f8d7da;
             color: #721c24;
         }
+
     </style>
 @endpush
 
 @section('content')
-    <div class="master-container">
-        <!-- Header Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Data Kelompok</h3>
+<div class="master-container">
+    <!-- Header Card -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Data Kelompok</h3>
+        </div>
+        <div class="card-body">
+            {{-- <p>Kelola data kelompok di wilayah Anda. Tambah, edit, atau hapus data kelompok sesuai kebutuhan.</p> --}}
+
+            <div class="table-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Cari nama kelompok...">
+                    <i class="eg-search search-icon"></i>
+                </div>
+                <button class="btn btn-primary" onclick="showCreateModal()" style="padding: 9px 12px;">
+                    <i class="eg-plus"></i> Tambah Kelompok
+                </button>
             </div>
-            <div class="card-body">
-                {{-- <p>Kelola data kelompok di wilayah Anda. Tambah, edit, atau hapus data kelompok sesuai kebutuhan.</p> --}}
 
-                <div class="table-controls">
-                    <div class="search-box">
-                        <input type="text" id="searchInput" class="search-input" placeholder="Cari nama kelompok...">
-                        <i class="eg-search search-icon"></i>
-                    </div>
-                    <button class="btn btn-primary" onclick="showCreateModal()" style="padding: 9px 12px;">
-                        <i class="eg-plus"></i> Tambah Kelompok
-                    </button>
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="50">No</th>
+                                <th hidden>Kode Kelompok</th>
+                                <th>Nama Kelompok</th>
+                                <th>Nama Masjid</th>
+                                <th>Alamat Masjid</th>
+                                <th>Keterangan</th>
+                                <th width="120">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be loaded via AJAX -->
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                <!-- Table Container -->
-                <div class="table-container">
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th hidden>Kode Kelompok</th>
-                                    <th>Nama Kelompok</th>
-                                    <th>Nama Masjid</th>
-                                    <th>Alamat Masjid</th>
-                                    <th>Keterangan</th>
-                                    <th width="120">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <!-- Data will be loaded via AJAX -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="eg-info"></i>
+                <h4>Belum ada data kelompok</h4>
+                <p>Mulai dengan menambahkan data kelompok pertama Anda.</p>
+                <button class="btn btn-primary" onclick="showCreateModal()">
+                    <i class="eg-plus"></i> Tambah Kelompok
+                </button>
+            </div>
 
-                <!-- Empty State -->
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="eg-info"></i>
-                    <h4>Belum ada data kelompok</h4>
-                    <p>Mulai dengan menambahkan data kelompok pertama Anda.</p>
-                    <button class="btn btn-primary" onclick="showCreateModal()">
-                        <i class="eg-plus"></i> Tambah Kelompok
-                    </button>
-                </div>
+            <!-- Loading State -->
+            <div id="loadingState" class="empty-state">
+                <div class="skeleton" style="height: 20px; width: 200px; margin: 0 auto 10px;"></div>
+                <div class="skeleton" style="height: 20px; width: 150px; margin: 0 auto;"></div>
+            </div>
 
-                <!-- Loading State -->
-                <div id="loadingState" class="empty-state">
-                    <div class="skeleton" style="height: 20px; width: 200px; margin: 0 auto 10px;"></div>
-                    <div class="skeleton" style="height: 20px; width: 150px; margin: 0 auto;"></div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination" id="pagination" style="display: none;">
-                    <button class="page-btn" id="prevPage" onclick="changePage(currentPage - 1)">
-                        <i class="eg-arrow-left"></i> Prev
-                    </button>
-                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
-                    <button class="page-btn" id="nextPage" onclick="changePage(currentPage + 1)">
-                        Next <i class="eg-arrow-right"></i>
-                    </button>
-                </div>
+            <!-- Pagination -->
+            <div class="pagination" id="pagination" style="display: none;">
+                <button class="page-btn" id="prevPage" onclick="changePage(currentPage - 1)">
+                    <i class="eg-arrow-left"></i> Prev
+                </button>
+                <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                <button class="page-btn" id="nextPage" onclick="changePage(currentPage + 1)">
+                    Next <i class="eg-arrow-right"></i>
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Create/Edit Modal -->
-    <div class="modal" id="formModal">
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Tambah Kelompok</h3>
-                <button class="modal-close" onclick="hideModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="wilayahForm">
-                    <input type="hidden" id="editId">
+<!-- Create/Edit Modal -->
+<div class="modal" id="formModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Tambah Kelompok</h3>
+            <button class="modal-close" onclick="hideModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="wilayahForm">
+                <input type="hidden" id="editId">
 
-                    <div class="form-group">
-                        <label class="form-label" for="nama_kelompok">Nama Kelompok *</label>
-                        <input type="text" class="form-control" id="nama_kelompok" name="nama_kelompok" required>
-                        <div class="form-text">Nama kelompok harus unik</div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label" for="nama_kelompok">Nama Kelompok *</label>
+                    <input type="text" class="form-control" id="nama_kelompok" name="nama_kelompok" required>
+                    <div class="form-text">Nama kelompok harus unik</div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="nama_masjid">Nama Masjid</label>
-                        <input type="text" class="form-control" id="nama_masjid" name="nama_masjid">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label" for="nama_masjid">Nama Masjid</label>
+                    <input type="text" class="form-control" id="nama_masjid" name="nama_masjid">
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="alamat_masjid">Alamat Masjid</label>
-                        <textarea class="form-control" id="alamat_masjid" name="alamat_masjid" rows="3"></textarea>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label" for="alamat_masjid">Alamat Masjid</label>
+                    <textarea class="form-control" id="alamat_masjid" name="alamat_masjid" rows="3"></textarea>
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="keterangan">Keterangan</label>
-                        <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="hideModal()">Batal</button>
-                <button class="btn btn-success" id="submitBtn" onclick="submitForm()">Simpan</button>
-            </div>
+                <div class="form-group">
+                    <label class="form-label" for="keterangan">Keterangan</label>
+                    <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="hideModal()">Batal</button>
+            <button class="btn btn-success" id="submitBtn" onclick="submitForm()">Simpan</button>
         </div>
     </div>
+</div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h3 class="modal-title">Hapus Kelompok</h3>
-                <button class="modal-close" onclick="hideDeleteModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus kelompok <strong id="deleteItemName"></strong>?</p>
-                <p class="form-text">Data yang dihapus tidak dapat dikembalikan.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="hideDeleteModal()">Batal</button>
-                <button class="btn btn-delete" onclick="confirmDelete()">Hapus</button>
-            </div>
+<!-- Delete Confirmation Modal -->
+<div class="modal" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Hapus Kelompok</h3>
+            <button class="modal-close" onclick="hideDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Apakah Anda yakin ingin menghapus kelompok <strong id="deleteItemName"></strong>?</p>
+            <p class="form-text">Data yang dihapus tidak dapat dikembalikan.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="hideDeleteModal()">Batal</button>
+            <button class="btn btn-delete" onclick="confirmDelete()">Hapus</button>
         </div>
     </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -502,7 +502,7 @@
         let deleteId = null;
 
         // Load data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadData();
             setupEventListeners();
         });
@@ -511,7 +511,7 @@
         function setupEventListeners() {
             // Search input with debounce
             let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function(e) {
+            document.getElementById('searchInput').addEventListener('input', function (e) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     searchQuery = e.target.value;
@@ -613,7 +613,9 @@
         // Show edit modal
         async function editItem(id) {
             try {
-                const response = await fetch(`{{ route('api.wilayah-kelompok.show', '') }}/${id}`);
+                const response = await fetch(
+                    `{{ route('api.wilayah-kelompok.show', '') }}/${id}`
+                    );
                 const data = await response.json();
 
                 if (data.success) {
@@ -652,7 +654,8 @@
             };
 
             try {
-                const url = id ? `{{ route('api.wilayah-kelompok.update', '') }}/${id}` :
+                const url = id ?
+                    `{{ route('api.wilayah-kelompok.update', '') }}/${id}` :
                     '{{ route('api.wilayah-kelompok.store') }}';
                 const method = id ? 'PUT' : 'POST';
 
@@ -696,12 +699,13 @@
         // Confirm delete
         async function confirmDelete() {
             try {
-                const response = await fetch(`{{ route('api.wilayah-kelompok.destroy', '') }}/${deleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
+                const response = await fetch(
+                    `{{ route('api.wilayah-kelompok.destroy', '') }}/${deleteId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
 
                 const result = await response.json();
 
@@ -734,12 +738,13 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('formModal').addEventListener('click', function(e) {
+        document.getElementById('formModal').addEventListener('click', function (e) {
             if (e.target === this) hideModal();
         });
 
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
             if (e.target === this) hideDeleteModal();
         });
+
     </script>
 @endpush

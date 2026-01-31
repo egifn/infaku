@@ -4,7 +4,7 @@
 @section('page-title', 'Riwayat Transaksi')
 @section('icon-page-title', 'bi-clock-history')
 
-@push('style')
+@push('styles')
     <style>
         .riwayat-container {
             padding: 5px;

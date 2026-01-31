@@ -36,7 +36,7 @@ class MasterSubKontribusiController extends Controller
             $page = $request->get('page', 1);
 
             $query = DB::table('sub_kontribusi')
-                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.kode_kontribusi')
+                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.id')
                 ->where('sub_kontribusi.level', 'kelompok')
                 ->where(function ($q) use ($kelompokId) {
                     $q->where('sub_kontribusi.created_by', $kelompokId)
@@ -59,10 +59,10 @@ class MasterSubKontribusiController extends Controller
             $data = $query->select(
                 'sub_kontribusi.*',
                 'master_kontribusi.nama_kontribusi',
-                'master_kontribusi.kode_kontribusi'
+                'master_kontribusi.id as master_kontribusi_id'
             )
                 ->orderBy('master_kontribusi.nama_kontribusi')
-                ->orderBy('sub_kontribusi.sub_kat_id')
+                ->orderBy('sub_kontribusi.id')
                 ->offset(($page - 1) * $perPage)
                 ->limit($perPage)
                 ->get();
@@ -94,6 +94,7 @@ class MasterSubKontribusiController extends Controller
                 ->select('id', 'nama_kontribusi', 'kode_kontribusi')
                 ->orderBy('nama_kontribusi')
                 ->get();
+            // dd($masterKontribusi);
 
             return response()->json([
                 'success' => true,
@@ -115,7 +116,7 @@ class MasterSubKontribusiController extends Controller
             $kelompokId = $user['wilayah_id'];
 
             $subKontribusi = DB::table('sub_kontribusi')
-                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.kode_kontribusi')
+                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.id')
                 ->where('sub_kontribusi.kode_kontribusi', $masterId)
                 ->where('sub_kontribusi.level', 'kelompok')
                 ->where(function ($q) use ($kelompokId) {
@@ -125,7 +126,7 @@ class MasterSubKontribusiController extends Controller
                 ->select(
                     'sub_kontribusi.*',
                     'master_kontribusi.nama_kontribusi',
-                    'master_kontribusi.kode_kontribusi'
+                    'master_kontribusi.id'
                 )
                 ->orderBy('sub_kontribusi.nama_kontribusi')
                 ->get();
@@ -147,12 +148,12 @@ class MasterSubKontribusiController extends Controller
     {
         try {
             $kontribusi = DB::table('sub_kontribusi')
-                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.kode_kontribusi')
-                ->where('sub_kontribusi.sub_kat_id', $id)
+                ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.id')
+                ->where('sub_kontribusi.id', $id)
                 ->select(
                     'sub_kontribusi.*',
                     'master_kontribusi.nama_kontribusi',
-                    'master_kontribusi.kode_kontribusi'
+                    'master_kontribusi.id'
                 )
                 ->first();
 
@@ -178,25 +179,33 @@ class MasterSubKontribusiController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
 
             $validated = $request->validate([
-                'master_kontribusi_id' => 'required|exists:master_kontribusi,master_kontribusi_id',
-                'nama_kontribusi' => 'required|string|max:150',
-                'value' => 'required|numeric|min:0',
-                'jenis' => 'required|in:percentage,nominal',
-                'keterangan' => 'nullable|string|max:255',
-                'is_active' => 'required|boolean'
+                'master_kontribusi_id' => 'required|exists:master_kontribusi,id',
+                'nama_kontribusi'     => 'required|string|max:150',
+                'value'               => 'required|numeric|min:0',
+                'jenis'               => 'required|in:percentage,nominal',
+                'keterangan'          => 'nullable|string|max:255',
+                'is_active'           => 'required|boolean'
             ]);
 
-            // Set level to kelompok and created_by
-            $validated['level'] = 'kelompok';
-            $validated['created_by'] = $kelompokId;
-            $validated['created_at'] = now();
+            $data = [
+                'kode_kontribusi'     => $validated['master_kontribusi_id'],
+                'nama_kontribusi'     => $validated['nama_kontribusi'],
+                'value'               => $validated['value'],
+                'jenis'               => $validated['jenis'],
+                'keterangan'          => $validated['keterangan'] ?? null,
+                'is_active'           => $validated['is_active'],
+                'level'               => 'kelompok',
+                'created_by'          => $kelompokId,
+                'created_at'          => now()
+            ];
 
-            $subKontribusiId = DB::table('sub_kontribusi')->insertGetId($validated);
+            $subKontribusiId = DB::table('sub_kontribusi')->insertGetId($data);
 
             return response()->json([
                 'success' => true,
@@ -204,7 +213,9 @@ class MasterSubKontribusiController extends Controller
                 'data' => ['sub_kat_id' => $subKontribusiId]
             ]);
         } catch (\Exception $e) {
+
             Log::error('Error storing sub kontribusi: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menambahkan sub kontribusi: ' . $e->getMessage()
@@ -212,22 +223,23 @@ class MasterSubKontribusiController extends Controller
         }
     }
 
+
     public function update(Request $request, $id)
     {
         try {
             $validated = $request->validate([
-                'master_kontribusi_id' => 'required|exists:master_kontribusi,master_kontribusi_id',
-                'nama_kontribusi' => 'required|string|max:150',
-                'value' => 'required|numeric|min:0',
-                'jenis' => 'required|in:percentage,nominal',
-                'keterangan' => 'nullable|string|max:255',
-                'is_active' => 'required|boolean'
+                'master_kontribusi_id'  => 'required|exists:master_kontribusi,id',
+                'nama_kontribusi'       => 'required|string|max:150',
+                'value'                 => 'required|numeric|min:0',
+                'jenis'                 => 'required|in:percentage,nominal',
+                'keterangan'            => 'nullable|string|max:255',
+                'is_active'             => 'required|boolean'
             ]);
 
             $validated['updated_at'] = now();
 
             $affected = DB::table('sub_kontribusi')
-                ->where('sub_kat_id', $id)
+                ->where('id', $id)
                 ->update($validated);
 
             if ($affected === 0) {

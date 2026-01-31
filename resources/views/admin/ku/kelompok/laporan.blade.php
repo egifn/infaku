@@ -4,7 +4,7 @@
 @section('page-title', 'Laporan Keuangan')
 @section('icon-page-title', 'bi-file-earmark-text')
 
-@push('style')
+@push('styles')
     <style>
         .laporan-container {
             padding: 5px;
@@ -1093,10 +1093,10 @@
                             <i class="bi-pencil"></i>
                         </button>
                         ${item.status_laporan !== 'PUBLISHED' ? `
-                                                                                                        <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
-                                                                                                            <i class="bi-trash"></i>
-                                                                                                        </button>
-                                                                                                    ` : ''}
+                                                                                                            <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
+                                                                                                                <i class="bi-trash"></i>
+                                                                                                            </button>
+                                                                                                        ` : ''}
                     </div>
                 `;
 

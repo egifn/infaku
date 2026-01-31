@@ -4,7 +4,7 @@
 @section('page-title', 'Input Pembayaran')
 @section('icon-page-title', 'bi-cash-coin')
 
-@push('style')
+@push('styles')
     <style>
         .input-container {
             padding: 5px;
@@ -525,7 +525,7 @@
         /* Loading State */
         .loading-container {
             text-align: center;
-            padding: 0px 20px;
+            padding: 40px 20px;
             grid-column: 1 / -1;
         }
 
@@ -539,14 +539,13 @@
             margin-bottom: 10px;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        <blade keyframes|%20spin%20%7B%0D>0% {
+            transform: rotate(0deg);
+        }
 
-            100% {
-                transform: rotate(360deg);
-            }
+        100% {
+            transform: rotate(360deg);
+        }
         }
 
         .loading-text {
@@ -559,7 +558,7 @@
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 0px 20px;
+            padding: 40px 20px;
         }
 
         .empty-icon {
@@ -658,110 +657,6 @@
             font-size: 12px;
         }
 
-        /* Toast Styles */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 320px;
-            z-index: 1060;
-            max-width: 400px;
-        }
-
-        .toast {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            margin-bottom: 10px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            border-left: 4px solid #17a2b8;
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            min-width: 300px;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.hide {
-            transform: translateX(100%);
-        }
-
-        .toast-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .toast.success {
-            border-left: 4px solid #28a745;
-        }
-
-        .toast.success .toast-icon {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .toast.error {
-            border-left: 4px solid #dc3545;
-        }
-
-        .toast.error .toast-icon {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .toast.warning {
-            border-left: 4px solid #ffc107;
-        }
-
-        .toast.warning .toast-icon {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .toast.info {
-            border-left: 4px solid #17a2b8;
-        }
-
-        .toast.info .toast-icon {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .toast-content {
-            flex: 1;
-        }
-
-        .toast-title {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-
-        .toast-message {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .toast-close {
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 12px;
-            flex-shrink: 0;
-        }
-
         /* Back button */
         .back-btn {
             display: inline-flex;
@@ -812,38 +707,103 @@
             flex-shrink: 0;
         }
 
-        @media (max-width: 768px) {
-            .kontribusi-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #105a44;
+        }
 
-            .form-actions {
-                flex-direction: column;
-            }
+        .toast.show {
+            transform: translateX(0);
+        }
 
-            .btn {
-                width: 100%;
-            }
+        .toast.success {
+            border-left-color: #28a745;
+        }
 
-            .sub-kontribusi-table {
-                display: block;
-                overflow-x: auto;
-            }
+        .toast.error {
+            border-left-color: #dc3545;
+        }
 
-            .selected-kontribusi-badge {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
+        .toast.warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast.info {
+            border-left-color: #17a2b8;
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast.success .toast-icon {
+            color: #28a745;
+        }
+
+        .toast.error .toast-icon {
+            color: #dc3545;
+        }
+
+        .toast.warning .toast-icon {
+            color: #ffc107;
+        }
+
+        .toast.info .toast-icon {
+            color: #17a2b8;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .toast-close:hover {
+            color: #333;
         }
 
         /* Animation untuk card */
-        @keyframes fadeInUp {
+        @@keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -875,6 +835,122 @@
         .kontribusi-card:nth-child(4) {
             animation-delay: 0.25s;
         }
+
+        /* Responsive Styles */
+        @@media (max-width: 768px) {
+            .kontribusi-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .sub-kontribusi-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .selected-kontribusi-badge {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .master-card-title {
+                font-size: 1rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+
+            .master-card-header,
+            .card-header,
+            .card-body-pos,
+            .master-card-body {
+                padding: 15px;
+            }
+
+            .form-section {
+                padding-bottom: 15px;
+            }
+
+            .total-section {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .total-amount {
+                text-align: left;
+            }
+        }
+
+        /* Utility Classes */
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+
+        .is-valid {
+            border-color: #28a745 !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .text-success {
+            color: #28a745;
+        }
+
+        .text-warning {
+            color: #ffc107;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: -0.125em;
+            border: 0.2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.2em;
+        }
     </style>
 @endpush
 
@@ -882,11 +958,6 @@
     <div class="input-container">
         @if (request()->has('master_kontribusi_id'))
             <!-- Tampilkan form input pembayaran jika sudah memilih kontribusi -->
-            {{-- <button class="back-btn" onclick="goBackToSelection()">
-                <i class="bi-arrow-left"></i> Kembali ke Pilihan Kontribusi
-            </button> --}}
-
-            <!-- Display selected kontribusi info -->
             @if (isset($selectedKontribusi))
                 <div class="selected-kontribusi-badge">
                     <div class="kontribusi-info">
@@ -899,7 +970,7 @@
                                 {{ $selectedKontribusi->kode_kontribusi }}</span>
                         </div>
                     </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="changeKontribusi()">
+                    <button class="btn btn-secondary btn-sm" onclick="changeKontribusi()">
                         <i class="bi-arrow-repeat"></i> Ganti Kontribusi
                     </button>
                 </div>
@@ -918,7 +989,7 @@
                             <!-- Section 1: Data Jamaah -->
                             <div class="form-section">
                                 <div class="section-title">
-                                    Data Jamaah
+                                    <i class="bi-people"></i> Data Jamaah
                                 </div>
 
                                 <div class="form-group">
@@ -1078,10 +1149,18 @@
 
 @push('scripts')
     <script>
+        // Pastikan fungsi navigasi selalu terdefinisi
+
+
         // Fungsi untuk halaman pilih kontribusi
         function fetchKontribusi() {
             fetch("{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}")
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const list = document.getElementById('kontribusi-list');
                     const loading = document.getElementById('loadingKontribusi');
@@ -1113,8 +1192,8 @@
                         if (item.deskripsi) {
                             detailItems.push({
                                 label: 'Deskripsi',
-                                value: item.deskripsi.length > 40 ? item.deskripsi.substring(0, 40) +
-                                    '...' : item.deskripsi
+                                value: item.deskripsi.length > 40 ?
+                                    item.deskripsi.substring(0, 40) + '...' : item.deskripsi
                             });
                         }
 
@@ -1141,17 +1220,17 @@
                                 </div>
                             </div>
                             ${detailItems.length > 0 ? `
-                                                                                            <div class="kontribusi-card-body">
-                                                                                                <ul class="kontribusi-card-details">
-                                                                                                    ${detailItems.map(detail => `
+                                        <div class="kontribusi-card-body">
+                                            <ul class="kontribusi-card-details">
+                                                ${detailItems.map(detail => `
                                             <li>
                                                 <span class="detail-label">${detail.label}</span>
                                                 <span class="detail-value">${detail.value}</span>
                                             </li>
                                         `).join('')}
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        ` : ''}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
                             <div class="kontribusi-card-footer">
                                 <button class="select-btn" onclick="goToInputPembayaran('${item.master_kontribusi_id}')">
                                     <i class="bi bi-arrow-right"></i>
@@ -1187,7 +1266,10 @@
         }
 
         function goToInputPembayaran(masterKontribusiId) {
-            const button = event?.target?.closest('.select-btn');
+            let button = null;
+            if (window.event && window.event.target) {
+                button = window.event.target.closest('.select-btn');
+            }
             if (button) {
                 const originalContent = button.innerHTML;
                 button.innerHTML = `
@@ -1204,7 +1286,7 @@
         }
 
         function goBackToSelection() {
-            window.location.href = "{{ route('admin.kelompok.input-pembayaran.create') }}";
+            window.location.href = "{{ route('admin.kelompok.input-pembayaran.index') }}";
         }
 
         function changeKontribusi() {
@@ -1216,19 +1298,17 @@
         let isSubmitting = false;
 
         document.addEventListener('DOMContentLoaded', function() {
-            @if (request()->has('master_kontribusi_id'))
-                // Load sub kontribusi saat halaman form dimuat
-                const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
-                if (masterKontribusiId) {
-                    loadSubKontribusi(masterKontribusiId);
-                }
-
+            // Cek apakah sedang di halaman input pembayaran atau halaman pilih kontribusi
+            const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
+            if (masterKontribusiId) {
+                // Halaman input pembayaran
+                loadSubKontribusi(masterKontribusiId);
                 setupEventListeners();
                 setupDropdowns();
-            @else
-                // Load kontribusi untuk halaman pilihan
+            } else {
+                // Halaman pilih kontribusi
                 fetchKontribusi();
-            @endif
+            }
         });
 
         function setupEventListeners() {
@@ -1236,19 +1316,28 @@
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('sub-kontribusi-input')) {
                     calculateTotal();
+                    validateForm();
                 }
             });
 
             // Form submit event
-            document.getElementById('pembayaranForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await submitForm();
-            });
+            const form = document.getElementById('pembayaranForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await submitForm();
+                });
+            }
+
+            // Validate form on input
+            document.addEventListener('input', validateForm);
         }
 
         function setupDropdowns() {
             // Jamaah dropdown
             const jamaahSearch = document.getElementById('jamaah_search');
+            if (!jamaahSearch) return;
+
             const jamaahOptions = document.getElementById('jamaah_options');
             let jamaahSearchTimeout;
 
@@ -1277,6 +1366,7 @@
 
         async function searchJamaah(query) {
             const optionsContainer = document.getElementById('jamaah_options');
+            if (!optionsContainer) return;
 
             if (query.length < 2) {
                 optionsContainer.innerHTML = '<div class="no-options">Ketik minimal 2 karakter</div>';
@@ -1314,22 +1404,37 @@
         function selectJamaah(id, nama, nik, telepon, alamat) {
             document.getElementById('jamaah_id').value = id;
             document.getElementById('jamaah_search').value = nama;
-            document.getElementById('jamaah_options').classList.remove('show');
+            const optionsContainer = document.getElementById('jamaah_options');
+            if (optionsContainer) {
+                optionsContainer.classList.remove('show');
+            }
 
             // Show jamaah info
-            document.getElementById('jamaahNama').textContent = nama;
-            document.getElementById('jamaahNik').textContent = `NIK: ${nik || 'Belum ada'}`;
-            document.getElementById('jamaahTelepon').textContent = `Telp: ${telepon || 'Belum ada'}`;
-            document.getElementById('jamaahAlamat').textContent = alamat ?
-                `Alamat: ${escapeHtml(alamat).substring(0, 50) + (alamat.length > 50 ? '...' : '')}` : 'Alamat: Belum ada';
+            const jamaahInfo = document.getElementById('jamaahInfo');
+            const jamaahNama = document.getElementById('jamaahNama');
+            const jamaahNik = document.getElementById('jamaahNik');
+            const jamaahTelepon = document.getElementById('jamaahTelepon');
+            const jamaahAlamat = document.getElementById('jamaahAlamat');
 
-            document.getElementById('jamaahInfo').style.display = 'block';
+            if (jamaahNama) jamaahNama.textContent = nama;
+            if (jamaahNik) jamaahNik.textContent = `NIK: ${nik || 'Belum ada'}`;
+            if (jamaahTelepon) jamaahTelepon.textContent = `Telp: ${telepon || 'Belum ada'}`;
+            if (jamaahAlamat) {
+                const truncatedAlamat = alamat ?
+                    escapeHtml(alamat).substring(0, 50) + (alamat.length > 50 ? '...' : '') :
+                    '';
+                jamaahAlamat.textContent = alamat ? `Alamat: ${truncatedAlamat}` : 'Alamat: Belum ada';
+            }
+
+            if (jamaahInfo) jamaahInfo.style.display = 'block';
             validateForm();
         }
 
         async function loadSubKontribusi(masterKontribusiId) {
             const container = document.getElementById('subKontribusiContainer');
             const tbody = document.getElementById('subKontribusiBody');
+
+            if (!container || !tbody) return;
 
             container.style.display = 'block';
             tbody.innerHTML =
@@ -1388,6 +1493,9 @@
         }
 
         function calculateTotal() {
+            const totalElement = document.getElementById('totalPembayaran');
+            if (!totalElement) return;
+
             let total = 0;
 
             document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
@@ -1395,20 +1503,35 @@
                 total += value;
             });
 
-            document.getElementById('totalPembayaran').textContent = 'Rp ' + formatNumber(total.toFixed(2));
+            totalElement.textContent = 'Rp ' + formatNumber(total.toFixed(2));
         }
 
         function validateForm() {
-            const jamaahId = document.getElementById('jamaah_id').value;
+            const jamaahId = document.getElementById('jamaah_id')?.value;
             const submitBtn = document.getElementById('submitBtn');
 
-            submitBtn.disabled = !jamaahId;
+            if (!submitBtn) return;
+
+            // Check if all required inputs are filled
+            let allInputsFilled = true;
+            if (jamaahId) {
+                const inputs = document.querySelectorAll('.sub-kontribusi-input');
+                inputs.forEach(input => {
+                    if (!input.value || parseFloat(input.value) <= 0) {
+                        allInputsFilled = false;
+                    }
+                });
+            }
+
+            submitBtn.disabled = !jamaahId || !allInputsFilled;
         }
 
         async function submitForm() {
             if (isSubmitting) return;
 
             const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) return;
+
             const originalText = submitBtn.innerHTML;
 
             // Validate required inputs in sub kontribusi
@@ -1434,13 +1557,14 @@
             try {
                 const formData = new FormData(document.getElementById('pembayaranForm'));
 
-                const response = await fetch('{{ route('admin.kelompok.input-pembayaran.store') }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
+                const response = await fetch(
+                    '{{ route('admin.kelompok.input-pembayaran.store') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
 
                 const result = await response.json();
 
@@ -1452,7 +1576,7 @@
                         resetForm();
                     }, 1500);
                 } else {
-                    throw new Error(result.message);
+                    throw new Error(result.message || 'Terjadi kesalahan');
                 }
             } catch (error) {
                 console.error('Error submitting form:', error);
@@ -1488,32 +1612,44 @@
                     return;
                 }
 
-                fileName.textContent = file.name;
-                fileText.textContent = 'File dipilih:';
+                if (fileName) fileName.textContent = file.name;
+                if (fileText) fileText.textContent = 'File dipilih:';
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    previewContainer.style.display = 'block';
+                    if (previewImage) previewImage.src = e.target.result;
+                    if (previewContainer) previewContainer.style.display = 'block';
                 }
                 reader.readAsDataURL(file);
             }
         }
 
         function removeImage() {
-            document.getElementById('bukti_bayar').value = '';
-            document.getElementById('fileName').textContent = '';
-            document.getElementById('fileText').textContent = 'Unggah Bukti Pembayaran';
-            document.getElementById('previewContainer').style.display = 'none';
-            document.getElementById('previewImage').src = '';
+            const fileInput = document.getElementById('bukti_bayar');
+            const fileName = document.getElementById('fileName');
+            const fileText = document.getElementById('fileText');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+
+            if (fileInput) fileInput.value = '';
+            if (fileName) fileName.textContent = '';
+            if (fileText) fileText.textContent = 'Unggah Bukti Pembayaran';
+            if (previewContainer) previewContainer.style.display = 'none';
+            if (previewImage) previewImage.src = '';
         }
 
         function resetForm() {
-            document.getElementById('pembayaranForm').reset();
+            const form = document.getElementById('pembayaranForm');
+            if (form) form.reset();
+
             document.getElementById('jamaah_id').value = '';
             document.getElementById('jamaah_search').value = '';
-            document.getElementById('jamaahInfo').style.display = 'none';
-            document.getElementById('subKontribusiBody').innerHTML = '';
+            const jamaahInfo = document.getElementById('jamaahInfo');
+            if (jamaahInfo) jamaahInfo.style.display = 'none';
+
+            const tbody = document.getElementById('subKontribusiBody');
+            if (tbody) tbody.innerHTML = '';
+
             document.getElementById('totalPembayaran').textContent = 'Rp 0';
             document.getElementById('tgl_transaksi').value = '{{ date('Y-m-d') }}';
             document.getElementById('submitBtn').disabled = true;
@@ -1529,17 +1665,21 @@
         }
 
         function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
         function formatNumber(number) {
+            if (!number) return '0';
             return new Intl.NumberFormat('id-ID').format(number);
         }
 
         function showToast(type, title, message) {
             const container = document.getElementById('toastContainer');
+            if (!container) return;
+
             const toast = document.createElement('div');
             const icons = {
                 success: 'bi-check-circle',

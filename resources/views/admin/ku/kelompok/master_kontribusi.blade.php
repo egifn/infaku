@@ -43,6 +43,7 @@
                                 <th width="50">No</th>
                                 <th>Kode Kategori</th>
                                 <th>Nama Kategori</th>
+                                <th>Kelompok</th>
                                 <th>Status</th>
                                 <th>Keterangan</th>
                                 <th width="120">Aksi</th>
@@ -83,31 +84,70 @@
 
 <!-- ---------- MODALS ---------- -->
 
-<!-- Create/Edit Modal -->
-<div class="modal" id="formModal">
+<!-- Create Modal -->
+<div class="modal" id="createModal">
     <div class="modal-dialog">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle">Tambah Kategori Kontribusi</h3>
-            <button class="modal-close" onclick="KontribusiApp.hideFormModal()">&times;</button>
+            <h3 class="modal-title">Tambah Kategori Kontribusi</h3>
+            <button class="modal-close" onclick="KontribusiApp.hideCreateModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <form id="kontribusiForm">
-                <input type="hidden" id="editId">
-
+            <form id="createForm">
                 <div class="form-group">
                     <label class="form-label">Nama Kategori *</label>
-                    <input type="text" class="form-control" id="namaKontribusi" name="nama_kontribusi" maxlength="100"
-                        required>
+                    <input type="text" class="form-control" name="nama_kontribusi" maxlength="100" required
+                        placeholder="Contoh: INFAQ, SODAQOH, ZAKAT">
+                    <div class="form-text">Nama lengkap kategori kontribusi</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Keterangan</label>
-                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                    <textarea class="form-control" name="keterangan" rows="3"
+                        placeholder="Deskripsi atau penjelasan tentang kategori ini..."></textarea>
                 </div>
 
-                <div class="form-group" id="statusField" style="display: none;">
+                <div class="form-group" id="statusCreate" style="display: none;">
                     <label class="form-label">Status *</label>
-                    <select class="form-select" id="isAktif" name="is_aktif" required>
+                    <select class="form-select" name="is_aktif" required>
+                        <option value="1" selected>Aktif</option>
+                        <option value="0">Tidak Aktif</option>
+                    </select>
+                    <div class="form-text">Kategori tidak aktif tidak akan muncul dalam pilihan</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="KontribusiApp.hideCreateModal()">Batal</button>
+            <button class="btn btn-success" onclick="KontribusiApp.submitCreateForm()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Kategori Kontribusi</h3>
+            <button class="modal-close" onclick="KontribusiApp.hideEditModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editForm">
+                <input type="hidden" id="editKontribusiId">
+
+                <div class="form-group">
+                    <label class="form-label">Nama Kategori *</label>
+                    <input type="text" class="form-control" id="editNamaKontribusi" name="nama_kontribusi"
+                        maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Keterangan</label>
+                    <textarea class="form-control" id="editKeterangan" name="keterangan" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status *</label>
+                    <select class="form-select" id="editIsAktif" name="is_aktif" required>
                         <option value="1">Aktif</option>
                         <option value="0">Tidak Aktif</option>
                     </select>
@@ -115,8 +155,8 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn" onclick="KontribusiApp.hideFormModal()">Batal</button>
-            <button class="btn btn-success" onclick="KontribusiApp.submitForm()">Simpan</button>
+            <button class="btn" onclick="KontribusiApp.hideEditModal()">Batal</button>
+            <button class="btn btn-success" onclick="KontribusiApp.submitEditForm()">Simpan</button>
         </div>
     </div>
 </div>
@@ -187,12 +227,9 @@
                 }
 
                 const url = `${API_ROUTES.data}?${params.toString()}`;
-                console.log('Loading data from:', url); // Debug
 
                 const response = await fetch(url);
                 const result = await response.json();
-
-                console.log('API Response:', result); // Debug
 
                 if (result.success) {
                     renderTable(result.data);
@@ -241,9 +278,12 @@
                 <tr>
                     <td>${rowNumber}</td>
                     <td>
-                        <span class="code-badge">${item.kode_kontribusi}</span>
+                        <span class="code-badge">${item.kode_kontribusi || '-'}</span>
                     </td>
                     <td>${escapeHtml(item.nama_kontribusi)}</td>
+                    <td>
+                        <span class="badge badge-info">${item.nama_kelompok || 'KELOMPOK'}</span>
+                    </td>
                     <td>
                         ${item.is_aktif ? 
                             '<span class="badge badge-success">Aktif</span>' : 
@@ -323,12 +363,18 @@
 
         // Modal Create
         function showCreateModal() {
-            document.getElementById('modalTitle').textContent = 'Tambah Kategori Kontribusi';
-            document.getElementById('editId').value = '';
-            document.getElementById('kontribusiForm').reset();
-            document.getElementById('statusField').style.display = 'none';
+            document.getElementById('createForm').reset();
+            document.getElementById('statusCreate').style.display = 'none';
+            document.getElementById('createModal').classList.add('show');
 
-            document.getElementById('formModal').classList.add('show');
+            // Focus ke input setelah modal muncul
+            setTimeout(() => {
+                document.querySelector('#createForm input[name="nama_kontribusi"]').focus();
+            }, 300);
+        }
+
+        function hideCreateModal() {
+            document.getElementById('createModal').classList.remove('show');
         }
 
         // Modal Edit
@@ -340,14 +386,14 @@
                 if (result.success) {
                     const kontribusi = result.data;
 
-                    document.getElementById('modalTitle').textContent = 'Edit Kategori Kontribusi';
-                    document.getElementById('editId').value = kontribusi.id;
-                    document.getElementById('namaKontribusi').value = kontribusi.nama_kontribusi;
-                    document.getElementById('keterangan').value = kontribusi.keterangan || '';
-                    document.getElementById('statusField').style.display = 'block';
-                    document.getElementById('isAktif').value = kontribusi.is_aktif ? '1' : '0';
+                    // Isi form dengan data kontribusi
+                    document.getElementById('editKontribusiId').value = kontribusi.id;
+                    document.getElementById('editNamaKontribusi').value = kontribusi.nama_kontribusi;
+                    document.getElementById('editKeterangan').value = kontribusi.keterangan || '';
+                    document.getElementById('editIsAktif').value = kontribusi.is_aktif ? '1' : '0';
 
-                    document.getElementById('formModal').classList.add('show');
+                    // Tampilkan modal
+                    document.getElementById('editModal').classList.add('show');
                 } else {
                     throw new Error(result.message);
                 }
@@ -359,8 +405,8 @@
             }
         }
 
-        function hideFormModal() {
-            document.getElementById('formModal').classList.remove('show');
+        function hideEditModal() {
+            document.getElementById('editModal').classList.remove('show');
         }
 
         // Modal Delete
@@ -379,35 +425,29 @@
         // FUNGSI FORM - SUBMIT CREATE, EDIT, DELETE
         // ============================================================================
 
-        // Submit Form (Create/Edit)
-        async function submitForm() {
-            const kontribusiId = document.getElementById('editId').value;
-            const namaKontribusi = document.getElementById('namaKontribusi').value;
-            const keterangan = document.getElementById('keterangan').value;
-            const isAktif = kontribusiId ? document.getElementById('isAktif').value : '1';
+        // Submit Create Form
+        async function submitCreateForm() {
+            const form = document.getElementById('createForm');
+            const formData = new FormData(form);
 
-            // Validasi
-            if (!namaKontribusi) {
+            // Konversi ke object
+            const data = {
+                nama_kontribusi: formData.get('nama_kontribusi'),
+                keterangan: formData.get('keterangan'),
+                is_aktif: true // Default true untuk create
+            };
+
+            // Validasi sederhana
+            if (!data.nama_kontribusi) {
                 if (window.showToast) {
                     window.showToast('Harap isi nama kategori', 'error');
                 }
                 return;
             }
 
-            const data = {
-                nama_kontribusi: namaKontribusi,
-                keterangan: keterangan,
-                is_aktif: isAktif === '1'
-            };
-
             try {
-                const url = kontribusiId ?
-                    `${API_ROUTES.update}/${kontribusiId}` :
-                    API_ROUTES.create;
-                const method = kontribusiId ? 'PUT' : 'POST';
-
-                const response = await fetch(url, {
-                    method: method,
+                const response = await fetch(API_ROUTES.create, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -418,18 +458,67 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    hideFormModal();
+                    hideCreateModal();
                     currentPage = 1; // Kembali ke halaman 1
                     loadKontribusiData();
                     if (window.showToast) {
-                        window.showToast(kontribusiId ? 'Data berhasil diupdate' : 'Data berhasil ditambahkan',
-                            'success');
+                        window.showToast('Data kontribusi berhasil ditambahkan', 'success');
                     }
                 } else {
-                    throw new Error(result.message || 'Gagal menyimpan data');
+                    throw new Error(result.message || 'Gagal menambahkan data');
                 }
             } catch (error) {
-                console.error('Error submitting form:', error);
+                console.error('Error creating kontribusi:', error);
+                if (window.showToast) {
+                    window.showToast(error.message, 'error');
+                }
+            }
+        }
+
+        // Submit Edit Form
+        async function submitEditForm() {
+            const kontribusiId = document.getElementById('editKontribusiId').value;
+            const form = document.getElementById('editForm');
+            const formData = new FormData(form);
+
+            // Konversi ke object
+            const data = {
+                nama_kontribusi: formData.get('nama_kontribusi'),
+                keterangan: formData.get('keterangan'),
+                is_aktif: formData.get('is_aktif') === '1'
+            };
+
+            // Validasi sederhana
+            if (!data.nama_kontribusi) {
+                if (window.showToast) {
+                    window.showToast('Harap isi nama kategori', 'error');
+                }
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_ROUTES.update}/${kontribusiId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    hideEditModal();
+                    loadKontribusiData(); // Reload data di halaman yang sama
+                    if (window.showToast) {
+                        window.showToast('Data kontribusi berhasil diupdate', 'success');
+                    }
+                } else {
+                    throw new Error(result.message || 'Gagal mengupdate data');
+                }
+            } catch (error) {
+                console.error('Error updating kontribusi:', error);
                 if (window.showToast) {
                     window.showToast(error.message, 'error');
                 }
@@ -454,7 +543,7 @@
                     hideDeleteModal();
                     loadKontribusiData();
                     if (window.showToast) {
-                        window.showToast('Data berhasil dihapus', 'success');
+                        window.showToast('Data kontribusi berhasil dihapus', 'success');
                     }
                 } else {
                     throw new Error(result.message);
@@ -530,8 +619,12 @@
             });
 
             // Modal backdrop clicks
-            document.getElementById('formModal').addEventListener('click', function (e) {
-                if (e.target === this) hideFormModal();
+            document.getElementById('createModal').addEventListener('click', function (e) {
+                if (e.target === this) hideCreateModal();
+            });
+
+            document.getElementById('editModal').addEventListener('click', function (e) {
+                if (e.target === this) hideEditModal();
             });
 
             document.getElementById('deleteModal').addEventListener('click', function (e) {
@@ -557,13 +650,15 @@
 
             // Modals
             showCreateModal: showCreateModal,
-            hideFormModal: hideFormModal,
+            hideCreateModal: hideCreateModal,
             showEditModal: showEditModal,
+            hideEditModal: hideEditModal,
             showDeleteModal: showDeleteModal,
             hideDeleteModal: hideDeleteModal,
 
             // Forms
-            submitForm: submitForm,
+            submitCreateForm: submitCreateForm,
+            submitEditForm: submitEditForm,
             confirmDelete: confirmDelete
         };
 

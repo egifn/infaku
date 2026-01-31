@@ -54,7 +54,7 @@ class MasterKontribusiController extends Controller
 
             // Build query
             $query = DB::table('master_kontribusi')
-                ->join('master_kelompok', 'master_kontribusi.created_by', '=', 'master_kelompok.kelompok_id')
+                ->join('master_kelompok', 'master_kontribusi.created_by', '=', 'master_kelompok.id')
                 ->select(
                     'master_kontribusi.*',
                     'master_kelompok.nama_kelompok'
@@ -68,6 +68,7 @@ class MasterKontribusiController extends Controller
                         ->orWhere('master_kontribusi.keterangan', 'like', "%{$search}%");
                 });
             }
+
 
             // Get total count
             $total = $query->count();
@@ -83,7 +84,7 @@ class MasterKontribusiController extends Controller
             }
 
             // Get paginated data
-            $data = $query->orderBy('master_kontribusi.nama_kontribusi', 'asc')
+            $data = $query->orderBy('master_kontribusi.id', 'asc')
                 ->offset($offset)
                 ->limit($perPage)
                 ->get();
@@ -146,7 +147,6 @@ class MasterKontribusiController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         try {
             // Validate request
             $validator = Validator::make($request->all(), [
@@ -168,59 +168,75 @@ class MasterKontribusiController extends Controller
 
             // Get kelompok data
             $kelompok = DB::table('master_kelompok')
-                ->where('kelompok_id', $kelompokId)
+                ->where('id', $kelompokId)
                 ->first();
 
             if (!$kelompok) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data kelompok tidak ditemukan'
+                    'message' => 'Kelompok tidak ditemukan'
                 ], 404);
             }
 
-            // Hitung urutan
+            // Hitung nomor urut
             $urut = DB::table('master_kontribusi')
                 ->where('created_by', $kelompokId)
                 ->count() + 1;
 
-            // Generate kode kontribusi
-            $abbr = strtoupper(
-                collect(explode(' ', $request->nama_kontribusi))
-                    ->map(fn($w) => substr($w, 0, 1))
-                    ->join('')
-            );
+            // Ambil bulan & tahun sekarang
+            $bulanRomawi = [
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
+            ];
 
+            $bulan = $bulanRomawi[date('n')]; // contoh: IV
+            $tahun = date('Y');               // contoh: 2026
+
+            // Nama kelompok dirapikan (spasi jadi - / uppercase)
+            $namaKelompok = strtoupper(str_replace(' ', '-', $kelompok->nama_kelompok));
+
+            // Generate nomor kontribusi (format dokumen)
             $nomorKontribusi = str_pad($urut, 3, '0', STR_PAD_LEFT)
-                . '/' . $kelompok->nama_kelompok
-                . '/' . 'IV'
-                . '/' . $abbr;
+                . '/' . $namaKelompok
+                . '/' . $bulan
+                . '/' . $tahun;
 
             // Prepare data
-            $kontribusiData = [
-                'kode_kontribusi' => $nomorKontribusi,
+            $data = [
+                'kode_kontribusi' => strtoupper($nomorKontribusi),
                 'nama_kontribusi' => strtoupper($request->nama_kontribusi),
                 'keterangan' => $request->keterangan,
-                'is_aktif' => $request->is_aktif,
                 'created_by' => $kelompokId,
+                'is_aktif' => $request->is_aktif,
                 'created_at' => DB::raw('NOW()')
             ];
 
             // Insert data
-            $masterId = DB::table('master_kontribusi')->insertGetId($kontribusiData);
+            $masterId = DB::table('master_kontribusi')->insertGetId($data);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Master kontribusi berhasil ditambahkan',
                 'data' => [
                     'id' => $masterId,
-                    'kode_kontribusi' => $nomorKontribusi
+                    'kode_kontribusi' => strtoupper($nomorKontribusi)
                 ]
             ]);
         } catch (\Exception $e) {
             Log::error('Error storing master kontribusi: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menambahkan master kontribusi'
+                'message' => 'Gagal menambahkan master kontribusi: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -244,7 +260,7 @@ class MasterKontribusiController extends Controller
             }
 
             // Prepare update data
-            $updateData = [
+            $data = [
                 'nama_kontribusi' => strtoupper($request->nama_kontribusi),
                 'keterangan' => $request->keterangan,
                 'is_aktif' => $request->is_aktif,
@@ -254,7 +270,7 @@ class MasterKontribusiController extends Controller
             // Update data
             $affected = DB::table('master_kontribusi')
                 ->where('id', $id)
-                ->update($updateData);
+                ->update($data);
 
             if ($affected === 0) {
                 return response()->json([
@@ -271,7 +287,7 @@ class MasterKontribusiController extends Controller
             Log::error('Error updating master kontribusi: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengupdate master kontribusi'
+                'message' => 'Gagal mengupdate master kontribusi: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -281,7 +297,7 @@ class MasterKontribusiController extends Controller
         try {
             // Check if master kontribusi has sub kontribusi
             $hasSubKontribusi = DB::table('sub_kontribusi')
-                ->where('master_kontribusi_id', $id)
+                ->where('kode_kontribusi', $id)
                 ->exists();
 
             if ($hasSubKontribusi) {
@@ -292,9 +308,13 @@ class MasterKontribusiController extends Controller
             }
 
             // Check if master kontribusi is used in transactions
-            $isUsed = DB::table('kategori_keuangan')
-                ->join('master_kontribusi', 'kategori_keuangan.jenis_ibadah', '=', 'master_kontribusi.nama_kontribusi')
-                ->where('master_kontribusi.id', $id)
+            $isUsed = DB::table('transaksi')
+                ->whereExists(function ($query) use ($id) {
+                    $query->select(DB::raw(1))
+                        ->from('sub_kontribusi')
+                        ->whereColumn('transaksi.sub_kontribusi_id', 'sub_kontribusi.id')
+                        ->where('sub_kontribusi.kode_kontribusi', $id);
+                })
                 ->exists();
 
             if ($isUsed) {

@@ -87,7 +87,6 @@ Route::middleware(['auth.session'])->group(function () {
 
             // -------------------------------- Master Kontribusi -------------------------------- //
             Route::get('/master-kontribusi', [MasterKontribusiController::class, 'index'])->name('master-kontribusi.index');
-            // API Routes for Master Kontribusi
             Route::prefix('api/master-kontribusi')->name('api.master-kontribusi.')->group(function () {
                 Route::get('/', [MasterKontribusiController::class, 'getData'])->name('index');
                 Route::get('/{id}', [MasterKontribusiController::class, 'show'])->name('show');

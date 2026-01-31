@@ -269,12 +269,10 @@
                 }
 
                 const url = `${API_ROUTES.data}?${params.toString()}`;
-                console.log('Loading data from:', url); // Debug
 
                 const response = await fetch(url);
                 const result = await response.json();
 
-                console.log('API Response:', result); // Debug
 
                 if (result.success) {
                     renderTable(result.data);

@@ -239,7 +239,7 @@
     color: #d4d4d4;
 }
 
-.navbar ul{
+.navbar ul {
     display: flex;
     justify-content: flex-end;
 }
@@ -369,78 +369,7 @@
     transform: translateY(0);
 }
 
-/* Toasts */
-.toast {
-    position: fixed;
-    min-width: 300px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(100%);
-    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-    z-index: 1050;
-}
 
-.toast.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.toast-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid rgba(3, 3, 3, 0.1);
-}
-
-.toast-title {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.toast-body {
-    padding: 10px;
-}
-
-/* Close Button */
-.toast .close {
-    background: none;
-    border: none;
-    color: #000000;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.toast .close:hover {
-    color: #aaa;
-}
-
-/* Positions */
-.top-right {
-    top: 20px;
-    right: 20px;
-}
-
-.bottom-right {
-    bottom: 20px;
-    right: 20px;
-}
-
-/* Positions */
-.top-right {
-    top: 20px;
-    right: 20px;
-}
-
-.bottom-right {
-    bottom: 20px;
-    right: 20px;
-}
 
 @-webkit-keyframes fadein {
     from {

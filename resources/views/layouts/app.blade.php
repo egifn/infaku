@@ -245,45 +245,6 @@
 
     <!-- Inline JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Toast auto-hide 5 detik
-            setTimeout(() => {
-                document.querySelectorAll('.toast.show').forEach(toast => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                });
-            }, 5000);
-
-            // Set CSRF token for all fetch requests
-            window.getCsrfToken = function () {
-                const meta = document.querySelector('meta[name="csrf-token"]');
-                return meta ? meta.getAttribute('content') : '';
-            };
-
-            // Helper fetch wrapper with CSRF
-            window.csrfFetch = function (url, options = {}) {
-                options.headers = options.headers || {};
-                if (!options.headers['X-CSRF-TOKEN']) {
-                    options.headers['X-CSRF-TOKEN'] = getCsrfToken();
-                }
-                return fetch(url, options);
-            };
-
-            // Global search functionality
-            const searchInput = document.getElementById('global-search');
-            if (searchInput) {
-                let searchTimeout;
-                searchInput.addEventListener('input', function (e) {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        if (this.value.length >= 3) {
-                            performSearch(this.value);
-                        }
-                    }, 500);
-                });
-            }
-        });
-
         function performSearch(query) {
             // Implement search functionality here
             console.log('Searching for:', query);
