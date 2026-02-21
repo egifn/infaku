@@ -5,10 +5,9 @@
 @section('icon-page-title', 'bi-people')
 
 @section('content')
-<div class="master-container">
-    <div class="card">
-        <div class="card-header">
-            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+    <div class="master-container">
+        <div class="card">
+            <div class="card-header">
                 <h3 class="card-title">Data Jamaah</h3>
                 <div>
                     <button class="btn btn-print" onclick="JamaahApp.printData()">
@@ -19,302 +18,301 @@
                     </button>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <!-- Filter Controls -->
-            <div class="table-controls">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px; font-size:13px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <select id="filterAktif" class="form-select" style="width: 150px;">
-                        <option value="">Semua Status</option>
-                        <option value="1">Aktif</option>
-                        <option value="0">Tidak Aktif</option>
-                    </select>
-                </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, telepon...">
-                    <i class="bi-search search-icon"></i>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th width="50">No</th>
-                                <th>Nama Lengkap</th>
-                                <th>Jenis Kelamin</th>
-                                <th>TTL</th>
-                                <th>Telepon</th>
-                                <th>Pekerjaan</th>
-                                <th>Status</th>
-                                <th>Dapuan</th>
-                                <th>Status Aktif</th>
-                                <th width="120">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- States -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi-people"></i>
-                <h4>Tidak ada data jamaah</h4>
-            </div>
-
-            <div id="loadingState" class="empty-state">
-                <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
-                </div>
-                <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination" id="pagination" style="display: none;">
-                <button class="page-btn" id="prevPage">
-                    <i class="bi-chevron-left"></i> Prev
-                </button>
-                <span class="page-info" id="pageInfo">Page 1 of 1</span>
-                <button class="page-btn" id="nextPage">
-                    Next <i class="bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ---------- MODALS ---------- -->
-
-<!-- Create Modal -->
-<div class="modal" id="createModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Tambah Jamaah</h3>
-            <button class="modal-close" onclick="JamaahApp.hideCreateModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="createForm">
-                <div class="form-group">
-                    <label class="form-label">Nama Lengkap *</label>
-                    <input type="text" class="form-control" name="nama_lengkap" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Tempat Lahir</label>
-                        <input type="text" class="form-control" name="tempat_lahir">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tanggal Lahir</label>
-                        <input type="date" class="form-control" name="tanggal_lahir">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Jenis Kelamin *</label>
-                        <select class="form-select" name="jenis_kelamin" required>
-                            <option value="">Pilih Jenis Kelamin</option>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
+            <div class="card-body">
+                <!-- Filter Controls -->
+                <div class="table-controls">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Golongan Darah</label>
-                        <select class="form-select" name="golongan_darah">
-                            <option value="-">Tidak Tahu</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="AB">AB</option>
-                            <option value="O">O</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Status Menikah *</label>
-                        <select class="form-select" name="status_menikah" required>
-                            <option value="">Pilih Status</option>
-                            <option value="Belum Menikah">Belum Menikah</option>
-                            <option value="Menikah">Menikah</option>
-                            <option value="Janda">Janda</option>
-                            <option value="Duda">Duda</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pekerjaan</label>
-                        <input type="text" class="form-control" name="pekerjaan">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Telepon</label>
-                        <input type="text" class="form-control" name="telepon" maxlength="15">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Dapuan *</label>
-                        <select class="form-select" id="createDapuanSelect" name="dapuan_id" required>
-                            <option value="">Pilih Dapuan</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Aktif *</label>
-                        <select class="form-select" name="is_aktif" required>
+                        <select id="filterAktif" class="form-select" style="width: 150px;">
+                            <option value="">Semua Status</option>
                             <option value="1">Aktif</option>
                             <option value="0">Tidak Aktif</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Alamat</label>
-                    <textarea class="form-control" name="alamat" rows="3"></textarea>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="JamaahApp.hideCreateModal()">Batal</button>
-            <button class="btn btn-success" onclick="JamaahApp.submitCreateForm()">Simpan</button>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal -->
-<div class="modal" id="editModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Edit Jamaah</h3>
-            <button class="modal-close" onclick="JamaahApp.hideEditModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="editForm">
-                <input type="hidden" id="editJamaahId">
-
-                <div class="form-group">
-                    <label class="form-label">Nama Lengkap *</label>
-                    <input type="text" class="form-control" id="editNamaLengkap" name="nama_lengkap" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Tempat Lahir</label>
-                        <input type="text" class="form-control" id="editTempatLahir" name="tempat_lahir">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tanggal Lahir</label>
-                        <input type="date" class="form-control" id="editTanggalLahir" name="tanggal_lahir">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, telepon...">
+                        <i class="bi-search search-icon"></i>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Jenis Kelamin *</label>
-                        <select class="form-select" id="editJenisKelamin" name="jenis_kelamin" required>
-                            <option value="">Pilih Jenis Kelamin</option>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Golongan Darah</label>
-                        <select class="form-select" id="editGolonganDarah" name="golongan_darah">
-                            <option value="-">Tidak Tahu</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="AB">AB</option>
-                            <option value="O">O</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Status Menikah *</label>
-                        <select class="form-select" id="editStatusMenikah" name="status_menikah" required>
-                            <option value="">Pilih Status</option>
-                            <option value="Belum Menikah">Belum Menikah</option>
-                            <option value="Menikah">Menikah</option>
-                            <option value="Janda">Janda</option>
-                            <option value="Duda">Duda</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Pekerjaan</label>
-                        <input type="text" class="form-control" id="editPekerjaan" name="pekerjaan">
+                <!-- Table -->
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="50">No</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>TTL</th>
+                                    <th>Telepon</th>
+                                    <th>Pekerjaan</th>
+                                    <th>Status</th>
+                                    <th>Dapuan</th>
+                                    <th>Status Aktif</th>
+                                    <th width="120">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Telepon</label>
-                        <input type="text" class="form-control" id="editTelepon" name="telepon" maxlength="15">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="editEmail" name="email">
-                    </div>
+                <!-- States -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi-people"></i>
+                    <h4>Tidak ada data jamaah</h4>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Dapuan *</label>
-                        <select class="form-select" id="editDapuanSelect" name="dapuan_id" required>
-                            <option value="">Pilih Dapuan</option>
-                        </select>
+                <div id="loadingState" class="empty-state">
+                    <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Aktif *</label>
-                        <select class="form-select" id="editIsAktif" name="is_aktif" required>
-                            <option value="1">Aktif</option>
-                            <option value="0">Tidak Aktif</option>
-                        </select>
-                    </div>
+                    <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Alamat</label>
-                    <textarea class="form-control" id="editAlamat" name="alamat" rows="3"></textarea>
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="page-btn" id="prevPage">
+                        <i class="bi-chevron-left"></i> Prev
+                    </button>
+                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                    <button class="page-btn" id="nextPage">
+                        Next <i class="bi-chevron-right"></i>
+                    </button>
                 </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="JamaahApp.hideEditModal()">Batal</button>
-            <button class="btn btn-success" onclick="JamaahApp.submitEditForm()">Simpan</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Detail Modal -->
-<div class="modal" id="detailModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Detail Jamaah</h3>
-            <button class="modal-close" onclick="JamaahApp.hideDetailModal()">&times;</button>
-        </div>
-        <div class="modal-body" id="detailBody">
-            <!-- Data akan diisi oleh JavaScript -->
+    <!-- ---------- MODALS ---------- -->
+
+    <!-- Create Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Tambah Jamaah</h3>
+                <button class="modal-close" onclick="JamaahApp.hideCreateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="form-group">
+                        <label class="form-label">Nama Lengkap *</label>
+                        <input type="text" class="form-control" name="nama_lengkap" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tempat Lahir</label>
+                            <input type="text" class="form-control" name="tempat_lahir">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Lahir</label>
+                            <input type="date" class="form-control" name="tanggal_lahir">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Kelamin *</label>
+                            <select class="form-select" name="jenis_kelamin" required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L">Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Golongan Darah</label>
+                            <select class="form-select" name="golongan_darah">
+                                <option value="-">Tidak Tahu</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Status Menikah *</label>
+                            <select class="form-select" name="status_menikah" required>
+                                <option value="">Pilih Status</option>
+                                <option value="Belum Menikah">Belum Menikah</option>
+                                <option value="Menikah">Menikah</option>
+                                <option value="Janda">Janda</option>
+                                <option value="Duda">Duda</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pekerjaan</label>
+                            <input type="text" class="form-control" name="pekerjaan">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Telepon</label>
+                            <input type="text" class="form-control" name="telepon" maxlength="15">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Dapuan *</label>
+                            <select class="form-select" id="createDapuanSelect" name="dapuan_id" required>
+                                <option value="">Pilih Dapuan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status Aktif *</label>
+                            <select class="form-select" name="is_aktif" required>
+                                <option value="1">Aktif</option>
+                                <option value="0">Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <textarea class="form-control" name="alamat" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="JamaahApp.hideCreateModal()">Batal</button>
+                <button class="btn btn-success" onclick="JamaahApp.submitCreateForm()">Simpan</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Jamaah</h3>
+                <button class="modal-close" onclick="JamaahApp.hideEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editJamaahId">
+
+                    <div class="form-group">
+                        <label class="form-label">Nama Lengkap *</label>
+                        <input type="text" class="form-control" id="editNamaLengkap" name="nama_lengkap" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tempat Lahir</label>
+                            <input type="text" class="form-control" id="editTempatLahir" name="tempat_lahir">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Lahir</label>
+                            <input type="date" class="form-control" id="editTanggalLahir" name="tanggal_lahir">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Kelamin *</label>
+                            <select class="form-select" id="editJenisKelamin" name="jenis_kelamin" required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="L">Laki-laki</option>
+                                <option value="P">Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Golongan Darah</label>
+                            <select class="form-select" id="editGolonganDarah" name="golongan_darah">
+                                <option value="-">Tidak Tahu</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Status Menikah *</label>
+                            <select class="form-select" id="editStatusMenikah" name="status_menikah" required>
+                                <option value="">Pilih Status</option>
+                                <option value="Belum Menikah">Belum Menikah</option>
+                                <option value="Menikah">Menikah</option>
+                                <option value="Janda">Janda</option>
+                                <option value="Duda">Duda</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pekerjaan</label>
+                            <input type="text" class="form-control" id="editPekerjaan" name="pekerjaan">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Telepon</label>
+                            <input type="text" class="form-control" id="editTelepon" name="telepon" maxlength="15">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Dapuan *</label>
+                            <select class="form-select" id="editDapuanSelect" name="dapuan_id" required>
+                                <option value="">Pilih Dapuan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status Aktif *</label>
+                            <select class="form-select" id="editIsAktif" name="is_aktif" required>
+                                <option value="1">Aktif</option>
+                                <option value="0">Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <textarea class="form-control" id="editAlamat" name="alamat" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="JamaahApp.hideEditModal()">Batal</button>
+                <button class="btn btn-success" onclick="JamaahApp.submitEditForm()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Jamaah</h3>
+                <button class="modal-close" onclick="JamaahApp.hideDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="detailBody">
+                <!-- Data akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -386,7 +384,8 @@
                 if (window.showToast) {
                     window.showToast(error.message, 'error');
                 } else {
-                    alert(error.message);
+                    // alert(error.message);
+                    window.showToast(error.message, 'error');
                 }
                 // Reset ke halaman 1 jika error
                 currentPage = 1;
@@ -819,7 +818,7 @@
         function setupEventListeners() {
             // Search dengan debounce
             let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function (e) {
+            document.getElementById('searchInput').addEventListener('input', function(e) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     searchQuery = e.target.value.trim();
@@ -829,42 +828,42 @@
             });
 
             // Filter aktif
-            document.getElementById('filterAktif').addEventListener('change', function (e) {
+            document.getElementById('filterAktif').addEventListener('change', function(e) {
                 aktifFilter = e.target.value;
                 currentPage = 1; // Reset ke halaman 1
                 loadJamaahData();
             });
 
             // Per page
-            document.getElementById('perPageSelect').addEventListener('change', function (e) {
+            document.getElementById('perPageSelect').addEventListener('change', function(e) {
                 perPage = parseInt(e.target.value) || 10;
                 currentPage = 1; // Reset ke halaman 1
                 loadJamaahData();
             });
 
             // Pagination buttons
-            document.getElementById('prevPage').addEventListener('click', function () {
+            document.getElementById('prevPage').addEventListener('click', function() {
                 if (currentPage > 1) {
                     goToPage(currentPage - 1);
                 }
             });
 
-            document.getElementById('nextPage').addEventListener('click', function () {
+            document.getElementById('nextPage').addEventListener('click', function() {
                 if (currentPage < totalPages) {
                     goToPage(currentPage + 1);
                 }
             });
 
             // Modal backdrop clicks
-            document.getElementById('createModal').addEventListener('click', function (e) {
+            document.getElementById('createModal').addEventListener('click', function(e) {
                 if (e.target === this) hideCreateModal();
             });
 
-            document.getElementById('editModal').addEventListener('click', function (e) {
+            document.getElementById('editModal').addEventListener('click', function(e) {
                 if (e.target === this) hideEditModal();
             });
 
-            document.getElementById('detailModal').addEventListener('click', function (e) {
+            document.getElementById('detailModal').addEventListener('click', function(e) {
                 if (e.target === this) hideDetailModal();
             });
         }
@@ -900,7 +899,7 @@
         // ============================================================================
         // START APP
         // ============================================================================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
 
             // Expose ke global scope
@@ -909,7 +908,7 @@
             window.showDetailModal = showDetailModal;
 
             // Debug
-            window.debugPagination = function () {
+            window.debugPagination = function() {
                 console.log('Pagination State:', {
                     currentPage,
                     totalPages,
@@ -920,6 +919,5 @@
                 });
             };
         });
-
     </script>
 @endpush

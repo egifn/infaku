@@ -10,32 +10,6 @@
             padding: 5px;
         }
 
-        .card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
         /* Filter Section */
         .filter-section {
             background: #f8f9fa;
@@ -201,99 +175,6 @@
         .action-buttons {
             display: flex;
             gap: 5px;
-        }
-
-        .btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            min-width: 70px;
-            justify-content: center;
-        }
-
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 10px;
-            min-width: 60px;
-        }
-
-        .btn-view {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #138496;
-        }
-
-        .btn-verify {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-verify:hover {
-            background: #218838;
-        }
-
-        .btn-reject {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-reject:hover {
-            background: #c82333;
-        }
-
-        .btn-print {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-print:hover {
-            background: #5a6268;
-        }
-
-        .btn-export {
-            background: #105a44;
-            color: white;
-        }
-
-        .btn-export:hover {
-            background: #0d8b66;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-primary {
-            background: #105a44;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0d8b66;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
         }
 
         /* Modal */

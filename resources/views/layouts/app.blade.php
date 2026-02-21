@@ -47,8 +47,7 @@
                     <div class="profile">
                         <div class="profile-img-wrapper">
                             <div class="dropdown hover-dropdown">
-                                <img src="{{ asset('img/default-avatar.png') }}" width="20"
-                                    height="20">
+                                <img src="{{ asset('img/default-avatar.png') }}" width="20" height="20">
                                 <div class="dropdown-content">
                                     <div style="padding: 8px 16px; font-weight: 600; color: #333;">
                                         {{ session('user.username') ?? '-' }}
@@ -70,8 +69,7 @@
                 </div>
             </div>
 
-            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                style="display: none;">
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
         </header>
@@ -106,14 +104,14 @@
                 <a href="{{ route('admin.kelompok.data-jamaah.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.data-jamaah.*') ? 'active' : '' }}"
                     data-name="Data Jamaah" title="Data Jamaah">
-                    <i class="bi bi-people"></i>
+                    <i class="bi bi-person-vcard"></i>
                     <span class="menu-text">Data Jamaah</span>
                 </a>
 
                 <a href="{{ route('admin.kelompok.data-keluarga.index') }}"
                     class="menu-item {{ request()->routeIs('admin.kelompok.data-keluarga.*') ? 'active' : '' }}"
                     data-name="Data Keluarga" title="Data Keluarga">
-                    <i class="bi bi-person-vcard"></i>
+                    <i class="bi bi-people"></i>
                     <span class="menu-text">Data Keluarga</span>
                 </a>
 
@@ -193,7 +191,7 @@
             @endif
 
             <!-- Flash Messages -->
-            @if(session('success'))
+            @if (session('success'))
                 <div class="toast-container">
                     <div class="toast success show">
                         <div class="toast-content">
@@ -210,7 +208,7 @@
                 </div>
             @endif
 
-            @if(session('error'))
+            @if (session('error'))
                 <div class="toast-container">
                     <div class="toast error show">
                         <div class="toast-content">
@@ -266,7 +264,6 @@
                 year: 'numeric'
             });
         }
-
     </script>
 
     @stack('scripts')

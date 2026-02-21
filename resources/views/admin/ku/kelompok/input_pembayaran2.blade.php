@@ -138,7 +138,7 @@
             justify-content: space-between;
             padding: 6px 0;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .kontribusi-card-details li:last-child {
@@ -173,7 +173,7 @@
             color: white;
             border: none;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -185,30 +185,7 @@
         }
 
         /* Styles untuk halaman form input pembayaran */
-        .card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
 
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
 
         .card-body-pos {
             padding: 15px 20px;
@@ -220,9 +197,7 @@
         }
 
         .form-section {
-            margin-bottom: 25px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #e0e0e0;
         }
 
         .section-title {
@@ -248,116 +223,12 @@
             margin-bottom: 5px;
             font-weight: 500;
             color: #333;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .form-label.required::after {
             content: ' *';
             color: #dc3545;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #4d4d4d;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #105a44;
-            box-shadow: 0 0 0 2px rgba(16, 90, 68, 0.1);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 12px;
-            background: white;
-            color: #4d4d4d;
-            cursor: pointer;
-        }
-
-        .form-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            min-width: 100px;
-        }
-
-        .btn-primary {
-            background: #105a44;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0d8b66;
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
         }
 
         .jamaah-info {
@@ -385,7 +256,7 @@
             border-collapse: collapse;
             margin-top: 15px;
             background: white;
-            border-radius: 8px;
+            /* border-radius: 8px; */
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
@@ -401,7 +272,7 @@
         }
 
         .sub-kontribusi-table td {
-            padding: 10px 15px;
+            padding: 5px 15px;
             border-bottom: 1px solid #e0e0e0;
             font-size: 12px;
         }
@@ -414,16 +285,16 @@
             width: 200px;
         }
 
-        .sub-kontribusi-table input[type="text"] {
+        .sub-kontribusi-table input[type="number"] {
             width: 100%;
-            padding: 6px;
+            padding: 6px 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 13px;
             text-align: right;
         }
 
-        .sub-kontribusi-table input[type="text"]:focus {
+        .sub-kontribusi-table input[type="number"]:focus {
             outline: none;
             border-color: #105a44;
             box-shadow: 0 0 0 2px rgba(16, 90, 68, 0.1);
@@ -431,6 +302,12 @@
 
         .sub-kontribusi-table .rupiah-input {
             position: relative;
+        }
+
+        .sub-kontribusi-table .rupiah-input input {
+            padding-right: 5px;
+            padding-left: 10px;
+            text-align: right;
         }
 
         .sub-kontribusi-table .rupiah-symbol {
@@ -444,17 +321,18 @@
 
         .total-section {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             margin-top: 15px;
-            padding: 10px 20px;
+            padding: 15px 0px;
             border-top: 2px solid #e0e0e0;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .total-label {
             font-weight: 600;
             color: #333;
             font-size: 14px;
-            margin-left: 45px;
+            margin-right: 15px;
         }
 
         .total-amount {
@@ -463,6 +341,7 @@
             font-size: 16px;
             min-width: 150px;
             text-align: right;
+            margin-right: 25px;
         }
 
         /* File Upload */
@@ -482,7 +361,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 5px 12px;
+            padding: 8px 12px;
             background: #f8f9fa;
             border: 1px dashed #ddd;
             border-radius: 4px;
@@ -535,19 +414,18 @@
             margin-bottom: 10px;
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        <blade keyframes|%20spin%20%7B%0D>0% {
+            transform: rotate(0deg);
+        }
 
-            100% {
-                transform: rotate(360deg);
-            }
+        100% {
+            transform: rotate(360deg);
+        }
         }
 
         .loading-text {
             color: #666;
-            font-size: 12px;
+            font-size: 13px;
             margin: 0;
         }
 
@@ -587,7 +465,7 @@
             padding: 8px 35px 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .dropdown-search:focus {
@@ -628,7 +506,7 @@
             padding: 8px 12px;
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 12px;
+            font-size: 13px;
             color: #4d4d4d;
         }
 
@@ -664,7 +542,7 @@
             color: white;
             border: none;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -704,10 +582,103 @@
             flex-shrink: 0;
         }
 
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
 
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #105a44;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #28a745;
+        }
+
+        .toast.error {
+            border-left-color: #dc3545;
+        }
+
+        .toast.warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast.info {
+            border-left-color: #17a2b8;
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast.success .toast-icon {
+            color: #28a745;
+        }
+
+        .toast.error .toast-icon {
+            color: #dc3545;
+        }
+
+        .toast.warning .toast-icon {
+            color: #ffc107;
+        }
+
+        .toast.info .toast-icon {
+            color: #17a2b8;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        .toast-close:hover {
+            color: #333;
+        }
 
         /* Animation untuk card */
-        @keyframes fadeInUp {
+        @@keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -740,29 +711,15 @@
             animation-delay: 0.25s;
         }
 
-        /* Validation Styles */
+        /* Utility Classes */
         .is-invalid {
             border-color: #dc3545 !important;
-            background-color: #fff8f8;
         }
 
-        .is-invalid:focus {
-            border-color: #dc3545 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        .is-valid {
+            border-color: #28a745 !important;
         }
 
-        .invalid-feedback {
-            display: block;
-            /* display: none; */
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 9px;
-            color: #dc3545;
-        }
-
-        s
-
-        /* Utility Classes */
         .text-center {
             text-align: center;
         }
@@ -781,10 +738,6 @@
 
         .mt-2 {
             margin-top: 0.5rem;
-        }
-
-        .mt-3 {
-            margin-top: 1rem;
         }
 
         .py-4 {
@@ -808,10 +761,6 @@
             height: 1rem;
             border-width: 0.2em;
         }
-
-        .me-2 {
-            margin-right: 0.5rem;
-        }
     </style>
 @endpush
 
@@ -826,12 +775,12 @@
                             <i class="bi-cash-coin"></i>
                         </div>
                         <div>
-                            <strong style="font-size: 12px;">{{ $selectedKontribusi->nama_kontribusi }}</strong><br>
+                            <strong style="font-size: 13px;">{{ $selectedKontribusi->nama_kontribusi }}</strong><br>
                             <span style="font-size: 12px; color: #666;">Kode:
                                 {{ $selectedKontribusi->kode_kontribusi }}</span>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="changeKontribusi()">
+                    <button class="btn btn-secondary btn-sm" onclick="changeKontribusi()">
                         <i class="bi-arrow-repeat"></i> Ganti Kontribusi
                     </button>
                 </div>
@@ -840,7 +789,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Input Pembayaran Kontribusi</h3>
-                    <button type="button" class="back-btn" onclick="goBackToSelection()">
+                    <button class="back-btn" onclick="goBackToSelection()">
                         <i class="bi-arrow-left"></i> Kembali ke Pilihan Kontribusi
                     </button>
                 </div>
@@ -849,9 +798,6 @@
                         <form id="pembayaranForm" method="POST"
                             action="{{ route('admin.kelompok.input-pembayaran.store') }}" enctype="multipart/form-data">
                             @csrf
-                            <input type="hidden" id="master_kontribusi_id" name="master_kontribusi_id"
-                                value="{{ request('master_kontribusi_id') }}">
-
                             <!-- Section 1: Data Jamaah -->
                             <div class="form-section">
                                 <div class="section-title">
@@ -862,20 +808,20 @@
                                     <label class="form-label required">Pilih Jamaah</label>
                                     <div class="searchable-dropdown">
                                         <input type="text" class="dropdown-search" id="jamaah_search"
-                                            placeholder="Cari jamaah..." autocomplete="off">
+                                            placeholder="Cari nama atau NIK jamaah..." autocomplete="off">
                                         <i class="bi-search dropdown-search-icon"></i>
                                         <div class="dropdown-options" id="jamaah_options"></div>
                                     </div>
                                     <input type="hidden" id="jamaah_id" name="jamaah_id">
-                                    <div class="invalid-feedback" id="jamaah_error">Jamaah wajib dipilih</div>
                                     <div class="form-text">Ketik nama atau NIK untuk mencari jamaah</div>
                                 </div>
 
                                 <div id="jamaahInfo" class="jamaah-info" style="display: none;">
                                     <div class="jamaah-name" id="jamaahNama"></div>
                                     <div class="jamaah-details">
-                                        <span id="jamaahAlamat"></span>
+                                        <span id="jamaahNik"></span> |
                                         <span id="jamaahTelepon"></span> |
+                                        <span id="jamaahAlamat"></span>
                                     </div>
                                 </div>
                             </div>
@@ -891,8 +837,6 @@
                                         <label class="form-label required" for="tgl_transaksi">Tanggal Pembayaran</label>
                                         <input type="date" class="form-control" id="tgl_transaksi" name="tgl_transaksi"
                                             value="{{ date('Y-m-d') }}" required>
-                                        <div class="invalid-feedback" id="tgl_transaksi_error">Tanggal pembayaran wajib
-                                            diisi</div>
                                     </div>
 
                                     <div class="form-group">
@@ -904,10 +848,11 @@
                                             <option value="QRIS">QRIS</option>
                                             <option value="LAINNYA">LAINNYA</option>
                                         </select>
-                                        <div class="invalid-feedback" id="metode_bayar_error">Metode pembayaran wajib
-                                            dipilih</div>
                                     </div>
                                 </div>
+
+                                <input type="hidden" id="master_kontribusi_id" name="master_kontribusi_id"
+                                    value="{{ request('master_kontribusi_id') }}">
 
                                 <!-- Sub Kontribusi Table -->
                                 <div id="subKontribusiContainer" style="display: none;">
@@ -931,13 +876,9 @@
                                     </table>
 
                                     <div class="total-section">
-                                        <div class="total-label">TOTAL PEMBAYARAN</div>
+                                        <div class="total-label">TOTAL PEMBAYARAN:</div>
                                         <div class="total-amount" id="totalPembayaran">Rp 0</div>
-                                        <input type="hidden" id="total_pembayaran" name="total_pembayaran"
-                                            value="0">
                                     </div>
-                                    <div class="invalid-feedback" id="sub_kontribusi_error">Semua nominal pembayaran harus
-                                        diisi dengan nilai lebih dari 0</div>
                                 </div>
                             </div>
 
@@ -950,7 +891,8 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label class="form-label" for="keterangan">Keterangan</label>
-                                        <input class="form-control" id="keterangan" name="keterangan" rows="3"
+                                        <input class="form-control" id="keterangan" name="keterangan"
+                                            style="height: 38px"
                                             placeholder="Catatan tambahan tentang pembayaran ini..."></input>
                                     </div>
 
@@ -960,7 +902,7 @@
                                             <label class="file-label" for="bukti_bayar">
                                                 <i class="bi-upload"></i>
                                                 <span id="fileText">Unggah Bukti Pembayaran</span>
-                                                <span class="file-name" id="fileName"></span>
+                                                <div class="file-name" id="fileName"></div>
                                             </label>
                                             <input type="file" class="file-input" id="bukti_bayar" name="bukti_bayar"
                                                 accept="image/*" onchange="previewFile()">
@@ -995,7 +937,7 @@
             <div class="master-card">
                 <div class="master-card-header">
                     <h3 class="master-card-title">
-                        <i class="bi-grid-3x3-gap"></i>
+                        <i class="bi bi-grid-3x3-gap"></i>
                         Pilih Master Kontribusi
                     </h3>
                     <div class="master-card-subtitle">
@@ -1020,32 +962,10 @@
 
 @push('scripts')
     <script>
-        // ============================================
-        // GLOBAL VARIABLES
-        // ============================================
-        let currentSubKontribusi = [];
-        let isSubmitting = false;
+        // Pastikan fungsi navigasi selalu terdefinisi
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
 
-            if (masterKontribusiId) {
-                // Halaman input pembayaran
-                loadSubKontribusi(masterKontribusiId);
-                setupEventListeners();
-                setupDropdowns();
-            } else {
-                // Halaman pilih kontribusi
-                fetchKontribusi();
-            }
-        });
-
-        // ============================================
-        // KONTRIBUSI SELECTION PAGE FUNCTIONS
-        // ============================================
+        // Fungsi untuk halaman pilih kontribusi
         function fetchKontribusi() {
             fetch("{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}")
                 .then(response => {
@@ -1113,17 +1033,17 @@
                                 </div>
                             </div>
                             ${detailItems.length > 0 ? `
-                                                                                                                                <div class="kontribusi-card-body">
-                                                                                                                                    <ul class="kontribusi-card-details">
-                                                                                                                                        ${detailItems.map(detail => `
-                                            <li>
-                                                <span class="detail-label">${detail.label}</span>
-                                                <span class="detail-value">${detail.value}</span>
-                                            </li>
-                                        `).join('')}
-                                                                                                                                    </ul>
-                                                                                                                                </div>
-                                                                                                                            ` : ''}
+                                                                                                                                                            <div class="kontribusi-card-body">
+                                                                                                                                                                <ul class="kontribusi-card-details">
+                                                                                                                                                                    ${detailItems.map(detail => `
+                                    <li>
+                                        <span class="detail-label">${detail.label}</span>
+                                        <span class="detail-value">${detail.value}</span>
+                                    </li>
+                                `).join('')}
+                                                                                                                                                                </ul>
+                                                                                                                                                            </div>
+                                                                                                                                                        ` : ''}
                             <div class="kontribusi-card-footer">
                                 <button class="select-btn" onclick="goToInputPembayaran('${item.master_kontribusi_id}')">
                                     <i class="bi bi-arrow-right"></i>
@@ -1153,9 +1073,6 @@
                             </div>
                             <h4 class="empty-title">Gagal memuat data</h4>
                             <p class="empty-subtitle">Terjadi kesalahan saat memuat data kontribusi</p>
-                            <button type="button" onclick="fetchKontribusi()" class="btn btn-primary btn-sm mt-3">
-                                <i class="bi-arrow-repeat"></i> Muat Ulang
-                            </button>
                         </div>
                     `;
                 });
@@ -1167,7 +1084,11 @@
                 button = window.event.target.closest('.select-btn');
             }
             if (button) {
-                button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memproses...';
+                const originalContent = button.innerHTML;
+                button.innerHTML = `
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Memproses...
+                `;
                 button.disabled = true;
             }
 
@@ -1185,180 +1106,70 @@
             goBackToSelection();
         }
 
-        // ============================================
-        // FORM PAGE FUNCTIONS
-        // ============================================
+        // Fungsi untuk halaman form input pembayaran
+        let currentSubKontribusi = [];
+        let isSubmitting = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cek apakah sedang di halaman input pembayaran atau halaman pilih kontribusi
+            const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
+            if (masterKontribusiId) {
+                // Halaman input pembayaran
+                loadSubKontribusi(masterKontribusiId);
+                setupEventListeners();
+                setupDropdowns();
+            } else {
+                // Halaman pilih kontribusi
+                fetchKontribusi();
+            }
+        });
+
         function setupEventListeners() {
-            // Format rupiah saat input
+            // Recalculate total when input changes
             document.addEventListener('input', function(e) {
                 if (e.target.classList.contains('sub-kontribusi-input')) {
-                    let val = parseRupiah(e.target.value);
-                    e.target.value = val ? formatNumber(val) : '';
                     calculateTotal();
                     validateForm();
                 }
             });
 
-            // Form submit - HANYA SATU EVENT LISTENER
+            // Form submit event
             const form = document.getElementById('pembayaranForm');
             if (form) {
-                // Hapus event listener lama dengan clone node
-                const newForm = form.cloneNode(true);
-                form.parentNode.replaceChild(newForm, form);
-
-                // Pasang event listener baru
-                newForm.addEventListener('submit', submitFormHandler);
-            }
-        }
-
-        // Handler submit form yang terpusat
-        async function submitFormHandler(e) {
-            e.preventDefault();
-
-            if (isSubmitting) {
-                window.showToast('Form sedang diproses, mohon tunggu...', 'warning');
-                return;
-            }
-
-            // Validasi Jamaah khusus toast
-            const jamaahId = document.getElementById('jamaah_id')?.value;
-            if (!jamaahId) {
-                window.showToast('Pilih jamaah terlebih dahulu', 'warning');
-                document.getElementById('jamaah_search')?.classList.add('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'block');
-                return;
-            }
-
-            // Validasi lengkap
-            const errors = validateFormBeforeSubmit();
-            if (errors.length > 0) {
-                window.showToast(errors.join('\n'), 'error');
-                return;
-            }
-
-            // Konversi nilai rupiah ke angka
-            document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
-                input.value = parseRupiah(input.value);
-            });
-
-            // Submit form via AJAX
-            await submitFormViaAjax(e.target);
-        }
-
-        function validateFormBeforeSubmit() {
-            const errors = [];
-
-            // Validasi Jamaah
-            const jamaahId = document.getElementById('jamaah_id')?.value;
-            const jamaahSearch = document.getElementById('jamaah_search');
-            if (!jamaahId) {
-                errors.push('• Jamaah wajib dipilih');
-                jamaahSearch?.classList.add('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'block');
-            } else {
-                jamaahSearch?.classList.remove('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-            }
-
-            // Validasi Tanggal
-            const tglTransaksi = document.getElementById('tgl_transaksi');
-            if (!tglTransaksi?.value) {
-                errors.push('• Tanggal pembayaran wajib diisi');
-                tglTransaksi?.classList.add('is-invalid');
-                document.getElementById('tgl_transaksi_error')?.style.setProperty('display', 'block');
-            } else {
-                tglTransaksi?.classList.remove('is-invalid');
-                document.getElementById('tgl_transaksi_error')?.style.setProperty('display', 'none');
-            }
-
-            // Validasi Metode Bayar
-            const metodeBayar = document.getElementById('metode_bayar');
-            if (!metodeBayar?.value) {
-                errors.push('• Metode pembayaran wajib dipilih');
-                metodeBayar?.classList.add('is-invalid');
-                document.getElementById('metode_bayar_error')?.style.setProperty('display', 'block');
-            } else {
-                metodeBayar?.classList.remove('is-invalid');
-                document.getElementById('metode_bayar_error')?.style.setProperty('display', 'none');
-            }
-
-            // Validasi Sub Kontribusi
-            const inputs = document.querySelectorAll('.sub-kontribusi-input');
-            if (inputs.length === 0) {
-                errors.push('• Data kontribusi tidak ditemukan');
-            } else {
-                let hasValidInput = false;
-                inputs.forEach(input => {
-                    const value = parseRupiah(input.value);
-                    if (value > 0) {
-                        hasValidInput = true;
-                        input.classList.remove('is-invalid');
-                    } else {
-                        input.classList.add('is-invalid');
+                form.addEventListener('submit', function(e) {
+                    // Validasi input sebelum submit
+                    let valid = true;
+                    document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
+                        if (!input.value || parseRupiah(input.value) <= 0) {
+                            input.classList.add('is-invalid');
+                            valid = false;
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+                    if (!document.getElementById('jamaah_id').value) {
+                        valid = false;
+                        showToast('error', 'Jamaah wajib dipilih', 'Silakan pilih jamaah terlebih dahulu');
                     }
-                });
-
-                if (!hasValidInput) {
-                    errors.push('• Minimal satu nominal pembayaran harus diisi dengan nilai lebih dari 0');
-                    document.getElementById('sub_kontribusi_error')?.style.setProperty('display', 'block');
-                } else {
-                    document.getElementById('sub_kontribusi_error')?.style.setProperty('display', 'none');
-                }
-            }
-
-            return errors;
-        }
-
-        async function submitFormViaAjax(form) {
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
-
-            isSubmitting = true;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
-
-            try {
-                const formData = new FormData(form);
-
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    if (!valid) {
+                        e.preventDefault();
+                        showToast('error', 'Input tidak valid', 'Pastikan semua input terisi dan tidak kosong');
+                        return;
                     }
+                    // Ubah input ke angka sebelum submit
+                    document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
+                        input.value = parseRupiah(input.value);
+                    });
+                    // Form akan submit ke backend
                 });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    window.showToast(result.message || 'Pembayaran berhasil dicatat', 'success');
-
-                    // Reset form setelah sukses
-                    setTimeout(() => {
-                        resetForm();
-                        window.showToast('Siap untuk input pembayaran baru', 'info');
-                    }, 2000);
-                } else {
-                    throw new Error(result.message || 'Gagal menyimpan data');
-                }
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                window.showToast(error.message || 'Terjadi kesalahan koneksi', 'error');
-
-                // Kembalikan format rupiah
-                document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
-                    const val = parseRupiah(input.value);
-                    input.value = formatNumber(val);
-                });
-            } finally {
-                isSubmitting = false;
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
             }
+
+            // Validate form on input
+            document.addEventListener('input', validateForm);
         }
 
         function setupDropdowns() {
+            // Jamaah dropdown
             const jamaahSearch = document.getElementById('jamaah_search');
             if (!jamaahSearch) return;
 
@@ -1367,19 +1178,14 @@
 
             jamaahSearch.addEventListener('input', function(e) {
                 clearTimeout(jamaahSearchTimeout);
-                const query = e.target.value.trim();
-
-                if (query.length >= 2) {
-                    jamaahSearchTimeout = setTimeout(() => searchJamaah(query), 300);
-                } else if (query.length === 0) {
-                    jamaahOptions.classList.remove('show');
-                }
+                jamaahSearchTimeout = setTimeout(() => {
+                    searchJamaah(e.target.value);
+                }, 300);
             });
 
             jamaahSearch.addEventListener('focus', function() {
-                const query = this.value.trim();
-                if (query.length >= 2) {
-                    searchJamaah(query);
+                if (this.value.length >= 2) {
+                    searchJamaah(this.value);
                 }
             });
 
@@ -1397,8 +1203,14 @@
             const optionsContainer = document.getElementById('jamaah_options');
             if (!optionsContainer) return;
 
+            if (query.length < 2) {
+                optionsContainer.innerHTML = '<div class="no-options">Ketik minimal 2 karakter</div>';
+                optionsContainer.classList.add('show');
+                return;
+            }
+
             optionsContainer.innerHTML =
-                '<div class="loading-options"><span class="spinner-border spinner-border-sm me-2"></span>Mencari...</div>';
+                '<div class="loading-options"><i class="bi-spinner bi-spin"></i> Mencari...</div>';
             optionsContainer.classList.add('show');
 
             try {
@@ -1407,13 +1219,14 @@
                 );
                 const data = await response.json();
 
-                if (data.success && data.data && data.data.length > 0) {
+                if (data.success && data.data.length > 0) {
                     optionsContainer.innerHTML = data.data.map(jamaah => `
-                        <div class="option-item" onclick='selectJamaah("${jamaah.jamaah_id}", ${JSON.stringify(escapeHtml(jamaah.nama_lengkap))}, ${JSON.stringify(escapeHtml(jamaah.nik || ''))}, ${JSON.stringify(escapeHtml(jamaah.telepon || ''))}, ${JSON.stringify(escapeHtml(jamaah.alamat || ''))})'>
-                            <strong>${escapeHtml(jamaah.nama_lengkap)}</strong><br>
-                            <small>${escapeHtml(jamaah.nik || 'No NIK')} | ${escapeHtml(jamaah.telepon || 'No Telp')}</small>
-                        </div>
-                    `).join('');
+                    <div class="option-item" 
+                         onclick="selectJamaah('${jamaah.jamaah_id}', '${escapeHtml(jamaah.nama_lengkap)}', '${escapeHtml(jamaah.nik || '')}', '${escapeHtml(jamaah.telepon || '')}', '${escapeHtml(jamaah.alamat || '')}')">
+                        <strong>${escapeHtml(jamaah.nama_lengkap)}</strong><br>
+                        <small>${escapeHtml(jamaah.nik || 'No NIK')} | ${escapeHtml(jamaah.telepon || 'No Telp')}</small>
+                    </div>
+                `).join('');
                 } else {
                     optionsContainer.innerHTML = '<div class="no-options">Tidak ditemukan jamaah</div>';
                 }
@@ -1426,9 +1239,6 @@
         function selectJamaah(id, nama, nik, telepon, alamat) {
             document.getElementById('jamaah_id').value = id;
             document.getElementById('jamaah_search').value = nama;
-            document.getElementById('jamaah_search').classList.remove('is-invalid');
-            document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-
             const optionsContainer = document.getElementById('jamaah_options');
             if (optionsContainer) {
                 optionsContainer.classList.remove('show');
@@ -1458,120 +1268,103 @@
         async function loadSubKontribusi(masterKontribusiId) {
             const container = document.getElementById('subKontribusiContainer');
             const tbody = document.getElementById('subKontribusiBody');
-
             if (!container || !tbody) return;
-
             container.style.display = 'block';
             tbody.innerHTML =
                 '<tr><td colspan="5" class="text-center"><div class="loading-container"><div class="spinner-border text-primary"></div><p class="mt-2">Memuat data...</p></div></td></tr>';
-
             try {
                 const response = await fetch(
                     `{{ route('admin.kelompok.api.input-pembayaran.sub-kontribusi-options', '') }}/${masterKontribusiId}`
                 );
                 const data = await response.json();
-                console.log('Sub Kontribusi Data:', data);
                 if (data.success && Object.keys(data.data).length > 0) {
                     currentSubKontribusi = data.data;
-                    renderSubKontribusiTable(data.data);
+                    const levelLabels = {
+                        pusat: 'Pusat',
+                        daerah: 'Daerah',
+                        desa: 'Desa',
+                        kelompok: 'Kelompok'
+                    };
+                    const levelOrder = ['pusat', 'daerah', 'desa', 'kelompok'];
+                    let html = '';
+                    let rowNum = 1;
+                    levelOrder.forEach(level => {
+                        if (data.data[level] && data.data[level].length > 0) {
+                            html +=
+                                `<tr><th colspan="5" style="background:#f8f9fa;border-bottom: 1px solid #e0e0e0;padding: 10px 15px;">${levelLabels[level]}</th></tr>`;
+                            data.data[level].forEach(item => {
+                                html += `
+                                <tr>
+                                    <td>${rowNum++}</td>
+                                    <td>${escapeHtml(item.nama_kontribusi)}</td>
+                                    <td>
+                                        <span style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: ${item.jenis === 'percentage' ? '#d1ecf1' : '#d4edda'}; color: ${item.jenis === 'percentage' ? '#0c5460' : '#155724'}">
+                                            ${item.jenis === 'percentage' ? 'Persentase' : 'Nominal'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        ${item.jenis === 'percentage' ? item.value + '%' : 'Rp ' + formatNumber(item.value)}
+                                    </td>
+                                    <td>
+                                        <div class="rupiah-input">
+                                            <span class="rupiah-symbol">Rp.</span>
+                                            <input type="text" class="form-control sub-kontribusi-input" 
+                                                name="sub_kontribusi[${rowNum-2}][input_value]"
+                                                data-sub-kat-id="${item.sub_kat_id}"
+                                                value="${item.jenis === 'percentage' ? '0' : formatNumber(item.value)}"
+                                                 autocomplete="off">
+                                            <input type="hidden" 
+                                                name="sub_kontribusi[${rowNum-2}][sub_kat_id]" 
+                                                value="${item.sub_kat_id}">
+                                        </div>
+                                    </td>
+                                </tr>
+                                `;
+                            });
+                        }
+                    });
+                    tbody.innerHTML = html;
+                    calculateTotal();
                 } else {
                     tbody.innerHTML =
                         '<tr><td colspan="5" class="text-center py-4">Tidak ada data sub kontribusi</td></tr>';
                 }
             } catch (error) {
                 console.error('Error loading sub kontribusi:', error);
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-4 text-danger">
-                            <i class="bi-exclamation-triangle"></i> Gagal memuat data
-                            <button type="button" onclick="loadSubKontribusi('${masterKontribusiId}')" class="btn btn-sm btn-outline-primary mt-2">
-                                <i class="bi-arrow-repeat"></i> Muat Ulang
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML =
+                    '<tr><td colspan="5" class="text-center py-4 text-danger">Gagal memuat data</td></tr>';
             }
         }
 
-        function renderSubKontribusiTable(data) {
-            const tbody = document.getElementById('subKontribusiBody');
-            const levelLabels = {
-                pusat: 'Pusat',
-                daerah: 'Daerah',
-                desa: 'Desa',
-                kelompok: 'Kelompok'
-            };
-            const levelOrder = ['pusat', 'daerah', 'desa', 'kelompok'];
-            let html = '';
-            let rowNum = 1;
-
-            levelOrder.forEach(level => {
-                if (data[level] && data[level].length > 0) {
-                    html +=
-                        `<tr><th colspan="5" style="background:#f8f9fa;border-bottom: 1px solid #e0e0e0;padding: 10px 15px;">${levelLabels[level]}</th></tr>`;
-
-                    data[level].forEach(item => {
-                        const defaultValue = item.jenis === 'percentage' ? '0' : formatNumber(item.value);
-                        html += `
-                            <tr>
-                                <td>${rowNum++}</td>
-                                <td>${escapeHtml(item.nama_kontribusi)}</td>
-                                <td>
-                                    <span style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: ${item.jenis === 'percentage' ? '#d1ecf1' : '#d4edda'}; color: ${item.jenis === 'percentage' ? '#0c5460' : '#155724'}">
-                                        ${item.jenis === 'percentage' ? 'Persentase' : 'Nominal'}
-                                    </span>
-                                </td>
-                                <td>
-                                    ${item.jenis === 'percentage' ? item.value + '%' : 'Rp ' + formatNumber(item.value)}
-                                </td>
-                                <td>
-                                    <div class="rupiah-input">
-                                        <span class="rupiah-symbol">Rp</span>
-                                        <input type="text" class="form-control sub-kontribusi-input" 
-                                            name="sub_kontribusi[${rowNum-2}][input_value]"
-                                            data-sub-kat-id="${item.id}"
-                                            value="${defaultValue}"
-                                            autocomplete="off">
-                                        <input type="hidden" 
-                                            name="sub_kontribusi[${rowNum-2}][id]" 
-                                            value="${item.id}">
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-            });
-
-            tbody.innerHTML = html;
-            calculateTotal();
-            validateForm();
-        }
-
         function parseRupiah(str) {
-            if (!str && str !== 0) return 0;
-            // Hapus semua karakter non-digit
-            const cleaned = str.toString().replace(/[^\d]/g, '');
-            return parseInt(cleaned) || 0;
+            return Number((str || '').replace(/[^\d]/g, '')) || 0;
         }
 
         function calculateTotal() {
             const totalElement = document.getElementById('totalPembayaran');
             if (!totalElement) return;
-
             let total = 0;
             document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
                 const value = parseRupiah(input.value);
-                if (!isNaN(value) && value > 0) {
-                    total += value;
-                }
+                total += value;
             });
-
             totalElement.textContent = 'Rp ' + formatNumber(total);
-            // Set hidden input agar ikut terkirim
-            const totalInput = document.getElementById('total_pembayaran');
-            if (totalInput) totalInput.value = total;
         }
+        // Format input saat user ketik (rupiah)
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('sub-kontribusi-input')) {
+                let val = parseRupiah(e.target.value);
+                e.target.value = val ? formatNumber(val) : '';
+                calculateTotal();
+            }
+        });
+
+        // Saat submit, ubah semua input ke angka (agar backend dapat angka)
+        document.getElementById('pembayaranForm')?.addEventListener('submit', function(e) {
+            document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
+                input.value = parseRupiah(input.value);
+            });
+        });
 
         function validateForm() {
             const jamaahId = document.getElementById('jamaah_id')?.value;
@@ -1579,16 +1372,80 @@
 
             if (!submitBtn) return;
 
-            let isValid = false;
-
+            // Check if all required inputs are filled
+            let allInputsFilled = true;
             if (jamaahId) {
                 const inputs = document.querySelectorAll('.sub-kontribusi-input');
-                if (inputs.length > 0) {
-                    isValid = Array.from(inputs).some(input => parseRupiah(input.value) > 0);
-                }
+                inputs.forEach(input => {
+                    if (!input.value || parseFloat(input.value) <= 0) {
+                        allInputsFilled = false;
+                    }
+                });
             }
 
-            submitBtn.disabled = !isValid;
+            submitBtn.disabled = !jamaahId || !allInputsFilled;
+        }
+
+        async function submitForm() {
+            if (isSubmitting) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) return;
+
+            const originalText = submitBtn.innerHTML;
+
+            // Validate required inputs in sub kontribusi
+            let hasEmptyInput = false;
+            document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
+                if (!input.value || parseFloat(input.value) <= 0) {
+                    hasEmptyInput = true;
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (hasEmptyInput) {
+                showToast('warning', 'Peringatan', 'Harap isi semua input pembayaran');
+                return;
+            }
+
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+
+            try {
+                const formData = new FormData(document.getElementById('pembayaranForm'));
+
+                const response = await fetch(
+                    '{{ route('admin.kelompok.input-pembayaran.store') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('success', 'Berhasil', 'Pembayaran berhasil dicatat');
+
+                    // Reset form after successful submission
+                    setTimeout(() => {
+                        resetForm();
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || 'Terjadi kesalahan');
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showToast('error', 'Error', 'Gagal mencatat pembayaran: ' + error.message);
+            } finally {
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
         }
 
         function previewFile() {
@@ -1603,14 +1460,14 @@
 
                 // Validate file size (max 2MB)
                 if (file.size > 2 * 1024 * 1024) {
-                    window.showToast('Ukuran file maksimal 2MB', 'error');
+                    showToast('error', 'Error', 'Ukuran file maksimal 2MB');
                     fileInput.value = '';
                     return;
                 }
 
                 // Validate file type
                 if (!file.type.match('image.*')) {
-                    window.showToast('File harus berupa gambar', 'error');
+                    showToast('error', 'Error', 'File harus berupa gambar');
                     fileInput.value = '';
                     return;
                 }
@@ -1643,38 +1500,19 @@
 
         function resetForm() {
             const form = document.getElementById('pembayaranForm');
-            if (form) {
-                form.reset();
+            if (form) form.reset();
 
-                // Set default values
-                const tglTransaksi = document.getElementById('tgl_transaksi');
-                if (tglTransaksi) tglTransaksi.value = '{{ date('Y-m-d') }}';
-
-                const metodeBayar = document.getElementById('metode_bayar');
-                if (metodeBayar) metodeBayar.value = 'TUNAI';
-            }
-
-            // Reset jamaah
             document.getElementById('jamaah_id').value = '';
             document.getElementById('jamaah_search').value = '';
-            document.getElementById('jamaah_search').classList.remove('is-invalid');
-            document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-
             const jamaahInfo = document.getElementById('jamaahInfo');
             if (jamaahInfo) jamaahInfo.style.display = 'none';
 
-            // Remove invalid classes
-            document.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
+            const tbody = document.getElementById('subKontribusiBody');
+            if (tbody) tbody.innerHTML = '';
 
-            // Reset total
             document.getElementById('totalPembayaran').textContent = 'Rp 0';
-
-            // Disable submit button
+            document.getElementById('tgl_transaksi').value = '{{ date('Y-m-d') }}';
             document.getElementById('submitBtn').disabled = true;
-
-            // Remove image
             removeImage();
 
             // Reload sub kontribusi
@@ -1683,7 +1521,7 @@
                 loadSubKontribusi(masterKontribusiId);
             }
 
-            window.showToast('Form telah direset', 'info');
+            showToast('info', 'Reset', 'Form telah direset');
         }
 
         function escapeHtml(text) {
@@ -1694,7 +1532,7 @@
         }
 
         function formatNumber(number) {
-            if (!number && number !== 0) return '0';
+            if (!number) return '0';
             return new Intl.NumberFormat('id-ID').format(number);
         }
 
@@ -1727,6 +1565,9 @@
 
             container.appendChild(toast);
 
+            const existingToasts = container.children.length - 1;
+            const delay = existingToasts * 300;
+
             setTimeout(() => {
                 toast.classList.add('show');
 
@@ -1738,19 +1579,7 @@
                         }
                     }, 250);
                 }, 3000);
-            }, 10);
+            }, delay);
         }
-
-        // ============================================
-        // EXPOSE FUNCTIONS TO GLOBAL SCOPE
-        // ============================================
-        window.goToInputPembayaran = goToInputPembayaran;
-        window.goBackToSelection = goBackToSelection;
-        window.changeKontribusi = changeKontribusi;
-        window.selectJamaah = selectJamaah;
-        window.previewFile = previewFile;
-        window.removeImage = removeImage;
-        window.resetForm = resetForm;
-        window.fetchKontribusi = fetchKontribusi;
     </script>
 @endpush

@@ -118,16 +118,28 @@ class TransaksiController extends Controller
     {
         try {
             $subKontribusis = DB::table('sub_kontribusi')
-                ->where('master_kontribusi_id', $masterKontribusiId)
+                ->where('kode_kontribusi', $masterKontribusiId)
                 ->where('is_active', true)
-                ->where('level', 'Kelompok')
-                ->select('sub_kat_id', 'nama_kontribusi', 'jenis', 'value')
-                ->orderBy('nama_kontribusi')
+                ->select('id', 'kode_kontribusi', 'nama_kontribusi', 'jenis', 'value', 'level')
+                ->orderBy('id')
                 ->get();
+
+            // Kelompokkan berdasarkan level (pusat, daerah, desa, kelompok)
+            $levelOrder = ['pusat', 'daerah', 'desa', 'kelompok'];
+            $grouped = collect($subKontribusis)->groupBy(function ($item) {
+                return strtolower($item->level);
+            });
+
+            $result = [];
+            foreach ($levelOrder as $level) {
+                if ($grouped->has($level)) {
+                    $result[$level] = $grouped[$level]->values();
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'data' => $subKontribusis
+                'data' => $result
             ]);
         } catch (\Exception $e) {
             Log::error('Error getting sub kontribusi options: ' . $e->getMessage());
@@ -140,13 +152,14 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
 
             $validated = $request->validate([
                 'jamaah_id' => 'required|exists:jamaah,jamaah_id',
-                'master_kontribusi_id' => 'required|exists:master_kontribusi,master_kontribusi_id',
+                'master_kontribusi_id' => 'required',
                 'tgl_transaksi' => 'required|date',
                 'metode_bayar' => 'required|in:TUNAI,TRANSFER,QRIS,LAINNYA',
                 'keterangan' => 'nullable|string',
@@ -165,11 +178,11 @@ class TransaksiController extends Controller
 
                 // Ambil data sub kontribusi untuk disimpan ke JSON
                 $subDetail = DB::table('sub_kontribusi')
-                    ->where('sub_kat_id', $sub['sub_kat_id'])
+                    ->where('id', $sub['id'])
                     ->first();
 
                 $subKontribusiData[] = [
-                    'sub_kat_id' => $sub['sub_kat_id'],
+                    'id' => $sub['id'],
                     'nama_kontribusi' => $subDetail->nama_kontribusi,
                     'jenis' => $subDetail->jenis,
                     'value' => $subDetail->value,

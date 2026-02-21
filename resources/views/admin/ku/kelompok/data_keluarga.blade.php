@@ -5,10 +5,9 @@
 @section('icon-page-title', 'bi-house-door')
 
 @section('content')
-<div class="master-container">
-    <div class="card">
-        <div class="card-header">
-            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+    <div class="master-container">
+        <div class="card">
+            <div class="card-header">
                 <h3 class="card-title">Data Keluarga</h3>
                 <div>
                     <button class="btn btn-print" onclick="KeluargaApp.printData()">
@@ -19,201 +18,200 @@
                     </button>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <!-- Filter Controls -->
-            <div class="table-controls">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px; font-size:13px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input"
-                        placeholder="Cari nama keluarga, alamat...">
-                    <i class="bi-search search-icon"></i>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th width="50">No</th>
-                                <th>Nama Keluarga</th>
-                                <th>Kepala Keluarga</th>
-                                <th>Alamat</th>
-                                <th width="150">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- States -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi-people"></i>
-                <h4>Tidak ada data keluarga</h4>
-            </div>
-
-            <div id="loadingState" class="empty-state">
-                <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
-                </div>
-                <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination" id="pagination" style="display: none;">
-                <button class="page-btn" id="prevPage">
-                    <i class="bi-chevron-left"></i> Prev
-                </button>
-                <span class="page-info" id="pageInfo">Page 1 of 1</span>
-                <button class="page-btn" id="nextPage">
-                    Next <i class="bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ---------- MODALS ---------- -->
-
-<!-- Create/Edit Modal -->
-<div class="modal" id="formModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle">Tambah Keluarga</h3>
-            <button class="modal-close" onclick="KeluargaApp.hideFormModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="keluargaForm">
-                <input type="hidden" id="editKeluargaId">
-                <input type="hidden" id="kepalaKeluargaId" name="kepala_keluarga_id">
-
-                <div class="form-group">
-                    <label class="form-label">Nama Keluarga *</label>
-                    <input type="text" class="form-control" id="namaKeluarga" name="nama_keluarga" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Kepala Keluarga *</label>
-                    <div class="searchable-dropdown">
-                        <div class="dropdown-search-container">
-                            <input style="width: 95%;margin-right: 5px;" type="text"
-                                class="form-control dropdown-search-input" id="kepalaKeluargaSearch"
-                                placeholder="Ketik untuk mencari jamaah..." autocomplete="off">
-                            <i class="bi-search dropdown-search-icon"></i>
-                        </div>
-                        <div class="dropdown-options" id="kepalaKeluargaOptions"
-                            style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
-                        </div>
+            <div class="card-body">
+                <!-- Filter Controls -->
+                <div class="table-controls">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input"
+                            placeholder="Cari nama keluarga, alamat...">
+                        <i class="bi-search search-icon"></i>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Alamat</label>
-                    <textarea class="form-control" id="alamat" name="alamat" rows="3"></textarea>
+                <!-- Table -->
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="50">No</th>
+                                    <th>Nama Keluarga</th>
+                                    <th>Kepala Keluarga</th>
+                                    <th>Alamat</th>
+                                    <th width="150">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="KeluargaApp.hideFormModal()">Batal</button>
-            <button class="btn btn-success" onclick="KeluargaApp.submitForm()">Simpan</button>
+
+                <!-- States -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi-people"></i>
+                    <h4>Tidak ada data keluarga</h4>
+                </div>
+
+                <div id="loadingState" class="empty-state">
+                    <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
+                    </div>
+                    <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="page-btn" id="prevPage">
+                        <i class="bi-chevron-left"></i> Prev
+                    </button>
+                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                    <button class="page-btn" id="nextPage">
+                        Next <i class="bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Detail Modal -->
-<div class="modal" id="detailModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Detail Keluarga</h3>
-            <button class="modal-close" onclick="KeluargaApp.hideDetailModal()">&times;</button>
-        </div>
-        <div class="modal-body" id="detailBody">
-            <!-- Data akan diisi oleh JavaScript -->
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="KeluargaApp.hideDetailModal()">Tutup</button>
-        </div>
-    </div>
-</div>
+    <!-- ---------- MODALS ---------- -->
 
-<!-- Delete Confirmation Modal -->
-<div class="modal" id="deleteModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Hapus Keluarga</h3>
-            <button class="modal-close" onclick="KeluargaApp.hideDeleteModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p>Apakah Anda yakin ingin menghapus keluarga <strong id="deleteItemName"></strong>?</p>
-            <p class="form-text">Data yang dihapus tidak dapat dikembalikan. Semua anggota keluarga juga akan terhapus.
-            </p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="KeluargaApp.hideDeleteModal()">Batal</button>
-            <button class="btn btn-delete" onclick="KeluargaApp.confirmDelete()">Hapus</button>
-        </div>
-    </div>
-</div>
+    <!-- Create/Edit Modal -->
+    <div class="modal" id="formModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Tambah Keluarga</h3>
+                <button class="modal-close" onclick="KeluargaApp.hideFormModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="keluargaForm">
+                    <input type="hidden" id="editKeluargaId">
+                    <input type="hidden" id="kepalaKeluargaId" name="kepala_keluarga_id">
 
-<!-- Tambah Anggota Modal -->
-<div class="modal" id="anggotaModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Tambah Anggota Keluarga</h3>
-            <button class="modal-close" onclick="KeluargaApp.hideAnggotaModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="anggotaForm">
-                <input type="hidden" id="anggotaKeluargaId">
+                    <div class="form-group">
+                        <label class="form-label">Nama Keluarga *</label>
+                        <input type="text" class="form-control" id="namaKeluarga" name="nama_keluarga" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Pilih Jamaah *</label>
-                    <div class="searchable-dropdown" style="">
-                        <div class="dropdown-search-container" style="display: flex;gap: 5px; align-item:center;">
-                            <input type="text" class="form-control dropdown-search-input" id="anggotaJamaahSearch"
-                                placeholder="Ketik untuk mencari jamaah..." autocomplete="off"
-                                style="display: none;display: block;width: 95%;margin-right: 5px;">
-                            <i class="bi-search dropdown-search-icon"></i>
-                        </div>
-                        <div class="dropdown-options" id="anggotaJamaahOptions"
-                            style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
+                    <div class="form-group">
+                        <label class="form-label">Kepala Keluarga *</label>
+                        <div class="searchable-dropdown">
+                            <div class="dropdown-search-container">
+                                <input style="width: 95%;margin-right: 5px;" type="text"
+                                    class="form-control dropdown-search-input" id="kepalaKeluargaSearch"
+                                    placeholder="Ketik untuk mencari jamaah..." autocomplete="off">
+                                <i class="bi-search dropdown-search-icon"></i>
+                            </div>
+                            <div class="dropdown-options" id="kepalaKeluargaOptions"
+                                style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
+                            </div>
                         </div>
                     </div>
-                    <input type="hidden" id="anggotaJamaahId">
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Status Hubungan *</label>
-                    <select class="form-select" id="statusHubungan" required>
-                        <option value="">Pilih Status</option>
-                        <option value="Istri">Istri</option>
-                        <option value="Anak">Anak</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Urutan</label>
-                    <input type="number" class="form-control" id="urutan" min="1" value="1">
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="KeluargaApp.hideAnggotaModal()">Batal</button>
-            <button class="btn btn-success" onclick="KeluargaApp.submitAnggotaForm()">Simpan</button>
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <textarea class="form-control" id="alamat" name="alamat" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="KeluargaApp.hideFormModal()">Batal</button>
+                <button class="btn btn-success" onclick="KeluargaApp.submitForm()">Simpan</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Keluarga</h3>
+                <button class="modal-close" onclick="KeluargaApp.hideDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="detailBody">
+                <!-- Data akan diisi oleh JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="KeluargaApp.hideDetailModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Hapus Keluarga</h3>
+                <button class="modal-close" onclick="KeluargaApp.hideDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus keluarga <strong id="deleteItemName"></strong>?</p>
+                <p class="form-text">Data yang dihapus tidak dapat dikembalikan. Semua anggota keluarga juga akan terhapus.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="KeluargaApp.hideDeleteModal()">Batal</button>
+                <button class="btn btn-delete" onclick="KeluargaApp.confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tambah Anggota Modal -->
+    <div class="modal" id="anggotaModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Tambah Anggota Keluarga</h3>
+                <button class="modal-close" onclick="KeluargaApp.hideAnggotaModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="anggotaForm">
+                    <input type="hidden" id="anggotaKeluargaId">
+
+                    <div class="form-group">
+                        <label class="form-label">Pilih Jamaah *</label>
+                        <div class="searchable-dropdown" style="">
+                            <div class="dropdown-search-container" style="display: flex;gap: 5px; align-item:center;">
+                                <input type="text" class="form-control dropdown-search-input" id="anggotaJamaahSearch"
+                                    placeholder="Ketik untuk mencari jamaah..." autocomplete="off"
+                                    style="display: none;display: block;width: 95%;margin-right: 5px;">
+                                <i class="bi-search dropdown-search-icon"></i>
+                            </div>
+                            <div class="dropdown-options" id="anggotaJamaahOptions"
+                                style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
+                            </div>
+                        </div>
+                        <input type="hidden" id="anggotaJamaahId">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status Hubungan *</label>
+                        <select class="form-select" id="statusHubungan" required>
+                            <option value="">Pilih Status</option>
+                            <option value="Istri">Istri</option>
+                            <option value="Anak">Anak</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Urutan</label>
+                        <input type="number" class="form-control" id="urutan" min="1" value="1">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="KeluargaApp.hideAnggotaModal()">Batal</button>
+                <button class="btn btn-success" onclick="KeluargaApp.submitAnggotaForm()">Simpan</button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -713,7 +711,7 @@
             const optionsContainer = document.getElementById('kepalaKeluargaOptions');
 
             // Event untuk pencarian real-time
-            searchInput.addEventListener('input', function (e) {
+            searchInput.addEventListener('input', function(e) {
                 const query = e.target.value.trim();
 
                 clearTimeout(kepalaKeluargaSearchTimeout);
@@ -732,7 +730,7 @@
             });
 
             // Event untuk focus
-            searchInput.addEventListener('focus', function () {
+            searchInput.addEventListener('focus', function() {
                 const query = this.value.trim();
                 if (query.length >= 2) {
                     searchJamaahOptions(query, 'kepalaKeluargaOptions', 'selectKepalaKeluarga');
@@ -740,7 +738,7 @@
             });
 
             // Prevent form submission on Enter in search
-            searchInput.addEventListener('keydown', function (e) {
+            searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const firstOption = optionsContainer.querySelector('.option-item');
@@ -759,7 +757,7 @@
             const optionsContainer = document.getElementById('anggotaJamaahOptions');
 
             // Event untuk pencarian real-time
-            searchInput.addEventListener('input', function (e) {
+            searchInput.addEventListener('input', function(e) {
                 const query = e.target.value.trim();
 
                 clearTimeout(anggotaJamaahSearchTimeout);
@@ -778,7 +776,7 @@
             });
 
             // Event untuk focus
-            searchInput.addEventListener('focus', function () {
+            searchInput.addEventListener('focus', function() {
                 const query = this.value.trim();
                 if (query.length >= 2) {
                     searchJamaahFamOptions(query, 'anggotaJamaahOptions', 'selectAnggotaJamaah');
@@ -786,7 +784,7 @@
             });
 
             // Prevent form submission on Enter in search
-            searchInput.addEventListener('keydown', function (e) {
+            searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const firstOption = optionsContainer.querySelector('.option-item');
@@ -958,7 +956,7 @@
         function setupEventListeners() {
             // Search dengan debounce
             let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function (e) {
+            document.getElementById('searchInput').addEventListener('input', function(e) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     searchQuery = e.target.value.trim();
@@ -968,44 +966,44 @@
             });
 
             // Per page
-            document.getElementById('perPageSelect').addEventListener('change', function (e) {
+            document.getElementById('perPageSelect').addEventListener('change', function(e) {
                 perPage = parseInt(e.target.value) || 10;
                 currentPage = 1; // Reset ke halaman 1
                 loadKeluargaData();
             });
 
             // Pagination buttons
-            document.getElementById('prevPage').addEventListener('click', function () {
+            document.getElementById('prevPage').addEventListener('click', function() {
                 if (currentPage > 1) {
                     goToPage(currentPage - 1);
                 }
             });
 
-            document.getElementById('nextPage').addEventListener('click', function () {
+            document.getElementById('nextPage').addEventListener('click', function() {
                 if (currentPage < totalPages) {
                     goToPage(currentPage + 1);
                 }
             });
 
             // Modal backdrop clicks
-            document.getElementById('formModal').addEventListener('click', function (e) {
+            document.getElementById('formModal').addEventListener('click', function(e) {
                 if (e.target === this) hideFormModal();
             });
 
-            document.getElementById('detailModal').addEventListener('click', function (e) {
+            document.getElementById('detailModal').addEventListener('click', function(e) {
                 if (e.target === this) hideDetailModal();
             });
 
-            document.getElementById('deleteModal').addEventListener('click', function (e) {
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
                 if (e.target === this) hideDeleteModal();
             });
 
-            document.getElementById('anggotaModal').addEventListener('click', function (e) {
+            document.getElementById('anggotaModal').addEventListener('click', function(e) {
                 if (e.target === this) hideAnggotaModal();
             });
 
             // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
+            document.addEventListener('click', function(e) {
                 const kepalaOptions = document.getElementById('kepalaKeluargaOptions');
                 const kepalaSearch = document.getElementById('kepalaKeluargaSearch');
                 const anggotaOptions = document.getElementById('anggotaJamaahOptions');
@@ -1062,7 +1060,7 @@
         // ============================================================================
         // START APP
         // ============================================================================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
 
             // Expose ke global scope
@@ -1073,7 +1071,7 @@
             window.showAnggotaModal = showAnggotaModal;
 
             // Debug
-            window.debugPagination = function () {
+            window.debugPagination = function() {
                 console.log('Pagination State:', {
                     currentPage,
                     totalPages,
@@ -1083,6 +1081,5 @@
                 });
             };
         });
-
     </script>
 @endpush

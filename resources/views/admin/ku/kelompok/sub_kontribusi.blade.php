@@ -5,176 +5,172 @@
 @section('icon-page-title', 'bi-list-ul')
 
 @section('content')
-<div class="master-container">
-    <div class="card">
-        <div class="card-header">
-            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+    <div class="master-container">
+        <div class="card">
+            <div class="card-header">
                 <h3 class="card-title">Sub Kontribusi</h3>
                 <button class="btn btn-primary" id="addBtn" onclick="SubKontribusiApp.showFormModal()"
                     style="display: none;">
                     <i class="bi-plus"></i> Tambah Sub Kontribusi
                 </button>
             </div>
-        </div>
-        <div class="card-body">
-            <!-- Table Controls -->
-            <div class="table-controls" id="tableControls">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="perPageSelect" class="form-select"
-                        style="width:auto; padding: 6px 12px; font-size:13px;">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <select id="masterFilter" class="form-select" style="width: 200px; padding: 7px 12px;">
-                        <option value="">Pilih Kategori</option>
-                    </select>
-                </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, keterangan...">
-                    <i class="bi-search search-icon"></i>
-                </div>
-            </div>
-
-            <!-- Initial State -->
-            <div id="initialState" class="empty-state">
-                <i class="bi-filter-circle"></i>
-                <h4>Pilih Kategori Kontribusi Terlebih Dahulu</h4>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container" id="tableSection" style="display: none;">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th width="50">No</th>
-                                <th>Nama Sub Kontribusi</th>
-                                <th>Jenis</th>
-                                <th>Nilai</th>
-                                <th>Status</th>
-                                <th>Keterangan</th>
-                                <th width="120">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- States -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi-list-ul"></i>
-                <p>Belum ada data sub kontribusi</p>
-            </div>
-
-            <div id="loadingState" class="empty-state" style="display: none;">
-                <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
-                </div>
-                <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination" id="pagination" style="display: none;">
-                <button class="page-btn" id="prevPage">
-                    <i class="bi-chevron-left"></i> Prev
-                </button>
-                <span class="page-info" id="pageInfo">Halaman 1 dari 1</span>
-                <button class="page-btn" id="nextPage">
-                    Next <i class="bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ---------- MODALS ---------- -->
-
-<!-- Form Modal -->
-<div class="modal" id="formModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle">Tambah Sub Kontribusi</h3>
-            <button class="modal-close" onclick="SubKontribusiApp.hideFormModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="kontribusiForm">
-                <input type="hidden" id="editId">
-                <input type="hidden" id="currentMasterId">
-
-                <div class="form-group">
-                    <label class="form-label">Kategori Kontribusi *</label>
-                    <select class="form-select" id="master_kontribusi_id" name="master_kontribusi_id" required>
-                        <option value="">Pilih Kategori</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Nama Sub Kontribusi *</label>
-                    <input type="text" class="form-control" id="nama_kontribusi" name="nama_kontribusi" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Jenis Nilai *</label>
-                        <select class="form-select" id="jenis" name="jenis" required
-                            onchange="SubKontribusiApp.toggleValuePrefix()">
-                            <option value="">Pilih Jenis</option>
-                            <option value="nominal">Nominal (Rp)</option>
-                            <option value="percentage">Persentase (%)</option>
+            <div class="card-body">
+                <!-- Table Controls -->
+                <div class="table-controls" id="tableControls">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <select id="masterFilter" class="form-select" style="width: 150px;">
+                            <option value="">Pilih Kategori</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Nilai *</label>
-                        <div class="value-input-group">
-                            <input type="number" class="form-control" id="value" name="value" step="1" min="0"
-                                style="width:94%;" required>
-                            <span class="value-prefix" id="valuePrefix">Rp</span>
-                        </div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, telepon...">
+                        <i class="bi-search search-icon"></i>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Keterangan</label>
-                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                <!-- Initial State -->
+                <div id="initialState" class="empty-state">
+                    <i class="bi-filter-circle"></i>
+                    <h4>Pilih Kategori Kontribusi Terlebih Dahulu</h4>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Status *</label>
-                    <select class="form-select" id="is_active" name="is_active" required>
-                        <option value="1">Aktif</option>
-                        <option value="0">Tidak Aktif</option>
-                    </select>
+                <!-- Table -->
+                <div class="table-container" id="tableSection" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="50">No</th>
+                                    <th>Nama Sub Kontribusi</th>
+                                    <th>Jenis</th>
+                                    <th>Nilai</th>
+                                    <th>Status</th>
+                                    <th>Keterangan</th>
+                                    <th width="120">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="SubKontribusiApp.hideFormModal()">Batal</button>
-            <button class="btn btn-success" onclick="SubKontribusiApp.submitForm()">Simpan</button>
-        </div>
-    </div>
-</div>
 
-<!-- Delete Modal -->
-<div class="modal" id="deleteModal">
-    <div class="modal-dialog">
-        <div class="modal-header">
-            <h3 class="modal-title">Hapus Sub Kontribusi</h3>
-            <button class="modal-close" onclick="SubKontribusiApp.hideDeleteModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p>Apakah Anda yakin ingin menghapus sub kontribusi <strong id="deleteItemName"></strong>?</p>
-            <p class="form-text">Data yang dihapus tidak dapat dikembalikan.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" onclick="SubKontribusiApp.hideDeleteModal()">Batal</button>
-            <button class="btn btn-delete" onclick="SubKontribusiApp.confirmDelete()">Hapus</button>
+                <!-- States -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi-list-ul"></i>
+                    <p>Belum ada data sub kontribusi</p>
+                </div>
+
+                <div id="loadingState" class="empty-state" style="display: none;">
+                    <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
+                    </div>
+                    <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="page-btn" id="prevPage">
+                        <i class="bi-chevron-left"></i> Prev
+                    </button>
+                    <span class="page-info" id="pageInfo">Halaman 1 dari 1</span>
+                    <button class="page-btn" id="nextPage">
+                        Next <i class="bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- ---------- MODALS ---------- -->
+    <!-- Form Modal -->
+    <div class="modal" id="formModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Tambah Sub Kontribusi</h3>
+                <button class="modal-close" onclick="SubKontribusiApp.hideFormModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="kontribusiForm">
+                    <input type="hidden" id="editId">
+                    <input type="hidden" id="currentMasterId">
+
+                    <div class="form-group">
+                        <label class="form-label">Kategori Kontribusi *</label>
+                        <select class="form-select" id="master_kontribusi_id" name="master_kontribusi_id" required>
+                            <option value="">Pilih Kategori</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nama Sub Kontribusi *</label>
+                        <input type="text" class="form-control" id="nama_kontribusi" name="nama_kontribusi" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Nilai *</label>
+                            <select class="form-select" id="jenis" name="jenis" required
+                                onchange="SubKontribusiApp.toggleValuePrefix()">
+                                <option value="">Pilih Jenis</option>
+                                <option value="nominal">Nominal (Rp)</option>
+                                <option value="percentage">Persentase (%)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nilai *</label>
+                            <div class="value-input-group">
+                                <input type="number" class="form-control" id="value" name="value" step="1"
+                                    min="0" style="width:94%;" required>
+                                <span class="value-prefix" id="valuePrefix">Rp</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status *</label>
+                        <select class="form-select" id="is_active" name="is_active" required>
+                            <option value="1">Aktif</option>
+                            <option value="0">Tidak Aktif</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="SubKontribusiApp.hideFormModal()">Batal</button>
+                <button class="btn btn-success" onclick="SubKontribusiApp.submitForm()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Hapus Sub Kontribusi</h3>
+                <button class="modal-close" onclick="SubKontribusiApp.hideDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus sub kontribusi <strong id="deleteItemName"></strong>?</p>
+                <p class="form-text">Data yang dihapus tidak dapat dikembalikan.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="SubKontribusiApp.hideDeleteModal()">Batal</button>
+                <button class="btn btn-delete" onclick="SubKontribusiApp.confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -192,12 +188,12 @@
         let isLoading = false;
 
         const API_ROUTES = {
-            index: '{{ route("admin.kelompok.api.sub-kontribusi.index") }}',
-            show: '{{ route("admin.kelompok.api.sub-kontribusi.show", "") }}',
-            store: '{{ route("admin.kelompok.api.sub-kontribusi.store") }}',
-            update: '{{ route("admin.kelompok.api.sub-kontribusi.update", "") }}',
-            destroy: '{{ route("admin.kelompok.api.sub-kontribusi.destroy", "") }}',
-            masterOptions: '{{ route("admin.kelompok.api.sub-kontribusi.master-options") }}'
+            index: '{{ route('admin.kelompok.api.sub-kontribusi.index') }}',
+            show: '{{ route('admin.kelompok.api.sub-kontribusi.show', '') }}',
+            store: '{{ route('admin.kelompok.api.sub-kontribusi.store') }}',
+            update: '{{ route('admin.kelompok.api.sub-kontribusi.update', '') }}',
+            destroy: '{{ route('admin.kelompok.api.sub-kontribusi.destroy', '') }}',
+            masterOptions: '{{ route('admin.kelompok.api.sub-kontribusi.master-options') }}'
         };
 
         // ============================================================================
@@ -281,7 +277,7 @@
                     <td>
                         <div class="value-display ${item.jenis === 'percentage' ? 'percentage-value' : 'nominal-value'}">
                             ${item.jenis === 'percentage' ? 
-                                `${parseFloat(item.value).toFixed(2)}%` : 
+                                `${parseFloat(item.value).toFixed(1)}%` : 
                                 `Rp ${formatNumber(parseFloat(item.value))}`
                             }
                         </div>
@@ -621,7 +617,7 @@
         function setupEventListeners() {
             // Filter master dengan debounce
             let filterTimeout;
-            document.getElementById('masterFilter').addEventListener('change', function (e) {
+            document.getElementById('masterFilter').addEventListener('change', function(e) {
                 clearTimeout(filterTimeout);
                 filterTimeout = setTimeout(() => {
                     const masterId = e.target.value;
@@ -645,7 +641,7 @@
 
             // Search dengan debounce, hanya aktif jika kategori dipilih
             let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function (e) {
+            document.getElementById('searchInput').addEventListener('input', function(e) {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     if (!currentMasterId) {
@@ -662,31 +658,31 @@
             });
 
             // Per page
-            document.getElementById('perPageSelect').addEventListener('change', function (e) {
+            document.getElementById('perPageSelect').addEventListener('change', function(e) {
                 perPage = parseInt(e.target.value) || 10;
                 currentPage = 1;
                 loadData();
             });
 
             // Pagination buttons
-            document.getElementById('prevPage').addEventListener('click', function () {
+            document.getElementById('prevPage').addEventListener('click', function() {
                 if (currentPage > 1) {
                     goToPage(currentPage - 1);
                 }
             });
 
-            document.getElementById('nextPage').addEventListener('click', function () {
+            document.getElementById('nextPage').addEventListener('click', function() {
                 if (currentPage < totalPages) {
                     goToPage(currentPage + 1);
                 }
             });
 
             // Modal backdrop clicks
-            document.getElementById('formModal').addEventListener('click', function (e) {
+            document.getElementById('formModal').addEventListener('click', function(e) {
                 if (e.target === this) hideFormModal();
             });
 
-            document.getElementById('deleteModal').addEventListener('click', function (e) {
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
                 if (e.target === this) hideDeleteModal();
             });
         }
@@ -717,7 +713,7 @@
         // ============================================================================
         // START APP
         // ============================================================================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
 
             // Expose ke global scope
@@ -725,6 +721,5 @@
             window.showEditModal = showEditModal;
             window.showDeleteModal = showDeleteModal;
         });
-
     </script>
 @endpush

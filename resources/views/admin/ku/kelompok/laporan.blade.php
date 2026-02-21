@@ -10,32 +10,6 @@
             padding: 5px;
         }
 
-        .card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
         /* Filter Section */
         .filter-section {
             background: #f8f9fa;
@@ -75,71 +49,6 @@
             display: flex;
             gap: 10px;
             justify-content: flex-end;
-        }
-
-        /* Create Laporan Form */
-        .form-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .form-section.show {
-            display: block;
-        }
-
-        .form-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #105a44;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 5px;
-        }
-
-        .form-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-label.required::after {
-            content: ' *';
-            color: #dc3545;
-        }
-
-        .form-control {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 13px;
-            background: white;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
         }
 
         /* Table Styles */
@@ -203,75 +112,6 @@
         .action-buttons {
             display: flex;
             gap: 5px;
-        }
-
-        .btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            /* min-width: 70px; */
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: #105a44;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0d8b66;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: #138496;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
         }
 
         /* Preview Section */
@@ -1093,10 +933,10 @@
                             <i class="bi-pencil"></i>
                         </button>
                         ${item.status_laporan !== 'PUBLISHED' ? `
-                                                                                                            <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
-                                                                                                                <i class="bi-trash"></i>
-                                                                                                            </button>
-                                                                                                        ` : ''}
+                                                                                                                            <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
+                                                                                                                                <i class="bi-trash"></i>
+                                                                                                                            </button>
+                                                                                                                        ` : ''}
                     </div>
                 `;
 

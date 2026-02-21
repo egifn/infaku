@@ -53,10 +53,10 @@
 
 .search-input {
     width: 100%;
-    padding: 9px 35px 5px 10px;
+    padding: 6px 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 12px;
 }
 
 .search-icon {

@@ -6,33 +6,6 @@
 
 @push('styles')
     <style>
-        /* Card Styles */
-        .card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
         /* Kontribusi Grid */
         .kontribusi-grid {
             display: grid;
@@ -278,51 +251,48 @@
             animation: fadeInUp 0.3s ease forwards;
             opacity: 0;
         }
-
     </style>
 @endpush
 
 @section('content')
-<div class="master-container">
-    <div class="card">
-        <div class="card-header">
-            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+    <div class="master-container">
+        <div class="card">
+            <div class="card-header">
                 <h3 class="card-title">Pilih Master Kontribusi</h3>
             </div>
-        </div>
-        <div class="card-body">
-            <!-- Loading State -->
-            <div id="loadingState" class="empty-state">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+            <div class="card-body">
+                <!-- Loading State -->
+                <div id="loadingState" class="empty-state">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h4>Memuat data kontribusi...</h4>
                 </div>
-                <h4>Memuat data kontribusi...</h4>
-            </div>
 
-            <!-- Empty State -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi-inbox"></i>
-                <h4>Tidak ada data kontribusi</h4>
-                <p>Belum ada kontribusi yang tersedia</p>
-            </div>
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi-inbox"></i>
+                    <h4>Tidak ada data kontribusi</h4>
+                    <p>Belum ada kontribusi yang tersedia</p>
+                </div>
 
-            <!-- Error State -->
-            <div id="errorState" class="empty-state" style="display: none;">
-                <i class="bi-exclamation-triangle"></i>
-                <h4>Gagal memuat data</h4>
-                <p id="errorMessage">Terjadi kesalahan saat memuat data</p>
-                <button class="btn btn-primary" onclick="PembayaranApp.loadMasterKontribusi()">
-                    <i class="bi-arrow-clockwise"></i> Coba Lagi
-                </button>
-            </div>
+                <!-- Error State -->
+                <div id="errorState" class="empty-state" style="display: none;">
+                    <i class="bi-exclamation-triangle"></i>
+                    <h4>Gagal memuat data</h4>
+                    <p id="errorMessage">Terjadi kesalahan saat memuat data</p>
+                    <button class="btn btn-primary" onclick="PembayaranApp.loadMasterKontribusi()">
+                        <i class="bi-arrow-clockwise"></i> Coba Lagi
+                    </button>
+                </div>
 
-            <!-- Kontribusi Grid -->
-            <div class="kontribusi-grid" id="kontribusiGrid" style="display: none;">
-                <!-- Data akan diisi oleh JavaScript -->
+                <!-- Kontribusi Grid -->
+                <div class="kontribusi-grid" id="kontribusiGrid" style="display: none;">
+                    <!-- Data akan diisi oleh JavaScript -->
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -334,8 +304,8 @@
         let currentSelection = null;
 
         const API_ROUTES = {
-            masterKontribusi: '{{ route("admin.kelompok.api.input-pembayaran.kontribusi-options") }}',
-            createPage: '{{ route("admin.kelompok.input-pembayaran.create") }}'
+            masterKontribusi: '{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}',
+            createPage: '{{ route('admin.kelompok.input-pembayaran.create') }}'
         };
 
         // ============================================================================
@@ -367,87 +337,43 @@
             }
         }
 
-        // Render master kontribusi cards
+        // Render master kontribusi cards (versi sederhana & rapi)
         function renderMasterKontribusi(data) {
             const kontribusiGrid = document.getElementById('kontribusiGrid');
             const emptyState = document.getElementById('emptyState');
-
             if (!data || data.length === 0) {
                 showEmptyState();
                 return;
             }
-
             emptyState.style.display = 'none';
             kontribusiGrid.style.display = 'grid';
-
-            const cardsHtml = data.map((item, index) => {
-                // Tentukan ikon berdasarkan kode atau nama kontribusi
-                let iconClass = getIconClass(item.kode_kontribusi);
-
-                // Buat detail items
-                const detailItems = [];
-
-                if (item.deskripsi) {
-                    detailItems.push({
-                        label: 'Deskripsi',
-                        value: truncateText(item.deskripsi, 50)
-                    });
-                }
-
-                if (item.nominal_default) {
-                    detailItems.push({
-                        label: 'Nominal Default',
-                        value: formatCurrency(item.nominal_default)
-                    });
-                }
-
-                if (item.is_active !== undefined) {
-                    detailItems.push({
-                        label: 'Status',
-                        value: item.is_active ? 'Aktif' : 'Tidak Aktif'
-                    });
-                }
-
-                return `
-                <div class="kontribusi-card" data-id="${item.master_kontribusi_id}" 
-                     style="animation-delay: ${index * 0.05}s">
+            let html = '';
+            data.forEach((item, idx) => {
+                html += `
+                <div class="kontribusi-card" data-id="${item.id}">
                     <div class="kontribusi-card-header">
-                        <div class="kontribusi-card-icon">
-                            <i class="bi ${iconClass}"></i>
-                        </div>
+                        <div class="kontribusi-card-icon"><i class="bi bi-cash-coin"></i></div>
                         <h4 class="kontribusi-card-title">${escapeHtml(item.nama_kontribusi)}</h4>
                         <div class="kontribusi-card-code">${escapeHtml(item.kode_kontribusi)}</div>
                     </div>
-                    
-                    ${detailItems.length > 0 ? `
                     <div class="kontribusi-card-body">
                         <ul class="kontribusi-card-details">
-                            ${detailItems.map(detail => `
-                                <li>
-                                    <span class="detail-label">${detail.label}</span>
-                                    <span class="detail-value">${detail.value}</span>
-                                </li>
-                            `).join('')}
+                            ${item.deskripsi ? `<li><span class='detail-label'>Deskripsi</span><span class='detail-value'>${escapeHtml(item.deskripsi)}</span></li>` : ''}
+                            ${item.nominal_default ? `<li><span class='detail-label'>Nominal Default</span><span class='detail-value'>${formatCurrency(item.nominal_default)}</span></li>` : ''}
+                            ${typeof item.is_active !== 'undefined' ? `<li><span class='detail-label'>Status</span><span class='detail-value'>${item.is_active ? 'Aktif' : 'Tidak Aktif'}</span></li>` : ''}
                         </ul>
                     </div>
-                    ` : ''}
-                    
                     <div class="kontribusi-card-footer">
-                        <button class="select-btn" onclick="selectKontribusi('${item.master_kontribusi_id}', this)">
-                            <span class="btn-text">Pilih Kontribusi</span>
-                            <span class="spinner"></span>
-                        </button>
+                        <button class="select-btn" onclick="selectKontribusi('${item.id}', this)">Pilih Kontribusi</button>
                     </div>
                 </div>
-            `;
-            }).join('');
-
-            kontribusiGrid.innerHTML = cardsHtml;
-
-            // Add click event to entire card
+                `;
+            });
+            kontribusiGrid.innerHTML = html;
+            // Card click = pilih kontribusi
             document.querySelectorAll('.kontribusi-card').forEach(card => {
-                card.addEventListener('click', function (e) {
-                    if (!e.target.closest('.select-btn')) {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.classList.contains('select-btn')) {
                         const button = this.querySelector('.select-btn');
                         const id = this.getAttribute('data-id');
                         selectKontribusi(id, button);
@@ -577,12 +503,11 @@
         // ============================================================================
         // START APP
         // ============================================================================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             loadMasterKontribusi();
 
             // Expose ke global scope
             window.PembayaranApp = PembayaranApp;
         });
-
     </script>
 @endpush

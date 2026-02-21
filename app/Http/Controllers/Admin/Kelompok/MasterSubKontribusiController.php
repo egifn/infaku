@@ -179,7 +179,6 @@ class MasterSubKontribusiController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         try {
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
