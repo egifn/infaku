@@ -29,7 +29,6 @@ class MasterSubKontribusiController extends Controller
         try {
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
-
             $masterId = $request->get('master_id');
             $search = $request->get('search', '');
             $perPage = $request->get('per_page', 10);
@@ -37,7 +36,6 @@ class MasterSubKontribusiController extends Controller
 
             $query = DB::table('sub_kontribusi')
                 ->join('master_kontribusi', 'sub_kontribusi.kode_kontribusi', '=', 'master_kontribusi.id')
-                ->where('sub_kontribusi.level', 'kelompok')
                 ->where(function ($q) use ($kelompokId) {
                     $q->where('sub_kontribusi.created_by', $kelompokId)
                         ->orWhereNull('sub_kontribusi.created_by');
@@ -58,7 +56,7 @@ class MasterSubKontribusiController extends Controller
             $total = $query->count();
             $data = $query->select(
                 'sub_kontribusi.*',
-                'master_kontribusi.nama_kontribusi',
+                'master_kontribusi.nama_kontribusi as nama_kontribusi_master',
                 'master_kontribusi.id as master_kontribusi_id'
             )
                 ->orderBy('master_kontribusi.nama_kontribusi')

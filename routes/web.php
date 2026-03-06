@@ -100,7 +100,7 @@ Route::middleware(['auth.session'])->group(function () {
 
             // API Routes for Sub Kontribusi
             Route::prefix('api/sub-kontribusi')->name('api.sub-kontribusi.')->group(function () {
-                Route::get('/', [MasterSubKontribusiController::class, 'getData'])->name('index');
+                Route::get('/', [MasterSubKontribusiController::class, 'getData'])->name('getdata');
                 Route::get('/master-options', [MasterSubKontribusiController::class, 'getMasterOptions'])->name('master-options');
                 Route::get('/{id}', [MasterSubKontribusiController::class, 'show'])->name('show');
                 Route::post('/', [MasterSubKontribusiController::class, 'store'])->name('store');

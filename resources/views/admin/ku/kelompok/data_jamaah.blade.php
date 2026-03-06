@@ -880,11 +880,16 @@
         // ============================================================================
         const JamaahApp = {
             printData() {
-                window.open(API_ROUTES.print, '_blank');
+                const win = window.open(API_ROUTES.print, '_blank');
+                if (win) {
+                    win.focus();
+                }
             },
+
             reloadData() {
                 loadJamaahData(1);
             },
+
             goToPage: goToPage,
             showCreateModal: showCreateModal,
             hideCreateModal: hideCreateModal,
@@ -895,6 +900,7 @@
             submitCreateForm: submitCreateForm,
             submitEditForm: submitEditForm
         };
+
 
         // ============================================================================
         // START APP
@@ -907,17 +913,6 @@
             window.showEditModal = showEditModal;
             window.showDetailModal = showDetailModal;
 
-            // Debug
-            window.debugPagination = function() {
-                console.log('Pagination State:', {
-                    currentPage,
-                    totalPages,
-                    totalRecords,
-                    perPage,
-                    searchQuery,
-                    aktifFilter
-                });
-            };
         });
     </script>
 @endpush

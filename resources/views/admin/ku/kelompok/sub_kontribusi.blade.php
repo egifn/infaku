@@ -50,6 +50,7 @@
                                     <th>Nama Sub Kontribusi</th>
                                     <th>Jenis</th>
                                     <th>Nilai</th>
+                                    <th>Kesanggupan</th>
                                     <th>Status</th>
                                     <th>Keterangan</th>
                                     <th width="120">Aksi</th>
@@ -188,7 +189,7 @@
         let isLoading = false;
 
         const API_ROUTES = {
-            index: '{{ route('admin.kelompok.api.sub-kontribusi.index') }}',
+            index: '{{ route('admin.kelompok.api.sub-kontribusi.getdata') }}',
             show: '{{ route('admin.kelompok.api.sub-kontribusi.show', '') }}',
             store: '{{ route('admin.kelompok.api.sub-kontribusi.store') }}',
             update: '{{ route('admin.kelompok.api.sub-kontribusi.update', '') }}',
@@ -282,6 +283,7 @@
                             }
                         </div>
                     </td>
+                    <td>${item.level.charAt(0).toUpperCase() + item.level.slice(1)}</td>
                     <td>
                         ${item.is_active ? 
                             '<span class="badge badge-success">Aktif</span>' : 

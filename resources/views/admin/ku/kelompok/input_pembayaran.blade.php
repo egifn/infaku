@@ -468,27 +468,27 @@
         /* File Upload */
         .file-upload {
             position: relative;
+            width: 100%;
+            min-height: 36px;
         }
 
         .file-input {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            display: none;
         }
 
         .file-label {
+            width: 100%;
+            min-height: 33px;
             display: flex;
+            font-size: 12px;
             align-items: center;
             gap: 8px;
-            padding: 5px 12px;
+            padding: 6px 12px;
             background: #f8f9fa;
             border: 1px dashed #ddd;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-size: 12px;
         }
 
         .file-label:hover {
@@ -705,7 +705,6 @@
         }
 
 
-
         /* Animation untuk card */
         @keyframes fadeInUp {
             from {
@@ -753,14 +752,12 @@
 
         .invalid-feedback {
             display: block;
-            /* display: none; */
+            display: none;
             width: 100%;
             margin-top: 0.25rem;
             font-size: 9px;
             color: #dc3545;
         }
-
-        s
 
         /* Utility Classes */
         .text-center {
@@ -818,32 +815,15 @@
 @section('content')
     <div class="input-container">
         @if (request()->has('master_kontribusi_id'))
-            <!-- Tampilkan form input pembayaran jika sudah memilih kontribusi -->
-            @if (isset($selectedKontribusi))
-                <div class="selected-kontribusi-badge">
-                    <div class="kontribusi-info">
-                        <div class="kontribusi-icon-small">
-                            <i class="bi-cash-coin"></i>
-                        </div>
-                        <div>
-                            <strong style="font-size: 12px;">{{ $selectedKontribusi->nama_kontribusi }}</strong><br>
-                            <span style="font-size: 12px; color: #666;">Kode:
-                                {{ $selectedKontribusi->kode_kontribusi }}</span>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="changeKontribusi()">
-                        <i class="bi-arrow-repeat"></i> Ganti Kontribusi
-                    </button>
-                </div>
-            @endif
-
             <div class="card">
+
                 <div class="card-header">
                     <h3 class="card-title">Input Pembayaran Kontribusi</h3>
                     <button type="button" class="back-btn" onclick="goBackToSelection()">
-                        <i class="bi-arrow-left"></i> Kembali ke Pilihan Kontribusi
+                        <i class="bi-arrow-left"></i> Kembali
                     </button>
                 </div>
+
                 <div class="card-body-pos">
                     <div class="form-container">
                         <form id="pembayaranForm" method="POST"
@@ -851,650 +831,268 @@
                             @csrf
                             <input type="hidden" id="master_kontribusi_id" name="master_kontribusi_id"
                                 value="{{ request('master_kontribusi_id') }}">
-
-                            <!-- Section 1: Data Jamaah -->
+                            <!-- DATA JAMAAH -->
                             <div class="form-section">
-                                <div class="section-title">
-                                    <i class="bi-people"></i> Data Jamaah
-                                </div>
-
+                                <div class="section-title"><i class="bi-people"></i> Data Jamaah</div>
                                 <div class="form-group">
                                     <label class="form-label required">Pilih Jamaah</label>
                                     <div class="searchable-dropdown">
                                         <input type="text" class="dropdown-search" id="jamaah_search"
-                                            placeholder="Cari jamaah..." autocomplete="off">
-                                        <i class="bi-search dropdown-search-icon"></i>
+                                            placeholder="Cari jamaah..." autocomplete="off"><i
+                                            class="bi-search dropdown-search-icon"></i>
                                         <div class="dropdown-options" id="jamaah_options"></div>
                                     </div>
                                     <input type="hidden" id="jamaah_id" name="jamaah_id">
-                                    <div class="invalid-feedback" id="jamaah_error">Jamaah wajib dipilih</div>
-                                    <div class="form-text">Ketik nama atau NIK untuk mencari jamaah</div>
                                 </div>
-
-                                <div id="jamaahInfo" class="jamaah-info" style="display: none;">
+                                <!-- INFO JAMAAH -->
+                                <div id="jamaahInfo" class="jamaah-info" style="display:none">
                                     <div class="jamaah-name" id="jamaahNama"></div>
-                                    <div class="jamaah-details">
-                                        <span id="jamaahAlamat"></span>
-                                        <span id="jamaahTelepon"></span> |
+                                    <div class="jamaah-details"><span id="jamaahAlamat"></span> | <span id="jamaahTelepon">
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Section 2: Data Pembayaran -->
+                            <!-- DATA PEMBAYARAN -->
                             <div class="form-section">
-                                <div class="section-title">
-                                    <i class="bi-cash"></i> Data Pembayaran
-                                </div>
-
+                                <div class="section-title"><i class="bi-cash"></i> Data Pembayaran</div>
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label required" for="tgl_transaksi">Tanggal Pembayaran</label>
-                                        <input type="date" class="form-control" id="tgl_transaksi" name="tgl_transaksi"
-                                            value="{{ date('Y-m-d') }}" required>
-                                        <div class="invalid-feedback" id="tgl_transaksi_error">Tanggal pembayaran wajib
-                                            diisi</div>
+                                    <div class="form-group"><label class="form-label required">Tanggal</label><input
+                                            type="date" class="form-control" id="tgl_transaksi" name="tgl_transaksi"
+                                            value="{{ date('Y-m-d') }}">
                                     </div>
-
-                                    <div class="form-group">
-                                        <label class="form-label required" for="metode_bayar">Metode Pembayaran</label>
-                                        <select class="form-select" id="metode_bayar" name="metode_bayar" required>
-                                            <option value="">Pilih Metode</option>
+                                    <div class="form-group"><label class="form-label required">Metode</label><select
+                                            class="form-select" id="metode_bayar" name="metode_bayar">
+                                            <option value="">Pilih</option>
                                             <option value="TUNAI" selected>TUNAI</option>
                                             <option value="TRANSFER">TRANSFER</option>
                                             <option value="QRIS">QRIS</option>
-                                            <option value="LAINNYA">LAINNYA</option>
                                         </select>
-                                        <div class="invalid-feedback" id="metode_bayar_error">Metode pembayaran wajib
-                                            dipilih</div>
                                     </div>
                                 </div>
 
-                                <!-- Sub Kontribusi Table -->
-                                <div id="subKontribusiContainer" style="display: none;">
-                                    <div class="section-title" style="margin-top: 20px;">
-                                        <i class="bi-list-check"></i> Detail Kontribusi
-                                    </div>
-
-                                    <table class="sub-kontribusi-table" id="subKontribusiTable">
+                                <!-- SUB KONTRIBUSI -->
+                                <div id="subKontribusiContainer" style="display:none">
+                                    <table class="sub-kontribusi-table">
                                         <thead>
                                             <tr>
-                                                <th width="50">No</th>
-                                                <th>Nama Kontribusi</th>
-                                                <th width="100">Jenis</th>
-                                                <th width="150">Value</th>
-                                                <th width="200" class="input-column">Input Pembayaran</th>
+                                                <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Jenis</th>
+                                                <th>Value</th>
+                                                <th>Input</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="subKontribusiBody">
-                                            <!-- Data akan diisi oleh JavaScript -->
-                                        </tbody>
+                                        <tbody id="subKontribusiBody"></tbody>
                                     </table>
-
                                     <div class="total-section">
-                                        <div class="total-label">TOTAL PEMBAYARAN</div>
+                                        <div class="total-label">TOTAL</div>
                                         <div class="total-amount" id="totalPembayaran">Rp 0</div>
-                                        <input type="hidden" id="total_pembayaran" name="total_pembayaran"
-                                            value="0">
+                                        <input type="hidden" id="total_pembayaran" name="total_pembayaran">
                                     </div>
-                                    <div class="invalid-feedback" id="sub_kontribusi_error">Semua nominal pembayaran harus
-                                        diisi dengan nilai lebih dari 0</div>
                                 </div>
                             </div>
 
-                            <!-- Section 3: Bukti & Keterangan -->
+                            <!-- BUKTI -->
                             <div class="form-section">
-                                <div class="section-title">
-                                    <i class="bi-receipt"></i> Bukti & Keterangan
-                                </div>
-
+                                <div class="section-title"><i class="bi-receipt"></i> Bukti</div>
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label" for="keterangan">Keterangan</label>
-                                        <input class="form-control" id="keterangan" name="keterangan" rows="3"
-                                            placeholder="Catatan tambahan tentang pembayaran ini..."></input>
+                                    <div class="form-group"><label>Keterangan</label><input class="form-control"
+                                            name="keterangan">
                                     </div>
-
                                     <div class="form-group">
-                                        <label class="form-label" for="bukti_bayar">Bukti Pembayaran</label>
+                                        <label>Bukti</label>
                                         <div class="file-upload">
-                                            <label class="file-label" for="bukti_bayar">
-                                                <i class="bi-upload"></i>
-                                                <span id="fileText">Unggah Bukti Pembayaran</span>
-                                                <span class="file-name" id="fileName"></span>
-                                            </label>
                                             <input type="file" class="file-input" id="bukti_bayar" name="bukti_bayar"
                                                 accept="image/*" onchange="previewFile()">
+                                            <label for="bukti_bayar" class="file-label">
+                                                <i class="bi-upload"></i>
+                                                <span id="fileText">Upload</span>
+                                                <span class="file-name" id="fileName"></span>
+                                            </label>
                                         </div>
-                                        <div class="form-text">Opsional, maks. 2MB (JPG, PNG, GIF)</div>
                                     </div>
                                 </div>
 
-                                <div class="preview-container" id="previewContainer" style="display: none;">
-                                    <img id="previewImage" class="preview-image" src="" alt="Preview Bukti">
+                                <div class="preview-container" id="previewContainer" style="display:none">
+                                    <img id="previewImage" class="preview-image">
                                     <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeImage()">
-                                        <i class="bi-trash"></i> Hapus Gambar
-                                    </button>
+                                        Hapus</button>
                                 </div>
                             </div>
 
-                            <!-- Form Actions -->
+                            <!-- ACTION -->
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                                    <i class="bi-arrow-clockwise"></i> Reset Form
-                                </button>
+                                    Reset</button>
                                 <button type="submit" class="btn btn-success" id="submitBtn" disabled>
-                                    <i class="bi-check-circle"></i> Simpan Pembayaran
-                                </button>
+                                    Simpan</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        @else
-            <!-- Tampilkan pilihan kontribusi jika belum memilih -->
-            <div class="master-card">
-                <div class="master-card-header">
-                    <h3 class="master-card-title">
-                        <i class="bi-grid-3x3-gap"></i>
-                        Pilih Master Kontribusi
-                    </h3>
-                    <div class="master-card-subtitle">
-                        Pilih salah satu jenis kontribusi untuk melanjutkan
-                    </div>
-                </div>
-                <div class="master-card-body">
-                    <div class="kontribusi-grid" id="kontribusi-list">
-                        <div class="loading-container" id="loadingKontribusi">
-                            <div class="loading-spinner"></div>
-                            <p class="loading-text">Memuat data kontribusi...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         @endif
     </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
 @endsection
+
 
 @push('scripts')
     <script>
-        // ============================================
-        // GLOBAL VARIABLES
-        // ============================================
-        let currentSubKontribusi = [];
         let isSubmitting = false;
+        /* INIT */
+        document.addEventListener('DOMContentLoaded', () => {
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
-
-            if (masterKontribusiId) {
-                // Halaman input pembayaran
-                loadSubKontribusi(masterKontribusiId);
-                setupEventListeners();
-                setupDropdowns();
-            } else {
-                // Halaman pilih kontribusi
-                fetchKontribusi();
+            const id = "{{ request('master_kontribusi_id') }}";
+            if (id) {
+                loadSubKontribusi(id);
+                initForm();
+                initDropdown();
             }
         });
+        /* FORM */
+        function initForm() {
 
-        // ============================================
-        // KONTRIBUSI SELECTION PAGE FUNCTIONS
-        // ============================================
-        function fetchKontribusi() {
-            fetch("{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const list = document.getElementById('kontribusi-list');
-                    const loading = document.getElementById('loadingKontribusi');
-
-                    if (!data.success || !data.data || data.data.length === 0) {
-                        loading.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-icon">
-                                    <i class="bi bi-inbox"></i>
-                                </div>
-                                <h4 class="empty-title">Tidak ada data kontribusi</h4>
-                                <p class="empty-subtitle">Belum ada master kontribusi yang tersedia</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    loading.style.display = 'none';
-                    list.innerHTML = '';
-
-                    data.data.forEach((item, index) => {
-                        const card = document.createElement('div');
-                        card.className = 'kontribusi-card';
-                        card.style.animationDelay = `${(index + 1) * 0.05}s`;
-
-                        let iconClass = 'bi-cash-coin';
-                        let detailItems = [];
-
-                        if (item.deskripsi) {
-                            detailItems.push({
-                                label: 'Deskripsi',
-                                value: item.deskripsi.length > 40 ?
-                                    item.deskripsi.substring(0, 40) + '...' : item.deskripsi
-                            });
-                        }
-
-                        if (item.nominal_default) {
-                            const nominal = new Intl.NumberFormat('id-ID', {
-                                style: 'currency',
-                                currency: 'IDR',
-                                minimumFractionDigits: 0
-                            }).format(item.nominal_default);
-                            detailItems.push({
-                                label: 'Nominal Default',
-                                value: nominal
-                            });
-                        }
-
-                        card.innerHTML = `
-                            <div class="kontribusi-card-header">
-                                <div class="kontribusi-card-icon">
-                                    <i class="bi ${iconClass}"></i>
-                                </div>
-                                <div class="kontribusi-card-title-wrapper">
-                                    <h5 class="kontribusi-card-title">${escapeHtml(item.nama_kontribusi)}</h5>
-                                    <div class="kontribusi-card-code">Kode: ${escapeHtml(item.kode_kontribusi)}</div>
-                                </div>
-                            </div>
-                            ${detailItems.length > 0 ? `
-                                                                                                                                <div class="kontribusi-card-body">
-                                                                                                                                    <ul class="kontribusi-card-details">
-                                                                                                                                        ${detailItems.map(detail => `
-                                            <li>
-                                                <span class="detail-label">${detail.label}</span>
-                                                <span class="detail-value">${detail.value}</span>
-                                            </li>
-                                        `).join('')}
-                                                                                                                                    </ul>
-                                                                                                                                </div>
-                                                                                                                            ` : ''}
-                            <div class="kontribusi-card-footer">
-                                <button class="select-btn" onclick="goToInputPembayaran('${item.master_kontribusi_id}')">
-                                    <i class="bi bi-arrow-right"></i>
-                                    Pilih
-                                </button>
-                            </div>
-                        `;
-
-                        card.addEventListener('click', function(e) {
-                            if (!e.target.closest('.select-btn')) {
-                                goToInputPembayaran(item.master_kontribusi_id);
-                            }
-                        });
-
-                        list.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching kontribusi:', error);
-                    const list = document.getElementById('kontribusi-list');
-                    const loading = document.getElementById('loadingKontribusi');
-
-                    loading.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </div>
-                            <h4 class="empty-title">Gagal memuat data</h4>
-                            <p class="empty-subtitle">Terjadi kesalahan saat memuat data kontribusi</p>
-                            <button type="button" onclick="fetchKontribusi()" class="btn btn-primary btn-sm mt-3">
-                                <i class="bi-arrow-repeat"></i> Muat Ulang
-                            </button>
-                        </div>
-                    `;
-                });
-        }
-
-        function goToInputPembayaran(masterKontribusiId) {
-            let button = null;
-            if (window.event && window.event.target) {
-                button = window.event.target.closest('.select-btn');
-            }
-            if (button) {
-                button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memproses...';
-                button.disabled = true;
-            }
-
-            setTimeout(() => {
-                window.location.href =
-                    `{{ route('admin.kelompok.input-pembayaran.create') }}?master_kontribusi_id=${masterKontribusiId}`;
-            }, 200);
-        }
-
-        function goBackToSelection() {
-            window.location.href = "{{ route('admin.kelompok.input-pembayaran.index') }}";
-        }
-
-        function changeKontribusi() {
-            goBackToSelection();
-        }
-
-        // ============================================
-        // FORM PAGE FUNCTIONS
-        // ============================================
-        function setupEventListeners() {
-            // Format rupiah saat input
-            document.addEventListener('input', function(e) {
+            const form = document.getElementById('pembayaranForm');
+            form.addEventListener('input', e => {
                 if (e.target.classList.contains('sub-kontribusi-input')) {
-                    let val = parseRupiah(e.target.value);
-                    e.target.value = val ? formatNumber(val) : '';
-                    calculateTotal();
+                    let v = parseRupiah(e.target.value);
+                    e.target.value = formatNumber(v);
+                    hitungTotal();
+                    validateForm();
+                }
+
+                if (['jamaah_search', 'tgl_transaksi', 'metode_bayar'].includes(e.target.id)) {
                     validateForm();
                 }
             });
-
-            // Form submit - HANYA SATU EVENT LISTENER
-            const form = document.getElementById('pembayaranForm');
-            if (form) {
-                // Hapus event listener lama dengan clone node
-                const newForm = form.cloneNode(true);
-                form.parentNode.replaceChild(newForm, form);
-
-                // Pasang event listener baru
-                newForm.addEventListener('submit', submitFormHandler);
-            }
+            form.addEventListener('submit', handleSubmit);
         }
+        /* VALIDASI */
+        function validateForm() {
 
-        // Handler submit form yang terpusat
-        async function submitFormHandler(e) {
+            const jamaah = document.getElementById('jamaah_id').value;
+            const tgl = document.getElementById('tgl_transaksi').value;
+            const metode = document.getElementById('metode_bayar').value;
+            document.getElementById('submitBtn').disabled = !(jamaah && tgl && metode);
+        }
+        /* SUBMIT */
+        function handleSubmit(e) {
+
             e.preventDefault();
+            if (isSubmitting) return;
 
-            if (isSubmitting) {
-                window.showToast('Form sedang diproses, mohon tunggu...', 'warning');
+            /* VALIDASI WAJIB */
+            if (!document.getElementById('jamaah_id').value) {
+                window.showToast('Pilih jamaah terlebih dahulu', 'error');
                 return;
             }
 
-            // Validasi Jamaah khusus toast
-            const jamaahId = document.getElementById('jamaah_id')?.value;
-            if (!jamaahId) {
-                window.showToast('Pilih jamaah terlebih dahulu', 'warning');
-                document.getElementById('jamaah_search')?.classList.add('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'block');
+            if (!document.getElementById('tgl_transaksi').value) {
+                window.showToast('Tanggal wajib diisi', 'error');
                 return;
             }
 
-            // Validasi lengkap
-            const errors = validateFormBeforeSubmit();
-            if (errors.length > 0) {
-                window.showToast(errors.join('\n'), 'error');
+            if (!document.getElementById('metode_bayar').value) {
+                window.showToast('Pilih metode pembayaran', 'error');
                 return;
             }
 
-            // Konversi nilai rupiah ke angka
-            document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
-                input.value = parseRupiah(input.value);
-            });
-
-            // Submit form via AJAX
-            await submitFormViaAjax(e.target);
+            showConfirmModal();
         }
 
-        function validateFormBeforeSubmit() {
-            const errors = [];
+        /* MODAL */
+        function showConfirmModal() {
 
-            // Validasi Jamaah
-            const jamaahId = document.getElementById('jamaah_id')?.value;
-            const jamaahSearch = document.getElementById('jamaah_search');
-            if (!jamaahId) {
-                errors.push('• Jamaah wajib dipilih');
-                jamaahSearch?.classList.add('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'block');
-            } else {
-                jamaahSearch?.classList.remove('is-invalid');
-                document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-            }
+            const old = document.getElementById('confirmModal');
+            if (old) old.remove();
 
-            // Validasi Tanggal
-            const tglTransaksi = document.getElementById('tgl_transaksi');
-            if (!tglTransaksi?.value) {
-                errors.push('• Tanggal pembayaran wajib diisi');
-                tglTransaksi?.classList.add('is-invalid');
-                document.getElementById('tgl_transaksi_error')?.style.setProperty('display', 'block');
-            } else {
-                tglTransaksi?.classList.remove('is-invalid');
-                document.getElementById('tgl_transaksi_error')?.style.setProperty('display', 'none');
-            }
+            const nama = document.getElementById('jamaah_search').value;
+            const total = document.getElementById('totalPembayaran').innerText;
 
-            // Validasi Metode Bayar
-            const metodeBayar = document.getElementById('metode_bayar');
-            if (!metodeBayar?.value) {
-                errors.push('• Metode pembayaran wajib dipilih');
-                metodeBayar?.classList.add('is-invalid');
-                document.getElementById('metode_bayar_error')?.style.setProperty('display', 'block');
-            } else {
-                metodeBayar?.classList.remove('is-invalid');
-                document.getElementById('metode_bayar_error')?.style.setProperty('display', 'none');
-            }
+            const html = `
+                <div id="confirmModal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:9999">
+                    <div style="background:#fff;width:100%;max-width:420px;border-radius:10px;overflow:hidden">
+                        <div style="padding:12px 16px;background:#105a44;color:#fff;font-weight:600">Konfirmasi</div>
+                        <div style="padding:18px;font-size:13px"><p>Yakin simpan transaksi?</p><div style="background:#f8f9fa;border:1px solid #ddd;border-radius:6px;padding:10px"><div><small>Nama Jamaah</small><br><b>${escapeHtml(nama)}</b></div><div style="margin-top:6px"><small>Total</small><br><b style="color:#0d8b66">${total}</b></div></div>
+                        </div>
+                        <div style="padding:10px 16px;background:#f3f3f3;text-align:right"><button id="btnCancelConfirm" class="btn btn-secondary btn-sm" style="margin-right: 5px;">Batal</button><button id="btnOkConfirm" class="btn btn-success btn-sm">Simpan</button>
+                        </div>
+                    </div>
+                </div>`;
 
-            // Validasi Sub Kontribusi
-            const inputs = document.querySelectorAll('.sub-kontribusi-input');
-            if (inputs.length === 0) {
-                errors.push('• Data kontribusi tidak ditemukan');
-            } else {
-                let hasValidInput = false;
-                inputs.forEach(input => {
-                    const value = parseRupiah(input.value);
-                    if (value > 0) {
-                        hasValidInput = true;
-                        input.classList.remove('is-invalid');
-                    } else {
-                        input.classList.add('is-invalid');
-                    }
-                });
-
-                if (!hasValidInput) {
-                    errors.push('• Minimal satu nominal pembayaran harus diisi dengan nilai lebih dari 0');
-                    document.getElementById('sub_kontribusi_error')?.style.setProperty('display', 'block');
-                } else {
-                    document.getElementById('sub_kontribusi_error')?.style.setProperty('display', 'none');
-                }
-            }
-
-            return errors;
+            document.body.insertAdjacentHTML('beforeend', html);
+            document.getElementById('btnCancelConfirm').onclick = () => document.getElementById('confirmModal').remove();
+            document.getElementById('btnOkConfirm').onclick = () => {
+                document.getElementById('confirmModal').remove();
+                submitFinal();
+            };
         }
+        /* SUBMIT AJAX */
+        async function submitFinal() {
 
-        async function submitFormViaAjax(form) {
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
+            const form = document.getElementById('pembayaranForm');
+            const btn = document.getElementById('submitBtn');
 
             isSubmitting = true;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+            btn.disabled = true;
+            btn.innerHTML = 'Menyimpan...';
+
+            document.querySelectorAll('.sub-kontribusi-input').forEach(i => {
+                i.value = parseRupiah(i.value);
+            });
 
             try {
-                const formData = new FormData(form);
-
-                const response = await fetch(form.action, {
+                const fd = new FormData(form);
+                const res = await fetch(form.action, {
                     method: 'POST',
-                    body: formData,
+                    body: fd,
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                        'X-CSRF-TOKEN': document.querySelector('[name=_token]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 });
 
-                const result = await response.json();
+                const json = await res.json();
 
-                if (response.ok && result.success) {
-                    window.showToast(result.message || 'Pembayaran berhasil dicatat', 'success');
-
-                    // Reset form setelah sukses
-                    setTimeout(() => {
-                        resetForm();
-                        window.showToast('Siap untuk input pembayaran baru', 'info');
-                    }, 2000);
+                if (res.ok && json.success) {
+                    window.showToast(json.message || 'Berhasil', 'success');
+                    setTimeout(resetForm, 1500);
                 } else {
-                    throw new Error(result.message || 'Gagal menyimpan data');
+                    throw new Error(json.message || 'Gagal');
                 }
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                window.showToast(error.message || 'Terjadi kesalahan koneksi', 'error');
+            } catch (err) {
 
-                // Kembalikan format rupiah
-                document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
-                    const val = parseRupiah(input.value);
-                    input.value = formatNumber(val);
-                });
+                window.showToast(err.message, 'error');
+
             } finally {
+
                 isSubmitting = false;
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
             }
         }
+        /* SUB KONTRIBUSI */
+        async function loadSubKontribusi(id) {
 
-        function setupDropdowns() {
-            const jamaahSearch = document.getElementById('jamaah_search');
-            if (!jamaahSearch) return;
+            const box = document.getElementById('subKontribusiContainer');
+            const body = document.getElementById('subKontribusiBody');
 
-            const jamaahOptions = document.getElementById('jamaah_options');
-            let jamaahSearchTimeout;
+            box.style.display = 'block';
+            body.innerHTML = '<tr><td colspan="5" style="text-size:10px">Loading...</td></tr>';
 
-            jamaahSearch.addEventListener('input', function(e) {
-                clearTimeout(jamaahSearchTimeout);
-                const query = e.target.value.trim();
+            const res = await fetch(
+                `{{ route('admin.kelompok.api.input-pembayaran.sub-kontribusi-options', '') }}/${id}`);
 
-                if (query.length >= 2) {
-                    jamaahSearchTimeout = setTimeout(() => searchJamaah(query), 300);
-                } else if (query.length === 0) {
-                    jamaahOptions.classList.remove('show');
-                }
-            });
+            const json = await res.json();
 
-            jamaahSearch.addEventListener('focus', function() {
-                const query = this.value.trim();
-                if (query.length >= 2) {
-                    searchJamaah(query);
-                }
-            });
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.searchable-dropdown')) {
-                    document.querySelectorAll('.dropdown-options').forEach(el => {
-                        el.classList.remove('show');
-                    });
-                }
-            });
+            renderSubKontribusi(json.data);
         }
 
-        async function searchJamaah(query) {
-            const optionsContainer = document.getElementById('jamaah_options');
-            if (!optionsContainer) return;
 
-            optionsContainer.innerHTML =
-                '<div class="loading-options"><span class="spinner-border spinner-border-sm me-2"></span>Mencari...</div>';
-            optionsContainer.classList.add('show');
+        function renderSubKontribusi(data) {
 
-            try {
-                const response = await fetch(
-                    `{{ route('admin.kelompok.api.input-pembayaran.jamaah-options') }}?search=${encodeURIComponent(query)}`
-                );
-                const data = await response.json();
-
-                if (data.success && data.data && data.data.length > 0) {
-                    optionsContainer.innerHTML = data.data.map(jamaah => `
-                        <div class="option-item" onclick='selectJamaah("${jamaah.jamaah_id}", ${JSON.stringify(escapeHtml(jamaah.nama_lengkap))}, ${JSON.stringify(escapeHtml(jamaah.nik || ''))}, ${JSON.stringify(escapeHtml(jamaah.telepon || ''))}, ${JSON.stringify(escapeHtml(jamaah.alamat || ''))})'>
-                            <strong>${escapeHtml(jamaah.nama_lengkap)}</strong><br>
-                            <small>${escapeHtml(jamaah.nik || 'No NIK')} | ${escapeHtml(jamaah.telepon || 'No Telp')}</small>
-                        </div>
-                    `).join('');
-                } else {
-                    optionsContainer.innerHTML = '<div class="no-options">Tidak ditemukan jamaah</div>';
-                }
-            } catch (error) {
-                console.error('Error searching jamaah:', error);
-                optionsContainer.innerHTML = '<div class="no-options">Gagal memuat data</div>';
-            }
-        }
-
-        function selectJamaah(id, nama, nik, telepon, alamat) {
-            document.getElementById('jamaah_id').value = id;
-            document.getElementById('jamaah_search').value = nama;
-            document.getElementById('jamaah_search').classList.remove('is-invalid');
-            document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-
-            const optionsContainer = document.getElementById('jamaah_options');
-            if (optionsContainer) {
-                optionsContainer.classList.remove('show');
-            }
-
-            // Show jamaah info
-            const jamaahInfo = document.getElementById('jamaahInfo');
-            const jamaahNama = document.getElementById('jamaahNama');
-            const jamaahNik = document.getElementById('jamaahNik');
-            const jamaahTelepon = document.getElementById('jamaahTelepon');
-            const jamaahAlamat = document.getElementById('jamaahAlamat');
-
-            if (jamaahNama) jamaahNama.textContent = nama;
-            if (jamaahNik) jamaahNik.textContent = `NIK: ${nik || 'Belum ada'}`;
-            if (jamaahTelepon) jamaahTelepon.textContent = `Telp: ${telepon || 'Belum ada'}`;
-            if (jamaahAlamat) {
-                const truncatedAlamat = alamat ?
-                    escapeHtml(alamat).substring(0, 50) + (alamat.length > 50 ? '...' : '') :
-                    '';
-                jamaahAlamat.textContent = alamat ? `Alamat: ${truncatedAlamat}` : 'Alamat: Belum ada';
-            }
-
-            if (jamaahInfo) jamaahInfo.style.display = 'block';
-            validateForm();
-        }
-
-        async function loadSubKontribusi(masterKontribusiId) {
-            const container = document.getElementById('subKontribusiContainer');
-            const tbody = document.getElementById('subKontribusiBody');
-
-            if (!container || !tbody) return;
-
-            container.style.display = 'block';
-            tbody.innerHTML =
-                '<tr><td colspan="5" class="text-center"><div class="loading-container"><div class="spinner-border text-primary"></div><p class="mt-2">Memuat data...</p></div></td></tr>';
-
-            try {
-                const response = await fetch(
-                    `{{ route('admin.kelompok.api.input-pembayaran.sub-kontribusi-options', '') }}/${masterKontribusiId}`
-                );
-                const data = await response.json();
-                console.log('Sub Kontribusi Data:', data);
-                if (data.success && Object.keys(data.data).length > 0) {
-                    currentSubKontribusi = data.data;
-                    renderSubKontribusiTable(data.data);
-                } else {
-                    tbody.innerHTML =
-                        '<tr><td colspan="5" class="text-center py-4">Tidak ada data sub kontribusi</td></tr>';
-                }
-            } catch (error) {
-                console.error('Error loading sub kontribusi:', error);
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-4 text-danger">
-                            <i class="bi-exclamation-triangle"></i> Gagal memuat data
-                            <button type="button" onclick="loadSubKontribusi('${masterKontribusiId}')" class="btn btn-sm btn-outline-primary mt-2">
-                                <i class="bi-arrow-repeat"></i> Muat Ulang
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function renderSubKontribusiTable(data) {
-            const tbody = document.getElementById('subKontribusiBody');
+            const body = document.getElementById('subKontribusiBody');
             const levelLabels = {
                 pusat: 'Pusat',
                 daerah: 'Daerah',
@@ -1504,93 +1102,151 @@
             const levelOrder = ['pusat', 'daerah', 'desa', 'kelompok'];
             let html = '';
             let rowNum = 1;
-
             levelOrder.forEach(level => {
                 if (data[level] && data[level].length > 0) {
                     html +=
                         `<tr><th colspan="5" style="background:#f8f9fa;border-bottom: 1px solid #e0e0e0;padding: 10px 15px;">${levelLabels[level]}</th></tr>`;
-
                     data[level].forEach(item => {
-                        const defaultValue = item.jenis === 'percentage' ? '0' : formatNumber(item.value);
                         html += `
-                            <tr>
-                                <td>${rowNum++}</td>
-                                <td>${escapeHtml(item.nama_kontribusi)}</td>
-                                <td>
-                                    <span style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: ${item.jenis === 'percentage' ? '#d1ecf1' : '#d4edda'}; color: ${item.jenis === 'percentage' ? '#0c5460' : '#155724'}">
-                                        ${item.jenis === 'percentage' ? 'Persentase' : 'Nominal'}
-                                    </span>
-                                </td>
-                                <td>
-                                    ${item.jenis === 'percentage' ? item.value + '%' : 'Rp ' + formatNumber(item.value)}
-                                </td>
-                                <td>
-                                    <div class="rupiah-input">
-                                        <span class="rupiah-symbol">Rp</span>
-                                        <input type="text" class="form-control sub-kontribusi-input" 
-                                            name="sub_kontribusi[${rowNum-2}][input_value]"
-                                            data-sub-kat-id="${item.id}"
-                                            value="${defaultValue}"
-                                            autocomplete="off">
-                                        <input type="hidden" 
-                                            name="sub_kontribusi[${rowNum-2}][id]" 
-                                            value="${item.id}">
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>${rowNum}</td>
+                            <td>${escapeHtml(item.nama_kontribusi)}</td>
+                            <td>
+                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 4px; background: ${item.jenis === 'percentage' ? '#d1ecf1' : '#d4edda'}; color: ${item.jenis === 'percentage' ? '#0c5460' : '#155724'}">
+                                    ${item.jenis === 'percentage' ? 'Persentase' : 'Nominal'}
+                                </span>
+                            </td>
+                            <td>
+                                ${item.jenis === 'percentage' ? item.value + '%' : 'Rp ' + formatNumber(item.value)}
+                            </td>
+                            <td>
+                                <div class="rupiah-input">
+                                    <span class="rupiah-symbol">Rp.</span>
+                                    <input type="text" class="form-control sub-kontribusi-input" 
+                                        name="sub_kontribusi[${rowNum-1}][input_value]"
+                                        data-sub-kat-id="${item.sub_kat_id || item.id}"
+                                        value="${item.jenis === 'percentage' ? '0' : formatNumber(item.value)}"
+                                         autocomplete="off">
+                                    <input type="hidden" 
+                                        name="sub_kontribusi[${rowNum-1}][sub_kat_id]" 
+                                        value="${item.sub_kat_id || item.id}">
+                                </div>
+                            </td>
+                        </tr>
                         `;
+                        rowNum++;
                     });
                 }
             });
-
-            tbody.innerHTML = html;
-            calculateTotal();
+            body.innerHTML = html;
+            hitungTotal();
             validateForm();
         }
 
-        function parseRupiah(str) {
-            if (!str && str !== 0) return 0;
-            // Hapus semua karakter non-digit
-            const cleaned = str.toString().replace(/[^\d]/g, '');
-            return parseInt(cleaned) || 0;
-        }
+        /* TOTAL */
+        function hitungTotal() {
 
-        function calculateTotal() {
-            const totalElement = document.getElementById('totalPembayaran');
-            if (!totalElement) return;
+            let t = 0;
 
-            let total = 0;
-            document.querySelectorAll('.sub-kontribusi-input').forEach(input => {
-                const value = parseRupiah(input.value);
-                if (!isNaN(value) && value > 0) {
-                    total += value;
-                }
+            document.querySelectorAll('.sub-kontribusi-input').forEach(i => {
+                t += parseRupiah(i.value);
             });
 
-            totalElement.textContent = 'Rp ' + formatNumber(total);
-            // Set hidden input agar ikut terkirim
-            const totalInput = document.getElementById('total_pembayaran');
-            if (totalInput) totalInput.value = total;
+            document.getElementById('totalPembayaran').innerText = 'Rp ' + formatNumber(t);
+            document.getElementById('total_pembayaran').value = t;
         }
 
-        function validateForm() {
-            const jamaahId = document.getElementById('jamaah_id')?.value;
-            const submitBtn = document.getElementById('submitBtn');
+        /* DROPDOWN */
+        function initDropdown() {
 
-            if (!submitBtn) return;
+            const s = document.getElementById('jamaah_search');
+            const o = document.getElementById('jamaah_options');
+            let t;
 
-            let isValid = false;
+            s.addEventListener('input', e => {
 
-            if (jamaahId) {
-                const inputs = document.querySelectorAll('.sub-kontribusi-input');
-                if (inputs.length > 0) {
-                    isValid = Array.from(inputs).some(input => parseRupiah(input.value) > 0);
+                clearTimeout(t);
+
+                if (e.target.value.length < 2) {
+                    o.classList.remove('show');
+                    return;
                 }
-            }
 
-            submitBtn.disabled = !isValid;
+                t = setTimeout(() => searchJamaah(e.target.value), 300);
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('.searchable-dropdown')) o.classList.remove('show');
+            });
         }
 
+
+        async function searchJamaah(q) {
+
+            const box = document.getElementById('jamaah_options');
+
+            box.innerHTML = '<div class="loading-options"><i class="bi bi-arrow-repeat spin"></i> Mencari...</div>';
+            box.classList.add('show');
+
+            const res = await fetch(`{{ route('admin.kelompok.api.input-pembayaran.jamaah-options') }}?search=${q}`);
+            const json = await res.json();
+
+            if (json.success) {
+                box.innerHTML = json.data.map(j => `
+                        <div class="option-item" onclick='selectJamaah("${j.jamaah_id}","${escapeHtml(j.nama_lengkap)}","${escapeHtml(j.nik)}","${escapeHtml(j.telepon)}","${escapeHtml(j.alamat)}")'>
+                            <strong>${escapeHtml(j.nama_lengkap)}</strong><br>
+                            <small>${escapeHtml(j.alamat)} | ${escapeHtml(j.telepon)}</small>
+                        </div>
+                `).join('');
+            }
+        }
+
+        /* SELECT JAMAAH */
+        function selectJamaah(id, nama, nik, telp, alamat) {
+
+            document.getElementById('jamaah_id').value = id;
+            document.getElementById('jamaah_search').value = nama;
+
+            document.getElementById('jamaahNama').innerText = nama;
+            document.getElementById('jamaahTelepon').innerText = 'Telp: ' + (telp || '-');
+            document.getElementById('jamaahAlamat').innerText = alamat || '-';
+
+            document.getElementById('jamaahInfo').style.display = 'block';
+            document.getElementById('jamaah_options').classList.remove('show');
+
+            validateForm();
+        }
+
+        /* RESET */
+        function resetForm() {
+
+            document.getElementById('pembayaranForm').reset();
+
+            document.getElementById('jamaah_id').value = '';
+            document.getElementById('jamaahInfo').style.display = 'none';
+
+            document.getElementById('totalPembayaran').innerText = 'Rp 0';
+            document.getElementById('submitBtn').disabled = true;
+
+            window.showToast('Form direset', 'info');
+        }
+
+        /* UTIL */
+        function parseRupiah(s) {
+            return parseInt((s || '').replace(/[^\d]/g, '')) || 0;
+        }
+
+        function formatNumber(n) {
+            return new Intl.NumberFormat('id-ID').format(n || 0);
+        }
+
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        /* FILE */
         function previewFile() {
             const fileInput = document.getElementById('bukti_bayar');
             const fileName = document.getElementById('fileName');
@@ -1598,19 +1254,25 @@
             const previewImage = document.getElementById('previewImage');
             const fileText = document.getElementById('fileText');
 
-            if (fileInput.files && fileInput.files[0]) {
+            // Reset preview terlebih dahulu
+            if (fileName) fileName.textContent = '';
+            if (fileText) fileText.textContent = 'Upload';
+            if (previewContainer) previewContainer.style.display = 'none';
+            if (previewImage) previewImage.src = '';
+
+            if (fileInput.files && fileInput.files.length > 0 && fileInput.files[0]) {
                 const file = fileInput.files[0];
 
-                // Validate file size (max 2MB)
+                // Validasi ukuran file (maks 2MB)
                 if (file.size > 2 * 1024 * 1024) {
-                    window.showToast('Ukuran file maksimal 2MB', 'error');
+                    window.showToast && window.showToast('Ukuran file maksimal 2MB', 'error');
                     fileInput.value = '';
                     return;
                 }
 
-                // Validate file type
-                if (!file.type.match('image.*')) {
-                    window.showToast('File harus berupa gambar', 'error');
+                // Validasi tipe file gambar
+                if (!file.type.match('image/')) {
+                    window.showToast && window.showToast('File harus berupa gambar', 'error');
                     fileInput.value = '';
                     return;
                 }
@@ -1622,135 +1284,31 @@
                 reader.onload = function(e) {
                     if (previewImage) previewImage.src = e.target.result;
                     if (previewContainer) previewContainer.style.display = 'block';
-                }
+                };
+                reader.onerror = function() {
+                    window.showToast && window.showToast('Gagal membaca file', 'error');
+                    fileInput.value = '';
+                    if (fileName) fileName.textContent = '';
+                    if (fileText) fileText.textContent = 'Upload';
+                    if (previewContainer) previewContainer.style.display = 'none';
+                    if (previewImage) previewImage.src = '';
+                };
                 reader.readAsDataURL(file);
             }
         }
 
         function removeImage() {
-            const fileInput = document.getElementById('bukti_bayar');
+
+            const input = document.getElementById('bukti_bayar');
+            const preview = document.getElementById('previewContainer');
             const fileName = document.getElementById('fileName');
             const fileText = document.getElementById('fileText');
-            const previewContainer = document.getElementById('previewContainer');
-            const previewImage = document.getElementById('previewImage');
 
-            if (fileInput) fileInput.value = '';
+            input.value = '';
+
+            if (preview) preview.style.display = 'none';
             if (fileName) fileName.textContent = '';
-            if (fileText) fileText.textContent = 'Unggah Bukti Pembayaran';
-            if (previewContainer) previewContainer.style.display = 'none';
-            if (previewImage) previewImage.src = '';
+            if (fileText) fileText.textContent = 'Upload';
         }
-
-        function resetForm() {
-            const form = document.getElementById('pembayaranForm');
-            if (form) {
-                form.reset();
-
-                // Set default values
-                const tglTransaksi = document.getElementById('tgl_transaksi');
-                if (tglTransaksi) tglTransaksi.value = '{{ date('Y-m-d') }}';
-
-                const metodeBayar = document.getElementById('metode_bayar');
-                if (metodeBayar) metodeBayar.value = 'TUNAI';
-            }
-
-            // Reset jamaah
-            document.getElementById('jamaah_id').value = '';
-            document.getElementById('jamaah_search').value = '';
-            document.getElementById('jamaah_search').classList.remove('is-invalid');
-            document.getElementById('jamaah_error')?.style.setProperty('display', 'none');
-
-            const jamaahInfo = document.getElementById('jamaahInfo');
-            if (jamaahInfo) jamaahInfo.style.display = 'none';
-
-            // Remove invalid classes
-            document.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-
-            // Reset total
-            document.getElementById('totalPembayaran').textContent = 'Rp 0';
-
-            // Disable submit button
-            document.getElementById('submitBtn').disabled = true;
-
-            // Remove image
-            removeImage();
-
-            // Reload sub kontribusi
-            const masterKontribusiId = "{{ request('master_kontribusi_id') }}";
-            if (masterKontribusiId) {
-                loadSubKontribusi(masterKontribusiId);
-            }
-
-            window.showToast('Form telah direset', 'info');
-        }
-
-        function escapeHtml(text) {
-            if (text === null || text === undefined) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatNumber(number) {
-            if (!number && number !== 0) return '0';
-            return new Intl.NumberFormat('id-ID').format(number);
-        }
-
-        function showToast(type, title, message) {
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-
-            const toast = document.createElement('div');
-            const icons = {
-                success: 'bi-check-circle',
-                error: 'bi-exclamation-triangle',
-                warning: 'bi-exclamation-circle',
-                info: 'bi-info-circle'
-            };
-
-            toast.className = `toast ${type}`;
-
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="bi ${icons[type] || 'bi-info-circle'}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${escapeHtml(title)}</div>
-                    <div class="toast-message">${escapeHtml(message)}</div>
-                </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">
-                    <i class="bi-x"></i>
-                </button>
-            `;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('show');
-
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.remove();
-                        }
-                    }, 250);
-                }, 3000);
-            }, 10);
-        }
-
-        // ============================================
-        // EXPOSE FUNCTIONS TO GLOBAL SCOPE
-        // ============================================
-        window.goToInputPembayaran = goToInputPembayaran;
-        window.goBackToSelection = goBackToSelection;
-        window.changeKontribusi = changeKontribusi;
-        window.selectJamaah = selectJamaah;
-        window.previewFile = previewFile;
-        window.removeImage = removeImage;
-        window.resetForm = resetForm;
-        window.fetchKontribusi = fetchKontribusi;
     </script>
 @endpush
