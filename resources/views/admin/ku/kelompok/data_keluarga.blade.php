@@ -49,9 +49,7 @@
                                     <th width="150">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                <!-- Data akan diisi oleh JavaScript -->
-                            </tbody>
+                            <tbody id="tableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -63,9 +61,7 @@
                 </div>
 
                 <div id="loadingState" class="empty-state">
-                    <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
-                    </div>
-                    <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
+                    <div class="loading-animation"></div>
                 </div>
 
                 <!-- Pagination -->
@@ -82,9 +78,7 @@
         </div>
     </div>
 
-    <!-- ---------- MODALS ---------- -->
-
-    <!-- Create/Edit Modal -->
+    <!-- ========== FORM MODAL (CREATE/EDIT) ========== -->
     <div class="modal" id="formModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -107,12 +101,10 @@
                             <div class="dropdown-search-container">
                                 <input style="width: 95%;margin-right: 5px;" type="text"
                                     class="form-control dropdown-search-input" id="kepalaKeluargaSearch"
-                                    placeholder="Ketik untuk mencari jamaah..." autocomplete="off">
+                                    placeholder="Ketik minimal 2 karakter..." autocomplete="off">
                                 <i class="bi-search dropdown-search-icon"></i>
                             </div>
-                            <div class="dropdown-options" id="kepalaKeluargaOptions"
-                                style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
-                            </div>
+                            <div class="dropdown-options" id="kepalaKeluargaOptions"></div>
                         </div>
                     </div>
 
@@ -129,23 +121,21 @@
         </div>
     </div>
 
-    <!-- Detail Modal -->
+    <!-- ========== DETAIL MODAL ========== -->
     <div class="modal" id="detailModal">
         <div class="modal-dialog">
             <div class="modal-header">
                 <h3 class="modal-title">Detail Keluarga</h3>
                 <button class="modal-close" onclick="KeluargaApp.hideDetailModal()">&times;</button>
             </div>
-            <div class="modal-body" id="detailBody">
-                <!-- Data akan diisi oleh JavaScript -->
-            </div>
+            <div class="modal-body" id="detailBody"></div>
             <div class="modal-footer">
                 <button class="btn" onclick="KeluargaApp.hideDetailModal()">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- ========== DELETE CONFIRMATION MODAL ========== -->
     <div class="modal" id="deleteModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -154,17 +144,17 @@
             </div>
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus keluarga <strong id="deleteItemName"></strong>?</p>
-                <p class="form-text">Data yang dihapus tidak dapat dikembalikan. Semua anggota keluarga juga akan terhapus.
-                </p>
+                <p class="text-danger">Data yang dihapus tidak dapat dikembalikan. Semua anggota keluarga juga akan
+                    terhapus.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="KeluargaApp.hideDeleteModal()">Batal</button>
-                <button class="btn btn-delete" onclick="KeluargaApp.confirmDelete()">Hapus</button>
+                <button class="btn btn-danger" onclick="KeluargaApp.confirmDelete()">Hapus</button>
             </div>
         </div>
     </div>
 
-    <!-- Tambah Anggota Modal -->
+    <!-- ========== ANGGOTA MODAL ========== -->
     <div class="modal" id="anggotaModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -177,16 +167,13 @@
 
                     <div class="form-group">
                         <label class="form-label">Pilih Jamaah *</label>
-                        <div class="searchable-dropdown" style="">
-                            <div class="dropdown-search-container" style="display: flex;gap: 5px; align-item:center;">
+                        <div class="searchable-dropdown">
+                            <div class="dropdown-search-container">
                                 <input type="text" class="form-control dropdown-search-input" id="anggotaJamaahSearch"
-                                    placeholder="Ketik untuk mencari jamaah..." autocomplete="off"
-                                    style="display: none;display: block;width: 95%;margin-right: 5px;">
+                                    placeholder="Ketik minimal 2 karakter..." autocomplete="off">
                                 <i class="bi-search dropdown-search-icon"></i>
                             </div>
-                            <div class="dropdown-options" id="anggotaJamaahOptions"
-                                style="display: none;display: block;padding: 5px 13px;font-size: 12px;border: 1px solid #cfcfcf;width: 95%;margin-top: 5px;cursor: pointer;">
-                            </div>
+                            <div class="dropdown-options" id="anggotaJamaahOptions"></div>
                         </div>
                         <input type="hidden" id="anggotaJamaahId">
                     </div>
@@ -215,871 +202,874 @@
 @endsection
 
 @push('scripts')
-    <script>
-        // ============================================================================
-        // VARIABEL GLOBAL & KONFIGURASI
-        // ============================================================================
-        let currentPage = 1;
-        let totalPages = 1;
-        let totalRecords = 0;
-        let searchQuery = '';
-        let perPage = 10;
-        let isLoading = false;
-        let deleteId = null;
-        let kepalaKeluargaSearchTimeout = null;
-        let anggotaJamaahSearchTimeout = null;
+    <style>
+        /* ===== STYLES ===== */
+        .loading-animation {
+            height: 20px;
+            width: 200px;
+            margin: 0 auto 10px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
 
-        const API_ROUTES = {
-            data: '{{ route('admin.kelompok.api.keluarga.index') }}',
-            detail: '{{ route('admin.kelompok.api.keluarga.show', '') }}',
-            create: '{{ route('admin.kelompok.api.keluarga.store') }}',
-            update: '{{ route('admin.kelompok.api.keluarga.update', '') }}',
-            destroy: '{{ route('admin.kelompok.api.keluarga.destroy', '') }}',
-            jamaahOptions: '{{ route('admin.kelompok.api.keluarga.jamaah-options') }}',
-            jamaahFam: '{{ route('admin.kelompok.api.keluarga.jamaah-fam') }}',
-            insertAnggota: '{{ route('admin.kelompok.api.anggota-keluarga.insert-anggota-keluarga') }}',
-            print: '{{ route('admin.kelompok.data-keluarga.print') }}'
-        };
-
-        // ============================================================================
-        // FUNGSI UTAMA - LOAD DATA & RENDER TABEL
-        // ============================================================================
-
-        // Fungsi untuk memuat data keluarga
-        async function loadKeluargaData(page = null) {
-            if (isLoading) return;
-
-            if (page !== null && page >= 1) {
-                currentPage = page;
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
             }
 
-            showLoadingState();
-            isLoading = true;
-
-            try {
-                const params = new URLSearchParams({
-                    page: currentPage,
-                    per_page: perPage
-                });
-
-                if (searchQuery) {
-                    params.append('search', searchQuery);
-                }
-
-                const url = `${API_ROUTES.data}?${params.toString()}`;
-
-                const response = await fetch(url);
-                const result = await response.json();
-
-
-                if (result.success) {
-                    renderTable(result.data);
-                    updatePagination(result);
-                } else {
-                    throw new Error(result.message || 'Gagal memuat data');
-                }
-            } catch (error) {
-                console.error('Error loading data:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                } else {
-                    alert(error.message);
-                }
-                // Reset ke halaman 1 jika error
-                currentPage = 1;
-                showEmptyState();
-            } finally {
-                hideLoadingState();
-                isLoading = false;
+            100% {
+                background-position: -200% 0;
             }
         }
 
-        // Fungsi untuk merender tabel
-        function renderTable(data) {
-            const tableBody = document.getElementById('tableBody');
-            const emptyState = document.getElementById('emptyState');
-            const loadingState = document.getElementById('loadingState');
-            const pagination = document.getElementById('pagination');
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
 
-            if (!data || data.length === 0) {
-                showEmptyState();
-                return;
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Dropdown Styles */
+        .searchable-dropdown {
+            position: relative;
+        }
+
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #cfcfcf;
+            border-top: none;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .option-item:hover,
+        .option-item:focus {
+            background: #f0f7ff;
+            outline: none;
+        }
+
+        .option-item:last-child {
+            border-bottom: none;
+        }
+
+        .no-options,
+        .loading-options {
+            padding: 12px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .loading-options i {
+            margin-right: 5px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
             }
 
-            // Hide loading and empty state
-            if (loadingState) loadingState.style.display = 'none';
-            if (emptyState) emptyState.style.display = 'none';
-            if (pagination) pagination.style.display = 'flex';
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-            // Format data untuk tabel
-            const startNumber = ((currentPage - 1) * perPage) + 1;
-            const tableRows = data.map((item, index) => {
-                const rowNumber = startNumber + index;
-                return `
-                <tr>
-                    <td>${rowNumber}</td>
-                    <td>${escapeHtml(item.nama_keluarga)}</td>
-                    <td>${escapeHtml(item.kepala_keluarga_nama)}</td>
-                    <td>${item.alamat ? escapeHtml(item.alamat.substring(0, 50) + (item.alamat.length > 50 ? '...' : '')) : '-'}</td>
+        /* Detail Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .anggota-list {
+            margin-top: 20px;
+        }
+
+        .anggota-header {
+            display: grid;
+            grid-template-columns: 150px 2fr 1fr;
+            gap: 12px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 500;
+        }
+
+        .anggota-item {
+            display: grid;
+            grid-template-columns: 150px 2fr 1fr;
+            gap: 12px;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .empty-anggota {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+    </style>
+
+    <script>
+        (function() {
+            // ============================================================================
+            // KONFIGURASI & STATE
+            // ============================================================================
+            const CONFIG = {
+                debounceDelay: 500,
+                defaultPerPage: 10,
+                minSearchChars: 2
+            };
+
+            // STATE - Semua data aplikasi disimpan di sini
+            const State = {
+                currentPage: 1,
+                totalPages: 1,
+                totalRecords: 0,
+                searchQuery: '',
+                perPage: CONFIG.defaultPerPage,
+                isLoading: false,
+                deleteId: null,
+
+                resetToFirstPage() {
+                    this.currentPage = 1;
+                },
+
+                updatePagination(data) {
+                    this.currentPage = parseInt(data.current_page) || 1;
+                    this.totalPages = parseInt(data.last_page) || 1;
+                    this.totalRecords = parseInt(data.total) || 0;
+                }
+            };
+
+            // API Routes
+            const API = {
+                data: '{{ route('admin.kelompok.api.keluarga.index') }}',
+                detail: (id) => '{{ route('admin.kelompok.api.keluarga.show', '') }}/' + id,
+                create: '{{ route('admin.kelompok.api.keluarga.store') }}',
+                update: (id) => '{{ route('admin.kelompok.api.keluarga.update', '') }}/' + id,
+                destroy: (id) => '{{ route('admin.kelompok.api.keluarga.destroy', '') }}/' + id,
+                jamaahOptions: '{{ route('admin.kelompok.api.keluarga.jamaah-options') }}',
+                jamaahFam: '{{ route('admin.kelompok.api.keluarga.jamaah-fam') }}',
+                insertAnggota: '{{ route('admin.kelompok.api.anggota-keluarga.insert-anggota-keluarga') }}',
+                print: '{{ route('admin.kelompok.data-keluarga.print') }}'
+            };
+
+            // ============================================================================
+            // HELPER FUNCTIONS
+            // ============================================================================
+            const Helpers = {
+                // ESCAPE HTML - PENTING UNTUK KEAMANAN!
+                escapeHtml(text) {
+                    if (!text) return '';
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                // Truncate text
+                truncate(text, length = 50) {
+                    if (!text) return '-';
+                    return text.length > length ? text.substring(0, length) + '...' : text;
+                },
+
+                // Validasi form keluarga
+                validateKeluargaForm(data) {
+                    if (!data.nama_keluarga) {
+                        this.showToast('Nama keluarga harus diisi', 'error');
+                        return false;
+                    }
+                    if (!data.kepala_keluarga_id) {
+                        this.showToast('Kepala keluarga harus dipilih', 'error');
+                        return false;
+                    }
+                    return true;
+                },
+
+                // Validasi form anggota
+                validateAnggotaForm(data) {
+                    if (!data.jamaah_id) {
+                        this.showToast('Jamaah harus dipilih', 'error');
+                        return false;
+                    }
+                    if (!data.status_hubungan) {
+                        this.showToast('Status hubungan harus dipilih', 'error');
+                        return false;
+                    }
+                    return true;
+                },
+
+                // Toast notification
+                showToast(message, type = 'info') {
+                    if (window.showToast) {
+                        window.showToast(message, type);
+                    } else {
+                        alert(message);
+                    }
+                },
+
+                // Loading state
+                setLoading(isLoading) {
+                    State.isLoading = isLoading;
+                    const loadingEl = document.getElementById('loadingState');
+                    const emptyEl = document.getElementById('emptyState');
+
+                    if (loadingEl) loadingEl.style.display = isLoading ? 'block' : 'none';
+                    if (emptyEl && isLoading) emptyEl.style.display = 'none';
+                },
+
+                // Build query string
+                buildQuery() {
+                    const params = new URLSearchParams({
+                        page: State.currentPage,
+                        per_page: State.perPage
+                    });
+
+                    if (State.searchQuery) {
+                        params.append('search', State.searchQuery);
+                    }
+
+                    return params.toString();
+                },
+
+                // Format nomor urut
+                formatRowNumber(index) {
+                    return ((State.currentPage - 1) * State.perPage) + index + 1;
+                }
+            };
+
+            // ============================================================================
+            // API CALLS
+            // ============================================================================
+            const Api = {
+                async getKeluarga() {
+                    if (State.isLoading) return null;
+
+                    Helpers.setLoading(true);
+
+                    try {
+                        const url = `${API.data}?${Helpers.buildQuery()}`;
+                        const res = await fetch(url);
+                        const result = await res.json();
+
+                        if (!result.success) {
+                            throw new Error(result.message || 'Gagal memuat data');
+                        }
+                        return result;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Helpers.showToast(error.message, 'error');
+                        return null;
+                    } finally {
+                        Helpers.setLoading(false);
+                    }
+                },
+
+                async getDetail(id) {
+                    try {
+                        const res = await fetch(API.detail(id));
+                        const result = await res.json();
+                        return result.success ? result.data : null;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Helpers.showToast('Gagal memuat detail', 'error');
+                        return null;
+                    }
+                },
+
+                async searchJamaah(query, type = 'kepala') {
+                    const endpoint = type === 'kepala' ? API.jamaahOptions : API.jamaahFam;
+                    try {
+                        const res = await fetch(`${endpoint}?search=${encodeURIComponent(query)}`);
+                        const result = await res.json();
+                        return result.success ? result.data : [];
+                    } catch (error) {
+                        console.error('Error searching jamaah:', error);
+                        return [];
+                    }
+                },
+
+                async create(data) {
+                    const res = await fetch(API.create, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    return await res.json();
+                },
+
+                async update(id, data) {
+                    const res = await fetch(API.update(id), {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    return await res.json();
+                },
+
+                async delete(id) {
+                    const res = await fetch(API.destroy(id), {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    return await res.json();
+                },
+
+                async addAnggota(data) {
+                    const res = await fetch(API.insertAnggota, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    return await res.json();
+                }
+            };
+
+            // ============================================================================
+            // UI RENDER
+            // ============================================================================
+            const UI = {
+                tableBody: document.getElementById('tableBody'),
+                emptyState: document.getElementById('emptyState'),
+                pagination: document.getElementById('pagination'),
+                pageInfo: document.getElementById('pageInfo'),
+
+                renderTable(data) {
+                    if (!data || data.length === 0) {
+                        this.showEmpty();
+                        return;
+                    }
+
+                    Helpers.setLoading(false);
+                    this.emptyState.style.display = 'none';
+                    this.pagination.style.display = 'flex';
+
+                    const rows = data.map((item, index) => {
+                        const no = Helpers.formatRowNumber(index);
+                        const alamat = item.alamat ? Helpers.truncate(item.alamat) : '-';
+
+                        return `<tr>
+                    <td>${no}</td>
+                    <td>${Helpers.escapeHtml(item.nama_keluarga)}</td>
+                    <td>${Helpers.escapeHtml(item.kepala_keluarga_nama)}</td>
+                    <td>${Helpers.escapeHtml(alamat)}</td>
                     <td>
-                        <button class="btn btn-primary btn-sm" onclick="showDetailModal('${item.keluarga_id}')" title="Detail">
+                        <button class="btn btn-primary btn-sm" onclick="KeluargaApp.showDetailModal('${item.keluarga_id}')" title="Detail">
                             <i class="bi-eye"></i>
                         </button>
-                        <button class="btn btn-edit btn-sm" onclick="showEditModal('${item.keluarga_id}')" title="Edit">
+                        <button class="btn btn-edit btn-sm" onclick="KeluargaApp.showEditModal('${item.keluarga_id}')" title="Edit">
                             <i class="bi-pencil"></i>
                         </button>
-                        <button class="btn btn-delete btn-sm" onclick="showDeleteModal('${item.keluarga_id}', '${escapeHtml(item.nama_keluarga)}')" title="Hapus">
+                        <button class="btn btn-danger btn-sm" onclick="KeluargaApp.showDeleteModal('${item.keluarga_id}', '${Helpers.escapeHtml(item.nama_keluarga)}')" title="Hapus">
                             <i class="bi-trash"></i>
                         </button>
                     </td>
-                </tr>
-            `;
-            }).join('');
+                </tr>`;
+                    }).join('');
 
-            tableBody.innerHTML = tableRows;
-        }
+                    this.tableBody.innerHTML = rows;
+                    this.updatePagination();
+                },
 
-        // Tampilkan empty state
-        function showEmptyState() {
-            const tableBody = document.getElementById('tableBody');
-            const emptyState = document.getElementById('emptyState');
-            const loadingState = document.getElementById('loadingState');
-            const pagination = document.getElementById('pagination');
+                showEmpty() {
+                    this.tableBody.innerHTML = '';
+                    this.emptyState.style.display = 'block';
+                    this.pagination.style.display = 'none';
+                    Helpers.setLoading(false);
 
-            if (tableBody) tableBody.innerHTML = '';
-            if (emptyState) emptyState.style.display = 'block';
-            if (loadingState) loadingState.style.display = 'none';
-            if (pagination) pagination.style.display = 'none';
-        }
+                    // Update emptyState message
+                    const emptyStateMsg = this.emptyState.querySelector('h4');
+                    if (emptyStateMsg) {
+                        if (State.searchQuery || State.aktifFilter !== '') {
+                            emptyStateMsg.textContent = 'Data tidak ditemukan';
+                        } else {
+                            emptyStateMsg.textContent = 'Tidak ada data jamaah';
+                        }
+                    }
+                },
 
-        // Fungsi untuk update pagination
-        function updatePagination(data) {
-            currentPage = parseInt(data.current_page) || 1;
-            totalPages = parseInt(data.last_page) || 1;
-            totalRecords = parseInt(data.total) || 0;
+                updatePagination() {
+                    if (this.pageInfo) {
+                        this.pageInfo.textContent = `Halaman ${State.currentPage} dari ${State.totalPages}`;
+                    }
 
-            const pageInfo = document.getElementById('pageInfo');
-            const prevBtn = document.getElementById('prevPage');
-            const nextBtn = document.getElementById('nextPage');
+                    const prev = document.getElementById('prevPage');
+                    const next = document.getElementById('nextPage');
 
-            // Update info
-            if (pageInfo) {
-                pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-            }
+                    if (prev) {
+                        prev.disabled = State.currentPage <= 1;
+                        prev.classList.toggle('disabled', State.currentPage <= 1);
+                    }
 
-            // Update prev button
-            if (prevBtn) {
-                const isDisabled = currentPage <= 1;
-                prevBtn.disabled = isDisabled;
-                prevBtn.classList.toggle('disabled', isDisabled);
-            }
+                    if (next) {
+                        next.disabled = State.currentPage >= State.totalPages;
+                        next.classList.toggle('disabled', State.currentPage >= State.totalPages);
+                    }
+                },
 
-            // Update next button
-            if (nextBtn) {
-                const isDisabled = currentPage >= totalPages;
-                nextBtn.disabled = isDisabled;
-                nextBtn.classList.toggle('disabled', isDisabled);
-            }
-        }
-
-        // Fungsi untuk ganti halaman
-        function goToPage(page) {
-            if (page < 1 || page > totalPages || page === currentPage) {
-                return;
-            }
-            loadKeluargaData(page);
-        }
-
-        // ============================================================================
-        // FUNGSI MODAL - CREATE, EDIT, DETAIL, DELETE, ANGGOTA
-        // ============================================================================
-
-        // Modal Form (Create/Edit)
-        function showCreateModal() {
-            document.getElementById('modalTitle').textContent = 'Tambah Keluarga';
-            document.getElementById('editKeluargaId').value = '';
-            document.getElementById('keluargaForm').reset();
-            document.getElementById('kepalaKeluargaId').value = '';
-            document.getElementById('kepalaKeluargaSearch').value = '';
-            document.getElementById('formModal').classList.add('show');
-
-            // Focus ke search input setelah modal muncul
-            setTimeout(() => {
-                document.getElementById('kepalaKeluargaSearch').focus();
-            }, 300);
-        }
-
-        async function showEditModal(keluargaId) {
-            try {
-                const response = await fetch(`${API_ROUTES.detail}/${keluargaId}`);
-                const result = await response.json();
-
-                if (result.success) {
-                    const keluarga = result.data;
-
-                    document.getElementById('modalTitle').textContent = 'Edit Keluarga';
-                    document.getElementById('editKeluargaId').value = keluarga.keluarga_id;
-                    document.getElementById('namaKeluarga').value = keluarga.nama_keluarga;
-                    document.getElementById('alamat').value = keluarga.alamat || '';
-                    document.getElementById('kepalaKeluargaId').value = keluarga.kepala_keluarga_id;
-                    document.getElementById('kepalaKeluargaSearch').value = keluarga.kepala_keluarga_nama;
-
-                    document.getElementById('formModal').classList.add('show');
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (error) {
-                console.error('Error loading edit data:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        function hideFormModal() {
-            document.getElementById('formModal').classList.remove('show');
-            document.getElementById('kepalaKeluargaOptions').style.display = 'none';
-        }
-
-        // Modal Detail
-        async function showDetailModal(keluargaId) {
-            try {
-                const response = await fetch(`${API_ROUTES.detail}/${keluargaId}`);
-                const result = await response.json();
-
-                if (result.success) {
-                    const keluarga = result.data;
-
-                    let detailHtml = `
-                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 12px;">
-                        <div style="font-weight: 500;">Nama Keluarga</div>
-                        <div>${escapeHtml(keluarga.nama_keluarga)}</div>
-                        
-                        <div style="font-weight: 500;">Alamat</div>
-                        <div>${keluarga.alamat ? escapeHtml(keluarga.alamat) : '-'}</div>
-                    </div>
+                renderDetail(data) {
+                    let html = `
+                <div class="detail-grid">
+                    <div class="detail-label">Nama Keluarga</div>
+                    <div class="detail-value">${Helpers.escapeHtml(data.nama_keluarga)}</div>
                     
-                    <div style="margin-top: 20px;">
-                        <h4 style="margin-bottom: 10px;">Anggota Keluarga</h4>
-                `;
+                    <div class="detail-label">Alamat</div>
+                    <div class="detail-value">${data.alamat ? Helpers.escapeHtml(data.alamat) : '-'}</div>
+                </div>
+                
+                <div class="anggota-list">
+                    <h4 style="margin-bottom: 10px;">Anggota Keluarga</h4>
+                    <div class="anggota-header">
+                        <div>Status</div>
+                        <div>Nama</div>
+                        <div>Urutan</div>
+                    </div>
+            `;
 
                     // Kepala keluarga
-                    detailHtml += `
-                      <div style="display: grid;grid-template-columns: 150px 2fr 1fr;gap: 12px;padding: 8px;border-bottom: 1px solid #eee;">
-                                <div><strong>Keluarga</strong></div>
-                                <div><strong>Nama</strong></div>
-                                <div><strong>Urutan</strong></div>
-                            </div>
-                    <div style="display: grid;grid-template-columns: 150px 1fr;gap: 12px;padding: 8px;border-bottom: 1px solid #eeeeee;">
-                        <div>Kepala Keluarga</div>
-                        <div>${escapeHtml(keluarga.kepala_keluarga_nama)}</div>
-                    </div>
-                `;
+                    html += `
+                <div class="anggota-item">
+                    <div>Kepala Keluarga</div>
+                    <div>${Helpers.escapeHtml(data.kepala_keluarga_nama)}</div>
+                    <div>-</div>
+                </div>
+            `;
 
                     // Anggota lainnya
-                    if (keluarga.anggota && keluarga.anggota.length > 0) {
-                        keluarga.anggota.forEach(anggota => {
-                            detailHtml += `
-                            <div style="display: grid;grid-template-columns: 150px 2fr 1fr;gap: 12px;padding: 8px;border-bottom: 1px solid #eee;">
-                                <div>${escapeHtml(anggota.status_hubungan)}</div>
-                                <div>${escapeHtml(anggota.nama_lengkap)}</div>
-                                <div>${escapeHtml(anggota.urutan)}</div>
-                            </div>
-                        `;
-                        });
-                    } else {
-                        detailHtml += `
-                        <div style="text-align: center; padding: 20px; color: #666;">
-                            <i class="bi-people" style="font-size: 48px; opacity: 0.3;"></i>
-                            <p>Belum ada anggota keluarga lainnya</p>
+                    if (data.anggota && data.anggota.length > 0) {
+                        data.anggota.forEach(anggota => {
+                            html += `
+                        <div class="anggota-item">
+                            <div>${Helpers.escapeHtml(anggota.status_hubungan)}</div>
+                            <div>${Helpers.escapeHtml(anggota.nama_lengkap)}</div>
+                            <div>${anggota.urutan || '-'}</div>
                         </div>
                     `;
-                    }
-
-                    detailHtml += `
-                    </div>
-                    <div style="margin-top: 20px; text-align: center;">
-                        <button class="btn btn-primary" onclick="showAnggotaModal('${keluarga.keluarga_id}')">
-                            <i class="bi-plus"></i> Tambah Anggota
-                        </button>
+                        });
+                    } else {
+                        html += `
+                    <div class="empty-anggota">
+                        <i class="bi-people" style="font-size: 48px; opacity: 0.3;"></i>
+                        <p>Belum ada anggota keluarga lainnya</p>
                     </div>
                 `;
+                    }
 
-                    document.getElementById('detailBody').innerHTML = detailHtml;
-                    document.getElementById('detailModal').classList.add('show');
-                } else {
-                    throw new Error(result.message);
+                    html += `
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn btn-primary" onclick="KeluargaApp.showAnggotaModal('${data.keluarga_id}')">
+                        <i class="bi-plus"></i> Tambah Anggota
+                    </button>
+                </div>
+            `;
+
+                    document.getElementById('detailBody').innerHTML = html;
                 }
-            } catch (error) {
-                console.error('Error loading detail:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        function hideDetailModal() {
-            document.getElementById('detailModal').classList.remove('show');
-        }
-
-        // Modal Delete
-        function showDeleteModal(keluargaId, namaKeluarga) {
-            deleteId = keluargaId;
-            document.getElementById('deleteItemName').textContent = namaKeluarga;
-            document.getElementById('deleteModal').classList.add('show');
-        }
-
-        function hideDeleteModal() {
-            deleteId = null;
-            document.getElementById('deleteModal').classList.remove('show');
-        }
-
-        // Modal Anggota
-        function showAnggotaModal(keluargaId) {
-            document.getElementById('anggotaKeluargaId').value = keluargaId;
-            document.getElementById('anggotaForm').reset();
-            document.getElementById('anggotaJamaahId').value = '';
-            document.getElementById('anggotaJamaahSearch').value = '';
-            document.getElementById('statusHubungan').value = '';
-            document.getElementById('urutan').value = '1';
-
-            hideDetailModal();
-            setTimeout(() => {
-                document.getElementById('anggotaModal').classList.add('show');
-                setTimeout(() => {
-                    document.getElementById('anggotaJamaahSearch').focus();
-                }, 300);
-            }, 300);
-        }
-
-        function hideAnggotaModal() {
-            document.getElementById('anggotaModal').classList.remove('show');
-            document.getElementById('anggotaJamaahOptions').style.display = 'none';
-        }
-
-        // ============================================================================
-        // FUNGSI FORM - SUBMIT CREATE, EDIT, DELETE, ANGGOTA
-        // ============================================================================
-
-        // Submit Form (Create/Edit)
-        async function submitForm() {
-            const keluargaId = document.getElementById('editKeluargaId').value;
-            const namaKeluarga = document.getElementById('namaKeluarga').value;
-            const kepalaKeluargaId = document.getElementById('kepalaKeluargaId').value;
-            const alamat = document.getElementById('alamat').value;
-
-            // Validasi
-            if (!namaKeluarga || !kepalaKeluargaId) {
-                if (window.showToast) {
-                    window.showToast('Harap isi semua field yang wajib diisi', 'error');
-                }
-                return;
-            }
-
-            const data = {
-                nama_keluarga: namaKeluarga,
-                kepala_keluarga_id: kepalaKeluargaId,
-                alamat: alamat
             };
 
-            try {
-                const url = keluargaId ?
-                    `${API_ROUTES.update}/${keluargaId}` :
-                    API_ROUTES.create;
-                const method = keluargaId ? 'PUT' : 'POST';
+            // ============================================================================
+            // DROPDOWN HANDLER
+            // ============================================================================
+            const Dropdown = {
+                timeouts: {},
 
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(data)
-                });
+                async search(containerId, inputId, callback, type = 'kepala') {
+                    const input = document.getElementById(inputId);
+                    const container = document.getElementById(containerId);
+                    const query = input.value.trim();
 
-                const result = await response.json();
-
-                if (result.success) {
-                    hideFormModal();
-                    currentPage = 1; // Kembali ke halaman 1
-                    loadKeluargaData();
-                    if (window.showToast) {
-                        window.showToast(keluargaId ? 'Data keluarga berhasil diupdate' :
-                            'Data keluarga berhasil ditambahkan', 'success');
+                    if (query.length < CONFIG.minSearchChars) {
+                        container.innerHTML = '<div class="no-options">Ketik minimal 2 karakter</div>';
+                        container.style.display = 'block';
+                        return;
                     }
-                } else {
-                    throw new Error(result.message || 'Gagal menyimpan data');
-                }
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
 
-        // Submit Delete
-        async function confirmDelete() {
-            if (!deleteId) return;
+                    container.innerHTML =
+                        '<div class="loading-options"><i class="bi-arrow-repeat"></i> Mencari...</div>';
+                    container.style.display = 'block';
 
-            try {
-                const response = await fetch(`${API_ROUTES.destroy}/${deleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
+                    const results = await Api.searchJamaah(query, type);
 
-                const result = await response.json();
-
-                if (result.success) {
-                    hideDeleteModal();
-                    loadKeluargaData();
-                    if (window.showToast) {
-                        window.showToast('Data keluarga berhasil dihapus', 'success');
-                    }
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (error) {
-                console.error('Error deleting keluarga:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        // Submit Anggota Form
-        async function submitAnggotaForm() {
-            const keluargaId = document.getElementById('anggotaKeluargaId').value;
-            const jamaahId = document.getElementById('anggotaJamaahId').value;
-            const statusHubungan = document.getElementById('statusHubungan').value;
-            const urutan = document.getElementById('urutan').value || 1;
-
-            // Validasi
-            if (!keluargaId || !jamaahId || !statusHubungan) {
-                if (window.showToast) {
-                    window.showToast('Harap isi semua field yang wajib diisi', 'error');
-                }
-                return;
-            }
-
-            const data = {
-                keluarga_id: keluargaId,
-                jamaah_id: jamaahId,
-                status_hubungan: statusHubungan,
-                urutan: parseInt(urutan)
-            };
-
-            try {
-                const response = await fetch(API_ROUTES.insertAnggota, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    hideAnggotaModal();
-                    // Reload detail modal
-                    showDetailModal(keluargaId);
-                    if (window.showToast) {
-                        window.showToast('Anggota keluarga berhasil ditambahkan', 'success');
-                    }
-                } else {
-                    throw new Error(result.message || 'Gagal menambahkan anggota');
-                }
-            } catch (error) {
-                console.error('Error submitting anggota:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        // ============================================================================
-        // FUNGSI DROPDOWN SEARCH
-        // ============================================================================
-
-        // Setup kepala keluarga dropdown
-        function setupKepalaKeluargaDropdown() {
-            const searchInput = document.getElementById('kepalaKeluargaSearch');
-            const optionsContainer = document.getElementById('kepalaKeluargaOptions');
-
-            // Event untuk pencarian real-time
-            searchInput.addEventListener('input', function(e) {
-                const query = e.target.value.trim();
-
-                clearTimeout(kepalaKeluargaSearchTimeout);
-
-                if (query.length >= 2) {
-                    showLoadingOptions('kepalaKeluargaOptions');
-                    kepalaKeluargaSearchTimeout = setTimeout(() => {
-                        searchJamaahOptions(query, 'kepalaKeluargaOptions', 'selectKepalaKeluarga');
-                    }, 300);
-                } else if (query.length === 0) {
-                    optionsContainer.innerHTML = '';
-                    optionsContainer.style.display = 'none';
-                } else {
-                    showMinCharsMessage('kepalaKeluargaOptions');
-                }
-            });
-
-            // Event untuk focus
-            searchInput.addEventListener('focus', function() {
-                const query = this.value.trim();
-                if (query.length >= 2) {
-                    searchJamaahOptions(query, 'kepalaKeluargaOptions', 'selectKepalaKeluarga');
-                }
-            });
-
-            // Prevent form submission on Enter in search
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const firstOption = optionsContainer.querySelector('.option-item');
-                    if (firstOption) {
-                        const id = firstOption.getAttribute('data-value');
-                        const name = firstOption.getAttribute('data-name');
-                        selectKepalaKeluarga(id, name);
-                    }
-                }
-            });
-        }
-
-        // Setup anggota jamaah dropdown
-        function setupAnggotaJamaahDropdown() {
-            const searchInput = document.getElementById('anggotaJamaahSearch');
-            const optionsContainer = document.getElementById('anggotaJamaahOptions');
-
-            // Event untuk pencarian real-time
-            searchInput.addEventListener('input', function(e) {
-                const query = e.target.value.trim();
-
-                clearTimeout(anggotaJamaahSearchTimeout);
-
-                if (query.length >= 2) {
-                    showLoadingOptions('anggotaJamaahOptions');
-                    anggotaJamaahSearchTimeout = setTimeout(() => {
-                        searchJamaahFamOptions(query, 'anggotaJamaahOptions', 'selectAnggotaJamaah');
-                    }, 300);
-                } else if (query.length === 0) {
-                    optionsContainer.innerHTML = '';
-                    optionsContainer.style.display = 'none';
-                } else {
-                    showMinCharsMessage('anggotaJamaahOptions');
-                }
-            });
-
-            // Event untuk focus
-            searchInput.addEventListener('focus', function() {
-                const query = this.value.trim();
-                if (query.length >= 2) {
-                    searchJamaahFamOptions(query, 'anggotaJamaahOptions', 'selectAnggotaJamaah');
-                }
-            });
-
-            // Prevent form submission on Enter in search
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const firstOption = optionsContainer.querySelector('.option-item');
-                    if (firstOption) {
-                        const id = firstOption.getAttribute('data-value');
-                        const name = firstOption.getAttribute('data-name');
-                        selectAnggotaJamaah(id, name);
-                    }
-                }
-            });
-        }
-
-        // Fungsi untuk search jamaah options (kepala keluarga)
-        async function searchJamaahOptions(searchTerm = '', containerId, callback) {
-            try {
-                const response = await fetch(
-                    `${API_ROUTES.jamaahOptions}?search=${encodeURIComponent(searchTerm)}`
-                );
-                const data = await response.json();
-
-                const optionsContainer = document.getElementById(containerId);
-
-                if (data.success && data.data.length > 0) {
-                    optionsContainer.innerHTML = data.data.map(jamaah => `
+                    if (results.length > 0) {
+                        container.innerHTML = results.map(item => `
                     <div class="option-item" 
-                         tabindex="0" style="padding: 5px 0; border-bottom: 1px solid #eee;"
-                         data-value="${jamaah.jamaah_id}"
-                         data-name="${escapeHtml(jamaah.nama_lengkap)}"
-                         onclick="${callback}('${jamaah.jamaah_id}', '${escapeHtml(jamaah.nama_lengkap)}')"
-                         onkeydown="handleOptionKeydown(event, '${jamaah.jamaah_id}', '${escapeHtml(jamaah.nama_lengkap)}', '${callback}')">
-                        ${jamaah.nama_lengkap}
+                         data-value="${item.jamaah_id}"
+                         data-name="${Helpers.escapeHtml(item.nama_lengkap)}"
+                         onclick="${callback}('${item.jamaah_id}', '${Helpers.escapeHtml(item.nama_lengkap)}')">
+                        ${Helpers.escapeHtml(item.nama_lengkap)}
                     </div>
                 `).join('');
-                } else {
-                    optionsContainer.innerHTML = '<div class="no-options">Tidak ditemukan jamaah</div>';
+                    } else {
+                        container.innerHTML = '<div class="no-options">Tidak ditemukan jamaah</div>';
+                    }
+                },
+
+                selectKepalaKeluarga(id, name) {
+                    document.getElementById('kepalaKeluargaId').value = id;
+                    document.getElementById('kepalaKeluargaSearch').value = name;
+                    document.getElementById('kepalaKeluargaOptions').style.display = 'none';
+                },
+
+                selectAnggotaJamaah(id, name) {
+                    document.getElementById('anggotaJamaahId').value = id;
+                    document.getElementById('anggotaJamaahSearch').value = name;
+                    document.getElementById('anggotaJamaahOptions').style.display = 'none';
+                },
+
+                setupKepalaDropdown() {
+                    const input = document.getElementById('kepalaKeluargaSearch');
+                    const container = document.getElementById('kepalaKeluargaOptions');
+
+                    input.addEventListener('input', () => {
+                        clearTimeout(this.timeouts.kepala);
+                        this.timeouts.kepala = setTimeout(() => {
+                            this.search('kepalaKeluargaOptions', 'kepalaKeluargaSearch',
+                                'Dropdown.selectKepalaKeluarga', 'kepala');
+                        }, 300);
+                    });
+
+                    input.addEventListener('focus', () => {
+                        if (input.value.trim().length >= CONFIG.minSearchChars) {
+                            this.search('kepalaKeluargaOptions', 'kepalaKeluargaSearch',
+                                'Dropdown.selectKepalaKeluarga', 'kepala');
+                        }
+                    });
+                },
+
+                setupAnggotaDropdown() {
+                    const input = document.getElementById('anggotaJamaahSearch');
+                    const container = document.getElementById('anggotaJamaahOptions');
+
+                    input.addEventListener('input', () => {
+                        clearTimeout(this.timeouts.anggota);
+                        this.timeouts.anggota = setTimeout(() => {
+                            this.search('anggotaJamaahOptions', 'anggotaJamaahSearch',
+                                'Dropdown.selectAnggotaJamaah', 'anggota');
+                        }, 300);
+                    });
+
+                    input.addEventListener('focus', () => {
+                        if (input.value.trim().length >= CONFIG.minSearchChars) {
+                            this.search('anggotaJamaahOptions', 'anggotaJamaahSearch',
+                                'Dropdown.selectAnggotaJamaah', 'anggota');
+                        }
+                    });
                 }
-
-                optionsContainer.style.display = 'block';
-            } catch (error) {
-                console.error('Error searching jamaah options:', error);
-                const optionsContainer = document.getElementById(containerId);
-                optionsContainer.innerHTML = '<div class="no-options">Gagal memuat data</div>';
-                optionsContainer.style.display = 'block';
-            }
-        }
-
-        // Fungsi untuk search jamaah fam options (anggota keluarga)
-        async function searchJamaahFamOptions(searchTerm = '', containerId, callback) {
-            try {
-                const response = await fetch(
-                    `${API_ROUTES.jamaahFam}?search=${encodeURIComponent(searchTerm)}`
-                );
-                const data = await response.json();
-
-                const optionsContainer = document.getElementById(containerId);
-
-                if (data.success && data.data.length > 0) {
-                    optionsContainer.innerHTML = data.data.map(jamaah => `
-                    <div class="option-item" 
-                         tabindex="0" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;padding: 5px 0px;"
-                         data-value="${jamaah.jamaah_id}"
-                         data-name="${escapeHtml(jamaah.nama_lengkap)}"
-                         onclick="${callback}('${jamaah.jamaah_id}', '${escapeHtml(jamaah.nama_lengkap)}')"
-                         onkeydown="handleOptionKeydown(event, '${jamaah.jamaah_id}', '${escapeHtml(jamaah.nama_lengkap)}', '${callback}')">
-                        ${jamaah.nama_lengkap}
-                    </div>
-                `).join('');
-                } else {
-                    optionsContainer.innerHTML = '<div class="no-options">Tidak ditemukan jamaah</div>';
-                }
-
-                optionsContainer.style.display = 'block';
-            } catch (error) {
-                console.error('Error searching jamaah fam options:', error);
-                const optionsContainer = document.getElementById(containerId);
-                optionsContainer.innerHTML = '<div class="no-options">Gagal memuat data</div>';
-                optionsContainer.style.display = 'block';
-            }
-        }
-
-        // Select kepala keluarga
-        function selectKepalaKeluarga(id, name) {
-            document.getElementById('kepalaKeluargaId').value = id;
-            document.getElementById('kepalaKeluargaSearch').value = name;
-            document.getElementById('kepalaKeluargaOptions').style.display = 'none';
-        }
-
-        // Select anggota jamaah
-        function selectAnggotaJamaah(id, name) {
-            document.getElementById('anggotaJamaahId').value = id;
-            document.getElementById('anggotaJamaahSearch').value = name;
-            document.getElementById('anggotaJamaahOptions').style.display = 'none';
-        }
-
-        // Handle keyboard navigation
-        function handleOptionKeydown(event, id, name, callback) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                if (callback === 'selectKepalaKeluarga') {
-                    selectKepalaKeluarga(id, name);
-                } else if (callback === 'selectAnggotaJamaah') {
-                    selectAnggotaJamaah(id, name);
-                }
-            } else if (event.key === 'ArrowDown') {
-                event.preventDefault();
-                const nextOption = event.target.nextElementSibling;
-                if (nextOption && nextOption.classList.contains('option-item')) {
-                    nextOption.focus();
-                }
-            } else if (event.key === 'ArrowUp') {
-                event.preventDefault();
-                const prevOption = event.target.previousElementSibling;
-                if (prevOption && prevOption.classList.contains('option-item')) {
-                    prevOption.focus();
-                } else {
-                    event.target.closest('.dropdown-search-container').querySelector('input').focus();
-                }
-            } else if (event.key === 'Escape') {
-                event.target.closest('.dropdown-options').style.display = 'none';
-                event.target.closest('.dropdown-search-container').querySelector('input').focus();
-            }
-        }
-
-        // Loading options
-        function showLoadingOptions(containerId) {
-            const optionsContainer = document.getElementById(containerId);
-            optionsContainer.innerHTML =
-                '<div class="loading-options"><i class="bi-spinner bi-spin"></i> Mencari...</div>';
-            optionsContainer.style.display = 'block';
-        }
-
-        // Min chars message
-        function showMinCharsMessage(containerId) {
-            const optionsContainer = document.getElementById(containerId);
-            optionsContainer.innerHTML = '<div class="no-options">Ketik minimal 2 karakter untuk mencari</div>';
-            optionsContainer.style.display = 'block';
-        }
-
-        // ============================================================================
-        // FUNGSI BANTU (HELPER FUNCTIONS)
-        // ============================================================================
-
-        // Escape HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Loading state
-        function showLoadingState() {
-            const loadingState = document.getElementById('loadingState');
-            const emptyState = document.getElementById('emptyState');
-            if (loadingState) loadingState.style.display = 'block';
-            if (emptyState) emptyState.style.display = 'none';
-        }
-
-        function hideLoadingState() {
-            const loadingState = document.getElementById('loadingState');
-            if (loadingState) loadingState.style.display = 'none';
-        }
-
-        // ============================================================================
-        // EVENT LISTENERS & INITIALIZATION
-        // ============================================================================
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search dengan debounce
-            let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function(e) {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    searchQuery = e.target.value.trim();
-                    currentPage = 1; // Reset ke halaman 1
-                    loadKeluargaData();
-                }, 500);
-            });
-
-            // Per page
-            document.getElementById('perPageSelect').addEventListener('change', function(e) {
-                perPage = parseInt(e.target.value) || 10;
-                currentPage = 1; // Reset ke halaman 1
-                loadKeluargaData();
-            });
-
-            // Pagination buttons
-            document.getElementById('prevPage').addEventListener('click', function() {
-                if (currentPage > 1) {
-                    goToPage(currentPage - 1);
-                }
-            });
-
-            document.getElementById('nextPage').addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    goToPage(currentPage + 1);
-                }
-            });
-
-            // Modal backdrop clicks
-            document.getElementById('formModal').addEventListener('click', function(e) {
-                if (e.target === this) hideFormModal();
-            });
-
-            document.getElementById('detailModal').addEventListener('click', function(e) {
-                if (e.target === this) hideDetailModal();
-            });
-
-            document.getElementById('deleteModal').addEventListener('click', function(e) {
-                if (e.target === this) hideDeleteModal();
-            });
-
-            document.getElementById('anggotaModal').addEventListener('click', function(e) {
-                if (e.target === this) hideAnggotaModal();
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                const kepalaOptions = document.getElementById('kepalaKeluargaOptions');
-                const kepalaSearch = document.getElementById('kepalaKeluargaSearch');
-                const anggotaOptions = document.getElementById('anggotaJamaahOptions');
-                const anggotaSearch = document.getElementById('anggotaJamaahSearch');
-
-                if (kepalaOptions && !kepalaOptions.contains(e.target) && e.target !== kepalaSearch) {
-                    kepalaOptions.style.display = 'none';
-                }
-
-                if (anggotaOptions && !anggotaOptions.contains(e.target) && e.target !== anggotaSearch) {
-                    anggotaOptions.style.display = 'none';
-                }
-            });
-        }
-
-        // Initialize aplikasi
-        async function initializeApp() {
-            setupEventListeners();
-            setupKepalaKeluargaDropdown();
-            setupAnggotaJamaahDropdown();
-            await loadKeluargaData(1); // Mulai dari halaman 1
-        }
-
-        // ============================================================================
-        // PUBLIC API (KeluargaApp)
-        // ============================================================================
-        const KeluargaApp = {
-            // Data & Table
-            printData() {
-                window.open(API_ROUTES.print, '_blank');
-            },
-            reloadData() {
-                loadKeluargaData(1);
-            },
-            goToPage: goToPage,
-
-            // Modals
-            showCreateModal: showCreateModal,
-            hideFormModal: hideFormModal,
-            showEditModal: showEditModal,
-            showDetailModal: showDetailModal,
-            hideDetailModal: hideDetailModal,
-            showDeleteModal: showDeleteModal,
-            hideDeleteModal: hideDeleteModal,
-            showAnggotaModal: showAnggotaModal,
-            hideAnggotaModal: hideAnggotaModal,
-
-            // Forms
-            submitForm: submitForm,
-            confirmDelete: confirmDelete,
-            submitAnggotaForm: submitAnggotaForm
-        };
-
-        // ============================================================================
-        // START APP
-        // ============================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-
-            // Expose ke global scope
-            window.KeluargaApp = KeluargaApp;
-            window.showEditModal = showEditModal;
-            window.showDetailModal = showDetailModal;
-            window.showDeleteModal = showDeleteModal;
-            window.showAnggotaModal = showAnggotaModal;
-
-            // Debug
-            window.debugPagination = function() {
-                console.log('Pagination State:', {
-                    currentPage,
-                    totalPages,
-                    totalRecords,
-                    perPage,
-                    searchQuery
-                });
             };
-        });
+
+            // Expose dropdown functions to global
+            window.Dropdown = Dropdown;
+
+            // ============================================================================
+            // MODAL CONTROLS
+            // ============================================================================
+            const Modal = {
+                show(id) {
+                    document.getElementById(id)?.classList.add('show');
+                },
+
+                hide(id) {
+                    document.getElementById(id)?.classList.remove('show');
+                    // Hide dropdowns when modal closes
+                    if (id === 'formModal') {
+                        document.getElementById('kepalaKeluargaOptions').style.display = 'none';
+                    }
+                    if (id === 'anggotaModal') {
+                        document.getElementById('anggotaJamaahOptions').style.display = 'none';
+                    }
+                },
+
+                showCreate() {
+                    document.getElementById('modalTitle').textContent = 'Tambah Keluarga';
+                    document.getElementById('editKeluargaId').value = '';
+                    document.getElementById('keluargaForm').reset();
+                    document.getElementById('kepalaKeluargaId').value = '';
+                    this.show('formModal');
+                    setTimeout(() => document.getElementById('kepalaKeluargaSearch').focus(), 300);
+                },
+
+                async showEdit(id) {
+                    const data = await Api.getDetail(id);
+                    if (!data) return;
+
+                    document.getElementById('modalTitle').textContent = 'Edit Keluarga';
+                    document.getElementById('editKeluargaId').value = data.keluarga_id;
+                    document.getElementById('namaKeluarga').value = data.nama_keluarga;
+                    document.getElementById('alamat').value = data.alamat || '';
+                    document.getElementById('kepalaKeluargaId').value = data.kepala_keluarga_id;
+                    document.getElementById('kepalaKeluargaSearch').value = data.kepala_keluarga_nama;
+
+                    this.show('formModal');
+                },
+
+                async showDetail(id) {
+                    const data = await Api.getDetail(id);
+                    if (data) {
+                        UI.renderDetail(data);
+                        this.show('detailModal');
+                    }
+                },
+
+                showDelete(id, name) {
+                    State.deleteId = id;
+                    document.getElementById('deleteItemName').textContent = name;
+                    this.show('deleteModal');
+                },
+
+                showAnggota(keluargaId) {
+                    document.getElementById('anggotaKeluargaId').value = keluargaId;
+                    document.getElementById('anggotaForm').reset();
+                    document.getElementById('anggotaJamaahId').value = '';
+
+                    this.hide('detailModal');
+                    setTimeout(() => {
+                        this.show('anggotaModal');
+                        setTimeout(() => document.getElementById('anggotaJamaahSearch').focus(), 300);
+                    }, 300);
+                }
+            };
+
+            // ============================================================================
+            // FORM HANDLERS
+            // ============================================================================
+            const Form = {
+                async submitKeluarga() {
+                    const id = document.getElementById('editKeluargaId').value;
+                    const data = {
+                        nama_keluarga: document.getElementById('namaKeluarga').value,
+                        kepala_keluarga_id: document.getElementById('kepalaKeluargaId').value,
+                        alamat: document.getElementById('alamat').value
+                    };
+
+                    if (!Helpers.validateKeluargaForm(data)) return;
+
+                    try {
+                        const result = id ? await Api.update(id, data) : await Api.create(data);
+
+                        if (result.success) {
+                            Modal.hide('formModal');
+                            State.resetToFirstPage();
+                            await loadData();
+                            Helpers.showToast(
+                                id ? 'Data keluarga berhasil diupdate' :
+                                'Data keluarga berhasil ditambahkan',
+                                'success'
+                            );
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
+                    }
+                },
+
+                async submitAnggota() {
+                    const data = {
+                        keluarga_id: document.getElementById('anggotaKeluargaId').value,
+                        jamaah_id: document.getElementById('anggotaJamaahId').value,
+                        status_hubungan: document.getElementById('statusHubungan').value,
+                        urutan: parseInt(document.getElementById('urutan').value) || 1
+                    };
+
+                    if (!Helpers.validateAnggotaForm(data)) return;
+
+                    try {
+                        const result = await Api.addAnggota(data);
+
+                        if (result.success) {
+                            Modal.hide('anggotaModal');
+                            // Reload detail modal
+                            Modal.showDetail(data.keluarga_id);
+                            Helpers.showToast('Anggota keluarga berhasil ditambahkan', 'success');
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
+                    }
+                },
+
+                async confirmDelete() {
+                    if (!State.deleteId) return;
+
+                    try {
+                        const result = await Api.delete(State.deleteId);
+
+                        if (result.success) {
+                            Modal.hide('deleteModal');
+                            State.deleteId = null;
+                            await loadData();
+                            Helpers.showToast('Data keluarga berhasil dihapus', 'success');
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
+                    }
+                }
+            };
+
+            // ============================================================================
+            // MAIN FUNCTION
+            // ============================================================================
+            async function loadData(page = null) {
+                if (page !== null) State.currentPage = page;
+
+                const result = await Api.getKeluarga();
+                if (result?.success) {
+                    State.updatePagination(result);
+                    UI.renderTable(result.data);
+                } else {
+                    UI.showEmpty();
+                }
+            }
+
+            // ============================================================================
+            // EVENT LISTENERS
+            // ============================================================================
+            function setupListeners() {
+                // Search debounce
+                let timeout;
+                document.getElementById('searchInput').addEventListener('input', function(e) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        State.searchQuery = e.target.value.trim();
+                        State.resetToFirstPage();
+                        loadData();
+                    }, CONFIG.debounceDelay);
+                });
+
+                // Per page
+                document.getElementById('perPageSelect').addEventListener('change', function(e) {
+                    State.perPage = parseInt(e.target.value) || CONFIG.defaultPerPage;
+                    State.resetToFirstPage();
+                    loadData();
+                });
+
+                // Pagination
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    if (State.currentPage > 1) loadData(State.currentPage - 1);
+                });
+
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    if (State.currentPage < State.totalPages) loadData(State.currentPage + 1);
+                });
+
+                // Modal backdrop clicks
+                ['formModal', 'detailModal', 'deleteModal', 'anggotaModal'].forEach(id => {
+                    document.getElementById(id)?.addEventListener('click', function(e) {
+                        if (e.target === this) Modal.hide(id);
+                    });
+                });
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function(e) {
+                    const kepalaSearch = document.getElementById('kepalaKeluargaSearch');
+                    const kepalaOptions = document.getElementById('kepalaKeluargaOptions');
+                    const anggotaSearch = document.getElementById('anggotaJamaahSearch');
+                    const anggotaOptions = document.getElementById('anggotaJamaahOptions');
+
+                    if (kepalaOptions && !kepalaOptions.contains(e.target) && e.target !== kepalaSearch) {
+                        kepalaOptions.style.display = 'none';
+                    }
+
+                    if (anggotaOptions && !anggotaOptions.contains(e.target) && e.target !== anggotaSearch) {
+                        anggotaOptions.style.display = 'none';
+                    }
+                });
+            }
+
+            // ============================================================================
+            // INITIALIZE
+            // ============================================================================
+            async function init() {
+                Dropdown.setupKepalaDropdown();
+                Dropdown.setupAnggotaDropdown();
+                setupListeners();
+                await loadData(1);
+
+                // Expose ke global
+                window.KeluargaApp = {
+                    // Data & Table
+                    printData: () => window.open(API.print, '_blank'),
+                    reloadData: () => loadData(1),
+
+                    // Modals
+                    showCreateModal: () => Modal.showCreate(),
+                    hideFormModal: () => Modal.hide('formModal'),
+                    showEditModal: (id) => Modal.showEdit(id),
+                    showDetailModal: (id) => Modal.showDetail(id),
+                    hideDetailModal: () => Modal.hide('detailModal'),
+                    showDeleteModal: (id, name) => Modal.showDelete(id, name),
+                    hideDeleteModal: () => Modal.hide('deleteModal'),
+                    showAnggotaModal: (id) => Modal.showAnggota(id),
+                    hideAnggotaModal: () => Modal.hide('anggotaModal'),
+
+                    // Forms
+                    submitForm: () => Form.submitKeluarga(),
+                    submitAnggotaForm: () => Form.submitAnggota(),
+                    confirmDelete: () => Form.confirmDelete()
+                };
+
+                // Untuk inline onclick
+                window.showEditModal = (id) => Modal.showEdit(id);
+                window.showDetailModal = (id) => Modal.showDetail(id);
+                window.showDeleteModal = (id, name) => Modal.showDelete(id, name);
+                window.showAnggotaModal = (id) => Modal.showAnggota(id);
+            }
+
+            // START!
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 @endpush

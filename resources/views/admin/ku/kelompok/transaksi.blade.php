@@ -6,250 +6,523 @@
 
 @push('styles')
     <style>
-        /* Kontribusi Grid */
-        .kontribusi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            margin-top: 10px;
+        :root {
+            --primary-color: #105a44;
+            --primary-hover: #0d8b66;
+            --primary-light: #e8f5e9;
+            --border-color: #e0e0e0;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-muted: #888;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Kontribusi Card */
-        .kontribusi-card {
+        /* Filter Section */
+        .filter-section {
             background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            overflow: hidden;
-            height: 100%;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
             display: flex;
-            flex-direction: column;
-        }
-
-        .kontribusi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #105a44;
-        }
-
-        .kontribusi-card.active {
-            border-color: #105a44;
-            background: #f8fff8;
-        }
-
-        .kontribusi-card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            background: linear-gradient(135deg, #105a44 0%, #0d8b66 100%);
-            color: white;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
             position: relative;
-            overflow: hidden;
+            z-index: 2;
         }
 
-        .kontribusi-card-header::before {
-            content: '';
+        .search-wrapper {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .search-icon {
             position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            transform: rotate(45deg);
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
         }
 
-        .kontribusi-card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
+        .search-input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 3;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 90, 68, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #aaa;
+            font-size: 0.875rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #f5f5f5;
+            padding: 0.25rem;
+            border-radius: 2rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1.25rem;
+            border: none;
+            background: transparent;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tab:hover {
+            color: var(--primary-color);
+        }
+
+        .filter-tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-tab .badge {
+            background: var(--primary-color);
             color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+        }
+
+        .filter-tab.active .badge {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .reset-filter {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-filter:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+            font-size: 1.25rem;
         }
 
-        .kontribusi-card-title {
-            font-size: 1.1rem;
+        .stat-info h6 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-info .stat-number {
+            font-size: 1.25rem;
             font-weight: 600;
-            margin: 0 0 5px 0;
-            color: white;
+            color: var(--text-primary);
+            line-height: 1.2;
         }
 
-        .kontribusi-card-code {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.9);
-            background: rgba(0, 0, 0, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            display: inline-block;
+        .stat-info .stat-detail {
+            font-size: 0.7rem;
+            color: var(--text-muted);
         }
 
-        .kontribusi-card-body {
-            padding: 20px;
+        /* Kontribusi List */
+        .kontribusi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .kontribusi-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .kontribusi-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .kontribusi-item.active {
+            border-color: var(--primary-color);
+            background: linear-gradient(to right, var(--primary-light), white);
+        }
+
+        .kontribusi-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-color);
+            border-radius: 3px 0 0 3px;
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             flex: 1;
         }
 
-        .kontribusi-card-details {
-            list-style: none;
-            padding: 0;
+        .item-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .item-title h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
             margin: 0;
         }
 
-        .kontribusi-card-details li {
+        .item-code {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: #f5f5f5;
+            padding: 0.2rem 0.5rem;
+            border-radius: 2rem;
+        }
+
+        .item-details {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 0.9rem;
         }
 
-        .kontribusi-card-details li:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: #666;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: #333;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .kontribusi-card-footer {
-            padding: 15px 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
+        .item-detail {
             display: flex;
-            justify-content: flex-end;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .item-detail i {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .item-detail .label {
+            color: var(--text-muted);
+        }
+
+        .item-detail .value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            gap: 0.25rem;
+        }
+
+        .status-badge.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .status-badge.inactive {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .item-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .item-price {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: var(--primary-light);
+            padding: 0.375rem 1rem;
+            border-radius: 2rem;
+            white-space: nowrap;
         }
 
         .select-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: #105a44;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
-        .select-btn:hover {
-            background: #0d8b66;
-            transform: translateY(-1px);
+        .select-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
         }
 
-        .select-btn:active {
+        .select-btn:active:not(:disabled) {
             transform: translateY(0);
         }
 
-        .select-btn.loading {
-            opacity: 0.7;
+        .select-btn:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .select-btn.loading .btn-text {
-            display: none;
+        .select-btn i {
+            font-size: 0.875rem;
         }
 
-        .select-btn.loading .spinner {
-            display: inline-block;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            border: 1px dashed var(--border-color);
         }
 
-        .select-btn .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
+        .empty-state i {
+            font-size: 3rem;
+            color: #bdbdbd;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
+            to {
                 transform: rotate(360deg);
             }
         }
 
-        /* Empty State */
-        .empty-state {
+        /* Loading Skeleton */
+        .skeleton-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
+            gap: 1rem;
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #bdbdbd;
+        .skeleton-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
         }
 
-        .empty-state h4 {
-            margin: 10px 0 5px 0;
-            font-weight: 500;
-            font-size: 1.2rem;
+        .skeleton-content {
+            flex: 1;
         }
 
-        .empty-state p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #888;
+        .skeleton-title {
+            width: 200px;
+            height: 1rem;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
-        .empty-state .btn {
-            margin-top: 15px;
+        .skeleton-detail {
+            width: 150px;
+            height: 0.75rem;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 0.25rem;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         /* Responsive */
-        @@media (max-width: 768px) {
-            .kontribusi-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .kontribusi-card-header,
-            .kontribusi-card-body,
-            .kontribusi-card-footer {
-                padding: 15px;
-            }
-        }
-
-        /* Animation */
-        @@keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
+            .filter-tabs {
+                width: 100%;
+                justify-content: center;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .reset-filter {
+                width: 100%;
+                justify-content: center;
             }
-        }
 
-        .kontribusi-card {
-            animation: fadeInUp 0.3s ease forwards;
-            opacity: 0;
+            .kontribusi-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .item-left {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .item-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .item-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .item-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
         }
     </style>
 @endpush
@@ -257,38 +530,94 @@
 @section('content')
     <div class="master-container">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pilih Master Kontribusi</h3>
+            <div class="card-header py-2">
+                <h3 class="card-title fs-5">
+                    <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                    Pilih Master Kontribusi
+                </h3>
             </div>
-            <div class="card-body">
-                <!-- Loading State -->
-                <div id="loadingState" class="empty-state">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+            <div class="card-body py-3">
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="search-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Cari kontribusi..."
+                            autocomplete="off">
                     </div>
-                    <h4>Memuat data kontribusi...</h4>
-                </div>
 
-                <!-- Empty State -->
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="bi-inbox"></i>
-                    <h4>Tidak ada data kontribusi</h4>
-                    <p>Belum ada kontribusi yang tersedia</p>
-                </div>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all" onclick="PembayaranApp.filterData('all')">
+                            <i class="bi bi-list"></i>
+                            Semua
+                            <span class="badge" id="totalCount">0</span>
+                        </button>
+                        <button class="filter-tab" data-filter="active" onclick="PembayaranApp.filterData('active')">
+                            <i class="bi bi-check-circle"></i>
+                            Aktif
+                            <span class="badge" id="activeCount">0</span>
+                        </button>
+                        <button class="filter-tab" data-filter="inactive" onclick="PembayaranApp.filterData('inactive')">
+                            <i class="bi bi-x-circle"></i>
+                            Non-Aktif
+                            <span class="badge" id="inactiveCount">0</span>
+                        </button>
+                    </div>
 
-                <!-- Error State -->
-                <div id="errorState" class="empty-state" style="display: none;">
-                    <i class="bi-exclamation-triangle"></i>
-                    <h4>Gagal memuat data</h4>
-                    <p id="errorMessage">Terjadi kesalahan saat memuat data</p>
-                    <button class="btn btn-primary" onclick="PembayaranApp.loadMasterKontribusi()">
-                        <i class="bi-arrow-clockwise"></i> Coba Lagi
+                    <button class="reset-filter" onclick="PembayaranApp.resetFilter()">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset Filter
                     </button>
                 </div>
 
-                <!-- Kontribusi Grid -->
-                <div class="kontribusi-grid" id="kontribusiGrid" style="display: none;">
-                    <!-- Data akan diisi oleh JavaScript -->
+                <!-- Stats Cards -->
+                <div class="stats-container" id="statsContainer" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Total Kontribusi</h6>
+                            <div class="stat-number" id="statTotal">0</div>
+                            <div class="stat-detail">Semua kontribusi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Aktif</h6>
+                            <div class="stat-number" id="statActive">0</div>
+                            <div class="stat-detail">Kontribusi aktif</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h6>Non-Aktif</h6>
+                            <div class="stat-number" id="statInactive">0</div>
+                            <div class="stat-detail">Kontribusi non-aktif</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state" style="display: flex;">
+                    <div class="loading-spinner"></div>
+                    <h4 class="fs-6">Memuat Data</h4>
+                    <p class="text-muted small">Mohon tunggu...</p>
+                </div>
+
+                <!-- Kontribusi List -->
+                <div class="kontribusi-list" id="kontribusiList" style="display: none;"></div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="bi bi-inbox"></i>
+                    <h5>Tidak Ada Data</h5>
+                    <p id="emptyMessage">Belum ada kontribusi tersedia.</p>
                 </div>
             </div>
         </div>
@@ -297,217 +626,527 @@
 
 @push('scripts')
     <script>
-        // ============================================================================
-        // VARIABEL GLOBAL & KONFIGURASI
-        // ============================================================================
-        let isLoading = false;
-        let currentSelection = null;
-
-        const API_ROUTES = {
-            masterKontribusi: '{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}',
-            createPage: '{{ route('admin.kelompok.input-pembayaran.create') }}'
-        };
-
-        // ============================================================================
-        // FUNGSI UTAMA - LOAD DATA
-        // ============================================================================
-
-        // Load master kontribusi
-        async function loadMasterKontribusi() {
-            if (isLoading) return;
-
-            showLoadingState();
-            isLoading = true;
-
-            try {
-                const response = await fetch(API_ROUTES.masterKontribusi);
-                const result = await response.json();
-
-                if (result.success) {
-                    renderMasterKontribusi(result.data);
-                } else {
-                    throw new Error(result.message || 'Gagal memuat data');
-                }
-            } catch (error) {
-                console.error('Error loading master kontribusi:', error);
-                showErrorState(error.message);
-            } finally {
-                hideLoadingState();
-                isLoading = false;
-            }
-        }
-
-        // Render master kontribusi cards (versi sederhana & rapi)
-        function renderMasterKontribusi(data) {
-            const kontribusiGrid = document.getElementById('kontribusiGrid');
-            const emptyState = document.getElementById('emptyState');
-            if (!data || data.length === 0) {
-                showEmptyState();
-                return;
-            }
-            emptyState.style.display = 'none';
-            kontribusiGrid.style.display = 'grid';
-            let html = '';
-            data.forEach((item, idx) => {
-                html += `
-                <div class="kontribusi-card" data-id="${item.id}">
-                    <div class="kontribusi-card-header">
-                        <div class="kontribusi-card-icon"><i class="bi bi-cash-coin"></i></div>
-                        <h4 class="kontribusi-card-title">${escapeHtml(item.nama_kontribusi)}</h4>
-                        <div class="kontribusi-card-code">${escapeHtml(item.kode_kontribusi)}</div>
-                    </div>
-                    <div class="kontribusi-card-body">
-                        <ul class="kontribusi-card-details">
-                            ${item.deskripsi ? `<li><span class='detail-label'>Deskripsi</span><span class='detail-value'>${escapeHtml(item.deskripsi)}</span></li>` : ''}
-                            ${item.nominal_default ? `<li><span class='detail-label'>Nominal Default</span><span class='detail-value'>${formatCurrency(item.nominal_default)}</span></li>` : ''}
-                            ${typeof item.is_active !== 'undefined' ? `<li><span class='detail-label'>Status</span><span class='detail-value'>${item.is_active ? 'Aktif' : 'Tidak Aktif'}</span></li>` : ''}
-                        </ul>
-                    </div>
-                    <div class="kontribusi-card-footer">
-                        <button class="select-btn" onclick="selectKontribusi('${item.id}', this)">Pilih Kontribusi</button>
-                    </div>
-                </div>
-                `;
-            });
-            kontribusiGrid.innerHTML = html;
-            // Card click = pilih kontribusi
-            document.querySelectorAll('.kontribusi-card').forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (!e.target.classList.contains('select-btn')) {
-                        const button = this.querySelector('.select-btn');
-                        const id = this.getAttribute('data-id');
-                        selectKontribusi(id, button);
-                    }
-                });
-            });
-        }
-
-        // Pilih kontribusi
-        async function selectKontribusi(masterId, button) {
-            if (isLoading) return;
-
-            // Set loading state pada button
-            if (button) {
-                button.classList.add('loading');
-            }
-
-            try {
-                // Navigasi ke halaman input pembayaran
-                window.location.href = `${API_ROUTES.createPage}?master_kontribusi_id=${masterId}`;
-            } catch (error) {
-                console.error('Error selecting kontribusi:', error);
-                showToast('Error', error.message, 'error');
-
-                // Reset button state
-                if (button) {
-                    button.classList.remove('loading');
-                }
-            }
-        }
-
-        // ============================================================================
-        // FUNGSI BANTU (HELPER FUNCTIONS)
-        // ============================================================================
-
-        // Get icon class based on kontribusi code
-        function getIconClass(kode) {
-            const iconMap = {
-                'INF': 'bi-cash-coin',
-                'ZAK': 'bi-currency-exchange',
-                'SOD': 'bi-heart',
-                'WAK': 'bi-bank',
-                'INV': 'bi-graph-up',
-                'DON': 'bi-gift'
+        (function() {
+            // ============================================================================
+            // KONFIGURASI & STATE
+            // ============================================================================
+            const CONFIG = {
+                api: {
+                    masterKontribusi: '{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}',
+                    createPage: '{{ route('admin.kelompok.input-pembayaran.create') }}'
+                },
+                debounceDelay: 500, // Sama dengan halaman lain (500ms)
+                defaultPerPage: 10
             };
 
-            // Check prefix
-            for (const [prefix, icon] of Object.entries(iconMap)) {
-                if (kode.startsWith(prefix)) {
-                    return icon;
+            // STATE - Semua data aplikasi disimpan di sini
+            const State = {
+                currentPage: 1,
+                totalPages: 1,
+                totalRecords: 0,
+                searchQuery: '',
+                aktifFilter: 'all', // 'all', 'active', 'inactive'
+                perPage: CONFIG.defaultPerPage,
+                isLoading: false,
+                selectedId: null,
+
+                resetToFirstPage() {
+                    this.currentPage = 1;
+                },
+
+                updatePagination(data) {
+                    this.currentPage = parseInt(data.current_page) || 1;
+                    this.totalPages = parseInt(data.last_page) || 1;
+                    this.totalRecords = parseInt(data.total) || 0;
+                },
+
+                getStatusFilter() {
+                    if (this.aktifFilter === 'all') return '';
+                    return this.aktifFilter === 'active' ? '1' : '0';
                 }
+            };
+
+            // API Routes
+            const API = {
+                data: '{{ route('admin.kelompok.api.input-pembayaran.kontribusi-options') }}',
+                createPage: '{{ route('admin.kelompok.input-pembayaran.create') }}'
+            };
+
+            // ============================================================================
+            // HELPER FUNCTIONS
+            // ============================================================================
+            const Helpers = {
+                // Escape HTML - PENTING UNTUK KEAMANAN!
+                escapeHtml(text) {
+                    if (!text) return '';
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                // Format currency
+                formatCurrency(amount) {
+                    if (!amount && amount !== 0) return 'Rp 0';
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(amount).replace('Rp', 'Rp');
+                },
+
+                // Truncate text
+                truncateText(text, maxLength = 50) {
+                    if (!text || text.length <= maxLength) return text;
+                    return text.substring(0, maxLength) + '...';
+                },
+
+                // Get icon based on kode
+                getIconClass(kode) {
+                    const iconMap = {
+                        'INF': 'bi-cash-coin',
+                        'ZAK': 'bi-currency-exchange',
+                        'SOD': 'bi-heart',
+                        'WAK': 'bi-bank',
+                        'INV': 'bi-graph-up',
+                        'DON': 'bi-gift'
+                    };
+
+                    for (const [prefix, icon] of Object.entries(iconMap)) {
+                        if (kode.startsWith(prefix)) return icon;
+                    }
+                    return 'bi-cash-coin';
+                },
+
+                // Show toast message
+                showToast(message, type = 'info') {
+                    if (window.showToast) {
+                        window.showToast(message, type);
+                    } else {
+                        alert(message);
+                    }
+                },
+
+                // Set button loading state
+                setButtonLoading(button, isLoading) {
+                    if (!button) return;
+
+                    if (isLoading) {
+                        button.disabled = true;
+                        button.innerHTML = `
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    <span>Loading...</span>
+                `;
+                    } else {
+                        button.disabled = false;
+                        button.innerHTML = `
+                    <i class="bi bi-check-circle"></i>
+                    <span>Pilih</span>
+                `;
+                    }
+                },
+
+                // Build query string - SAMA DENGAN HALAMAN SEBELUMNYA
+                buildQuery() {
+                    const params = new URLSearchParams({
+                        page: State.currentPage,
+                        per_page: State.perPage
+                    });
+
+                    if (State.searchQuery) {
+                        params.append('search', State.searchQuery);
+                    }
+
+                    const statusFilter = State.getStatusFilter();
+                    if (statusFilter !== '') {
+                        params.append('is_aktif', statusFilter);
+                    }
+
+                    return params.toString();
+                },
+
+                // Format nomor urut
+                formatRowNumber(index) {
+                    return ((State.currentPage - 1) * State.perPage) + index + 1;
+                }
+            };
+
+            // ============================================================================
+            // API CALLS - LANGSUNG KE SERVER (SAMA DENGAN HALAMAN LAIN)
+            // ============================================================================
+            const Api = {
+                async getMasterKontribusi() {
+                    if (State.isLoading) return null;
+
+                    State.isLoading = true;
+                    UI.showLoading();
+
+                    try {
+                        const url = `${API.data}?${Helpers.buildQuery()}`;
+                        console.log('Fetching:', url); // Untuk debugging
+
+                        const response = await fetch(url);
+                        const result = await response.json();
+
+                        if (!result.success) {
+                            throw new Error(result.message || 'Gagal memuat data');
+                        }
+
+                        return result;
+                    } catch (error) {
+                        console.error('Error loading data:', error);
+                        Helpers.showToast(error.message, 'error');
+                        return null;
+                    } finally {
+                        State.isLoading = false;
+                        // UI.hideLoading akan dipanggil di renderTable
+                    }
+                }
+            };
+
+            // ============================================================================
+            // UI RENDER - SAMA DENGAN HALAMAN SEBELUMNYA
+            // ============================================================================
+            const UI = {
+                // Elements
+                elements: {
+                    loadingState: document.getElementById('loadingState'),
+                    statsContainer: document.getElementById('statsContainer'),
+                    kontribusiList: document.getElementById('kontribusiList'),
+                    emptyState: document.getElementById('emptyState'),
+                    emptyMessage: document.getElementById('emptyMessage'),
+                    searchInput: document.getElementById('searchInput'),
+                    totalCount: document.getElementById('totalCount'),
+                    activeCount: document.getElementById('activeCount'),
+                    inactiveCount: document.getElementById('inactiveCount'),
+                    statTotal: document.getElementById('statTotal'),
+                    statActive: document.getElementById('statActive'),
+                    statInactive: document.getElementById('statInactive')
+                },
+
+                // Show loading state
+                showLoading() {
+                    this.elements.loadingState.style.display = 'flex';
+                    this.elements.statsContainer.style.display = 'none';
+                    this.elements.kontribusiList.style.display = 'none';
+                    this.elements.emptyState.style.display = 'none';
+                },
+
+                // Hide loading state
+                hideLoading() {
+                    this.elements.loadingState.style.display = 'none';
+                },
+
+                // Show content
+                showContent() {
+                    this.hideLoading();
+                    this.elements.statsContainer.style.display = 'grid';
+                },
+
+                // Render table - SAMA DENGAN HALAMAN LAIN
+                renderTable(data) {
+                    if (!data || data.length === 0) {
+                        this.showEmpty();
+                        return;
+                    }
+
+                    this.hideLoading();
+                    this.elements.statsContainer.style.display = 'grid';
+                    this.elements.emptyState.style.display = 'none';
+                    this.elements.kontribusiList.style.display = 'flex';
+
+                    // Update stats akan dipanggil terpisah
+                    const rows = data.map((item, index) => this.createListItem(item, index)).join('');
+                    this.elements.kontribusiList.innerHTML = rows;
+
+                    this.attachItemEvents();
+                },
+
+                // Show empty state
+                showEmpty() {
+                    this.elements.kontribusiList.innerHTML = '';
+                    this.elements.kontribusiList.style.display = 'none';
+                    this.elements.statsContainer.style.display = 'grid';
+                    this.elements.emptyState.style.display = 'block';
+                    this.hideLoading();
+
+                    this.updateEmptyMessage();
+                },
+
+                // Update empty message
+                updateEmptyMessage() {
+                    if (State.searchQuery || State.aktifFilter !== 'all') {
+                        this.elements.emptyMessage.textContent =
+                            'Tidak ditemukan kontribusi dengan kriteria tersebut.';
+                    } else {
+                        this.elements.emptyMessage.textContent = 'Belum ada kontribusi tersedia.';
+                    }
+                },
+
+                // Update statistics - SAMA DENGAN HALAMAN LAIN
+                updateStats(data) {
+                    if (!data) return;
+
+                    // Data from API response
+                    const total = data.total || 0;
+                    const aktif = data.aktif_count || 0;
+                    const nonAktif = total - aktif;
+
+                    this.elements.totalCount.textContent = total;
+                    this.elements.activeCount.textContent = aktif;
+                    this.elements.inactiveCount.textContent = nonAktif;
+
+                    this.elements.statTotal.textContent = total;
+                    this.elements.statActive.textContent = aktif;
+                    this.elements.statInactive.textContent = nonAktif;
+                },
+
+                // Update filter tabs
+                updateFilterTabs() {
+                    document.querySelectorAll('.filter-tab').forEach(tab => {
+                        const filter = tab.getAttribute('data-filter');
+                        if (filter === State.aktifFilter) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                },
+
+                // Create list item HTML
+                createListItem(item, index) {
+                    const no = Helpers.formatRowNumber(index);
+                    const statusClass = item.is_active ? 'active' : 'inactive';
+                    const statusText = item.is_active ? 'Aktif' : 'Non-Aktif';
+                    const nominal = item.nominal_default ? Helpers.formatCurrency(item.nominal_default) : '-';
+                    const iconClass = Helpers.getIconClass(item.kode_kontribusi);
+                    const isSelected = State.selectedId === item.id ? 'active' : '';
+
+                    return `
+                <div class="kontribusi-item ${isSelected}" data-id="${item.id}">
+                    <div class="item-left">
+                        <div class="item-icon">
+                            <i class="bi ${iconClass}"></i>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-title">
+                                <h4>${Helpers.escapeHtml(item.nama_kontribusi)}</h4>
+                                <span class="item-code">${Helpers.escapeHtml(item.kode_kontribusi)}</span>
+                                <span class="status-badge ${statusClass}">
+                                    <i class="bi bi-${item.is_active ? 'check-circle' : 'x-circle'}"></i>
+                                    ${statusText}
+                                </span>
+                            </div>
+                            <div class="item-details">
+                                ${item.deskripsi ? `
+                                        <div class="item-detail">
+                                            <i class="bi bi-info-circle"></i>
+                                            <span class="label">Deskripsi:</span>
+                                            <span class="value">${Helpers.truncateText(Helpers.escapeHtml(item.deskripsi))}</span>
+                                        </div>
+                                    ` : ''}
+                                <div class="item-detail">
+                                    <i class="bi bi-tag"></i>
+                                    <span class="label">Default:</span>
+                                    <span class="value">${nominal}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">${nominal}</div>
+                        <button class="select-btn" onclick="PembayaranApp.selectKontribusi('${item.id}', this)">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Pilih</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+                },
+
+                // Attach click events to items
+                attachItemEvents() {
+                    document.querySelectorAll('.kontribusi-item').forEach(item => {
+                        item.addEventListener('click', function(e) {
+                            if (!e.target.closest('.select-btn')) {
+                                const button = this.querySelector('.select-btn');
+                                const id = this.getAttribute('data-id');
+                                PembayaranApp.selectKontribusi(id, button);
+                            }
+                        });
+                    });
+                },
+
+                // Reset search input
+                resetSearchInput() {
+                    this.elements.searchInput.value = '';
+                }
+            };
+
+            // ============================================================================
+            // MAIN APP - SAMA DENGAN HALAMAN SEBELUMNYA
+            // ============================================================================
+            const PembayaranApp = {
+                searchTimeout: null,
+
+                // Load data dari server - SAMA DENGAN HALAMAN LAIN
+                async loadData(page = null) {
+                    if (State.isLoading) return;
+
+                    if (page !== null && page >= 1) {
+                        State.currentPage = page;
+                    }
+
+                    UI.showLoading();
+
+                    try {
+                        const result = await Api.getMasterKontribusi();
+
+                        if (result?.success) {
+                            State.updatePagination(result);
+                            UI.updateStats(result);
+                            UI.renderTable(result.data);
+                        } else {
+                            UI.showEmpty();
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        UI.showEmpty();
+                    }
+                },
+
+                // Filter data - PANGGIL API LAGI
+                filterData(filter) {
+                    State.aktifFilter = filter;
+                    State.resetToFirstPage();
+                    UI.updateFilterTabs();
+                    this.loadData();
+                },
+
+                // Search data - PANGGIL API LAGI (IN YANG BEDA!)
+                searchData(term) {
+                    State.searchQuery = term;
+                    State.resetToFirstPage();
+                    this.loadData();
+                },
+
+                // Debounced search
+                debounceSearch(term) {
+                    clearTimeout(this.searchTimeout);
+                    this.searchTimeout = setTimeout(() => {
+                        this.searchData(term);
+                    }, CONFIG.debounceDelay);
+                },
+
+                // Reset filter - PANGGIL API LAGI
+                resetFilter() {
+                    State.aktifFilter = 'all';
+                    State.searchQuery = '';
+                    State.resetToFirstPage();
+
+                    UI.resetSearchInput();
+                    UI.updateFilterTabs();
+                    this.loadData();
+                },
+
+                // Select kontribusi
+                async selectKontribusi(masterId, button) {
+                    if (State.isLoading) return;
+
+                    // Set selected state
+                    State.selectedId = masterId;
+
+                    // Update UI to show selected item
+                    document.querySelectorAll('.kontribusi-item').forEach(item => {
+                        if (item.getAttribute('data-id') === masterId) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+
+                    // Show loading on button
+                    Helpers.setButtonLoading(button, true);
+
+                    try {
+                        // Navigate to create page
+                        window.location.href = `${API.createPage}?master_kontribusi_id=${masterId}`;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Helpers.setButtonLoading(button, false);
+                        Helpers.showToast('Gagal melanjutkan ke halaman pembayaran', 'error');
+                    }
+                },
+
+                // Go to page - untuk pagination
+                goToPage(page) {
+                    if (page < 1 || page > State.totalPages || page === State.currentPage) {
+                        return;
+                    }
+                    this.loadData(page);
+                }
+            };
+
+            // ============================================================================
+            // EVENT LISTENERS
+            // ============================================================================
+            function setupEventListeners() {
+                const searchInput = document.getElementById('searchInput');
+
+                // Search dengan debounce - INI YAKIN AKAN MEMANGGIL API
+                searchInput.addEventListener('input', (e) => {
+                    PembayaranApp.debounceSearch(e.target.value.trim());
+                });
+
+                // Prevent form submission on Enter
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                });
+
+                // Pagination buttons
+                document.getElementById('prevPage')?.addEventListener('click', function() {
+                    if (State.currentPage > 1) {
+                        PembayaranApp.goToPage(State.currentPage - 1);
+                    }
+                });
+
+                document.getElementById('nextPage')?.addEventListener('click', function() {
+                    if (State.currentPage < State.totalPages) {
+                        PembayaranApp.goToPage(State.currentPage + 1);
+                    }
+                });
             }
 
-            // Default icon
-            return 'bi-cash-coin';
-        }
-
-        // Format currency
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(amount);
-        }
-
-        // Truncate text
-        function truncateText(text, maxLength) {
-            if (!text || text.length <= maxLength) return text;
-            return text.substring(0, maxLength) + '...';
-        }
-
-        // Escape HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Show loading state
-        function showLoadingState() {
-            document.getElementById('loadingState').style.display = 'flex';
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('errorState').style.display = 'none';
-            document.getElementById('kontribusiGrid').style.display = 'none';
-        }
-
-        function hideLoadingState() {
-            document.getElementById('loadingState').style.display = 'none';
-        }
-
-        // Show empty state
-        function showEmptyState() {
-            document.getElementById('emptyState').style.display = 'flex';
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('errorState').style.display = 'none';
-            document.getElementById('kontribusiGrid').style.display = 'none';
-        }
-
-        // Show error state
-        function showErrorState(message = 'Terjadi kesalahan saat memuat data') {
-            document.getElementById('errorState').style.display = 'flex';
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('kontribusiGrid').style.display = 'none';
-        }
-
-        // Toast notification
-        function showToast(title, message, type = 'info') {
-            if (window.showToast) {
-                window.showToast(message, type);
-            } else {
-                alert(`${title}: ${message}`);
+            // ============================================================================
+            // INITIALIZE
+            // ============================================================================
+            async function initializeApp() {
+                setupEventListeners();
+                await PembayaranApp.loadData(1);
             }
-        }
 
-        // ============================================================================
-        // PUBLIC API (PembayaranApp)
-        // ============================================================================
-        const PembayaranApp = {
-            loadMasterKontribusi: loadMasterKontribusi,
-            selectKontribusi: selectKontribusi
-        };
+            // ============================================================================
+            // START APP
+            // ============================================================================
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeApp();
 
-        // ============================================================================
-        // START APP
-        // ============================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            loadMasterKontribusi();
+                // Expose ke global scope
+                window.PembayaranApp = PembayaranApp;
 
-            // Expose ke global scope
-            window.PembayaranApp = PembayaranApp;
-        });
+                // Untuk debugging
+                window.debugState = function() {
+                    console.log('State:', {
+                        currentPage: State.currentPage,
+                        totalPages: State.totalPages,
+                        searchQuery: State.searchQuery,
+                        aktifFilter: State.aktifFilter,
+                        isLoading: State.isLoading
+                    });
+                };
+            });
+        })();
     </script>
 @endpush

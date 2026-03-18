@@ -48,9 +48,7 @@
                                     <th width="120">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                <!-- Data akan diisi oleh JavaScript -->
-                            </tbody>
+                            <tbody id="tableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -62,9 +60,7 @@
                 </div>
 
                 <div id="loadingState" class="empty-state">
-                    <div style="height: 20px; width: 200px; margin: 0 auto 10px; background: #f0f0f0; border-radius: 4px;">
-                    </div>
-                    <div style="height: 20px; width: 150px; margin: 0 auto; background: #f0f0f0; border-radius: 4px;"></div>
+                    <div class="loading-animation"></div>
                 </div>
 
                 <!-- Pagination -->
@@ -81,9 +77,7 @@
         </div>
     </div>
 
-    <!-- ---------- MODALS ---------- -->
-
-    <!-- Create Modal -->
+    <!-- ========== CREATE MODAL ========== -->
     <div class="modal" id="createModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -122,7 +116,7 @@
         </div>
     </div>
 
-    <!-- Edit Modal -->
+    <!-- ========== EDIT MODAL ========== -->
     <div class="modal" id="editModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -160,7 +154,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- ========== DELETE CONFIRMATION MODAL ========== -->
     <div class="modal" id="deleteModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -169,519 +163,587 @@
             </div>
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus kategori <strong id="deleteItemName"></strong>?</p>
-                <p class="form-text">Data yang dihapus tidak dapat dikembalikan.</p>
+                <p class="text-danger">Data yang dihapus tidak dapat dikembalikan.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="KontribusiApp.hideDeleteModal()">Batal</button>
-                <button class="btn btn-delete" onclick="KontribusiApp.confirmDelete()">Hapus</button>
+                <button class="btn btn-danger" onclick="KontribusiApp.confirmDelete()">Hapus</button>
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
-    <script>
-        // ============================================================================
-        // VARIABEL GLOBAL & KONFIGURASI
-        // ============================================================================
-        let currentPage = 1;
-        let totalPages = 1;
-        let totalRecords = 0;
-        let searchQuery = '';
-        let perPage = 10;
-        let isLoading = false;
-        let deleteId = null;
+    <style>
+        /* ===== STYLES ===== */
+        .loading-animation {
+            height: 20px;
+            width: 200px;
+            margin: 0 auto 10px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
 
-        const API_ROUTES = {
-            data: '{{ route('admin.kelompok.api.master-kontribusi.index') }}',
-            detail: '{{ route('admin.kelompok.api.master-kontribusi.show', '') }}',
-            create: '{{ route('admin.kelompok.api.master-kontribusi.store') }}',
-            update: '{{ route('admin.kelompok.api.master-kontribusi.update', '') }}',
-            destroy: '{{ route('admin.kelompok.api.master-kontribusi.destroy', '') }}'
-        };
-
-        // ============================================================================
-        // FUNGSI UTAMA - LOAD DATA & RENDER TABEL
-        // ============================================================================
-
-        // Fungsi untuk memuat data kontribusi
-        async function loadKontribusiData(page = null) {
-            if (isLoading) return;
-
-            if (page !== null && page >= 1) {
-                currentPage = page;
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
             }
 
-            showLoadingState();
-            isLoading = true;
-
-            try {
-                const params = new URLSearchParams({
-                    page: currentPage,
-                    per_page: perPage
-                });
-
-                if (searchQuery) {
-                    params.append('search', searchQuery);
-                }
-
-                const url = `${API_ROUTES.data}?${params.toString()}`;
-
-                const response = await fetch(url);
-                const result = await response.json();
-
-                if (result.success) {
-                    renderTable(result.data);
-                    updatePagination(result);
-                } else {
-                    throw new Error(result.message || 'Gagal memuat data');
-                }
-            } catch (error) {
-                console.error('Error loading data:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                } else {
-                    alert(error.message);
-                }
-                // Reset ke halaman 1 jika error
-                currentPage = 1;
-                showEmptyState();
-            } finally {
-                hideLoadingState();
-                isLoading = false;
+            100% {
+                background-position: -200% 0;
             }
         }
 
-        // Fungsi untuk merender tabel
-        function renderTable(data) {
-            const tableBody = document.getElementById('tableBody');
-            const emptyState = document.getElementById('emptyState');
-            const loadingState = document.getElementById('loadingState');
-            const pagination = document.getElementById('pagination');
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
 
-            if (!data || data.length === 0) {
-                showEmptyState();
-                return;
-            }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-            // Hide loading and empty state
-            if (loadingState) loadingState.style.display = 'none';
-            if (emptyState) emptyState.style.display = 'none';
-            if (pagination) pagination.style.display = 'flex';
+        /* Badge Styles */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
 
-            // Format data untuk tabel
-            const startNumber = ((currentPage - 1) * perPage) + 1;
-            const tableRows = data.map((item, index) => {
-                const rowNumber = startNumber + index;
-                return `
-                <tr>
-                    <td>${rowNumber}</td>
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .code-badge {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: 1px solid #ced4da;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+    </style>
+
+    <script>
+        (function() {
+            // ============================================================================
+            // KONFIGURASI & STATE
+            // ============================================================================
+            const CONFIG = {
+                debounceDelay: 500,
+                defaultPerPage: 10,
+                maxNamaLength: 100
+            };
+
+            // STATE - Semua data aplikasi disimpan di sini
+            const State = {
+                currentPage: 1,
+                totalPages: 1,
+                totalRecords: 0,
+                searchQuery: '',
+                perPage: CONFIG.defaultPerPage,
+                isLoading: false,
+                deleteId: null,
+
+                resetToFirstPage() {
+                    this.currentPage = 1;
+                },
+
+                updatePagination(data) {
+                    this.currentPage = parseInt(data.current_page) || 1;
+                    this.totalPages = parseInt(data.last_page) || 1;
+                    this.totalRecords = parseInt(data.total) || 0;
+                }
+            };
+
+            // API Routes
+            const API = {
+                data: '{{ route('admin.kelompok.api.master-kontribusi.index') }}',
+                detail: (id) => '{{ route('admin.kelompok.api.master-kontribusi.show', '') }}/' + id,
+                create: '{{ route('admin.kelompok.api.master-kontribusi.store') }}',
+                update: (id) => '{{ route('admin.kelompok.api.master-kontribusi.update', '') }}/' + id,
+                destroy: (id) => '{{ route('admin.kelompok.api.master-kontribusi.destroy', '') }}/' + id
+            };
+
+            // ============================================================================
+            // HELPER FUNCTIONS
+            // ============================================================================
+            const Helpers = {
+                // ESCAPE HTML - PENTING UNTUK KEAMANAN!
+                escapeHtml(text) {
+                    if (!text) return '';
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                // Format nomor urut
+                formatRowNumber(index) {
+                    return ((State.currentPage - 1) * State.perPage) + index + 1;
+                },
+
+                // Validasi form kontribusi
+                validateForm(data, isEdit = false) {
+                    if (!data.nama_kontribusi || data.nama_kontribusi.trim() === '') {
+                        this.showToast('Nama kategori harus diisi', 'error');
+                        return false;
+                    }
+
+                    if (data.nama_kontribusi.length > CONFIG.maxNamaLength) {
+                        this.showToast(`Nama kategori maksimal ${CONFIG.maxNamaLength} karakter`, 'error');
+                        return false;
+                    }
+
+                    return true;
+                },
+
+                // Toast notification
+                showToast(message, type = 'info') {
+                    if (window.showToast) {
+                        window.showToast(message, type);
+                    } else {
+                        alert(message);
+                    }
+                },
+
+                // Loading state
+                setLoading(isLoading) {
+                    State.isLoading = isLoading;
+                    const loadingEl = document.getElementById('loadingState');
+                    const emptyEl = document.getElementById('emptyState');
+
+                    if (loadingEl) loadingEl.style.display = isLoading ? 'block' : 'none';
+                    if (emptyEl && isLoading) emptyEl.style.display = 'none';
+                },
+
+                // Build query string
+                buildQuery() {
+                    const params = new URLSearchParams({
+                        page: State.currentPage,
+                        per_page: State.perPage
+                    });
+
+                    if (State.searchQuery) {
+                        params.append('search', State.searchQuery);
+                    }
+
+                    return params.toString();
+                }
+            };
+
+            // ============================================================================
+            // API CALLS
+            // ============================================================================
+            const Api = {
+                async getKontribusi() {
+                    if (State.isLoading) return null;
+
+                    Helpers.setLoading(true);
+
+                    try {
+                        const url = `${API.data}?${Helpers.buildQuery()}`;
+                        const res = await fetch(url);
+                        const result = await res.json();
+
+                        if (!result.success) {
+                            throw new Error(result.message || 'Gagal memuat data');
+                        }
+                        return result;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Helpers.showToast(error.message, 'error');
+                        return null;
+                    } finally {
+                        Helpers.setLoading(false);
+                    }
+                },
+
+                async getDetail(id) {
+                    try {
+                        const res = await fetch(API.detail(id));
+                        const result = await res.json();
+                        return result.success ? result.data : null;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Helpers.showToast('Gagal memuat detail', 'error');
+                        return null;
+                    }
+                },
+
+                async create(data) {
+                    const res = await fetch(API.create, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    return await res.json();
+                },
+
+                async update(id, data) {
+                    const res = await fetch(API.update(id), {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    return await res.json();
+                },
+
+                async delete(id) {
+                    const res = await fetch(API.destroy(id), {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                    return await res.json();
+                }
+            };
+
+            // ============================================================================
+            // UI RENDER
+            // ============================================================================
+            const UI = {
+                tableBody: document.getElementById('tableBody'),
+                emptyState: document.getElementById('emptyState'),
+                pagination: document.getElementById('pagination'),
+                pageInfo: document.getElementById('pageInfo'),
+
+                renderTable(data) {
+                    if (!data || data.length === 0) {
+                        this.showEmpty();
+                        return;
+                    }
+
+                    Helpers.setLoading(false);
+                    this.emptyState.style.display = 'none';
+                    this.pagination.style.display = 'flex';
+
+                    const rows = data.map((item, index) => {
+                        const no = Helpers.formatRowNumber(index);
+                        const statusBadge = item.is_aktif ?
+                            '<span class="badge badge-success">Aktif</span>' :
+                            '<span class="badge badge-danger">Tidak Aktif</span>';
+
+                        return `<tr>
+                    <td>${no}</td>
                     <td>
                         <span class="code-badge">${item.kode_kontribusi || '-'}</span>
                     </td>
-                    <td>${escapeHtml(item.nama_kontribusi)}</td>
+                    <td>${Helpers.escapeHtml(item.nama_kontribusi)}</td>
                     <td>
                         <span class="badge badge-info">${item.nama_kelompok || 'KELOMPOK'}</span>
                     </td>
+                    <td>${statusBadge}</td>
+                    <td>${item.keterangan ? Helpers.escapeHtml(item.keterangan) : '-'}</td>
                     <td>
-                        ${item.is_aktif ? 
-                            '<span class="badge badge-success">Aktif</span>' : 
-                            '<span class="badge badge-danger">Tidak Aktif</span>'
-                        }
-                    </td>
-                    <td>${item.keterangan ? escapeHtml(item.keterangan) : '-'}</td>
-                    <td>
-                        <button class="btn btn-edit btn-sm" onclick="showEditModal('${item.id}')" title="Edit">
+                        <button class="btn btn-edit btn-sm" onclick="KontribusiApp.showEditModal('${item.id}')" title="Edit">
                             <i class="bi-pencil"></i>
                         </button>
-                        <button class="btn btn-delete btn-sm" onclick="showDeleteModal('${item.id}', '${escapeHtml(item.nama_kontribusi)}')" title="Hapus">
+                        <button class="btn btn-danger btn-sm" onclick="KontribusiApp.showDeleteModal('${item.id}', '${Helpers.escapeHtml(item.nama_kontribusi)}')" title="Hapus">
                             <i class="bi-trash"></i>
                         </button>
                     </td>
-                </tr>
-            `;
-            }).join('');
+                </tr>`;
+                    }).join('');
 
-            tableBody.innerHTML = tableRows;
-        }
+                    this.tableBody.innerHTML = rows;
+                    this.updatePagination();
+                },
 
-        // Tampilkan empty state
-        function showEmptyState() {
-            const tableBody = document.getElementById('tableBody');
-            const emptyState = document.getElementById('emptyState');
-            const loadingState = document.getElementById('loadingState');
-            const pagination = document.getElementById('pagination');
+                showEmpty() {
+                    this.tableBody.innerHTML = '';
+                    this.emptyState.style.display = 'block';
+                    this.pagination.style.display = 'none';
+                    Helpers.setLoading(false);
+                },
 
-            if (tableBody) tableBody.innerHTML = '';
-            if (emptyState) emptyState.style.display = 'block';
-            if (loadingState) loadingState.style.display = 'none';
-            if (pagination) pagination.style.display = 'none';
-        }
+                updatePagination() {
+                    if (this.pageInfo) {
+                        this.pageInfo.textContent = `Halaman ${State.currentPage} dari ${State.totalPages}`;
+                    }
 
-        // Fungsi untuk update pagination
-        function updatePagination(data) {
-            currentPage = parseInt(data.current_page) || 1;
-            totalPages = parseInt(data.last_page) || 1;
-            totalRecords = parseInt(data.total) || 0;
+                    const prev = document.getElementById('prevPage');
+                    const next = document.getElementById('nextPage');
 
-            const pageInfo = document.getElementById('pageInfo');
-            const prevBtn = document.getElementById('prevPage');
-            const nextBtn = document.getElementById('nextPage');
+                    if (prev) {
+                        prev.disabled = State.currentPage <= 1;
+                        prev.classList.toggle('disabled', State.currentPage <= 1);
+                    }
 
-            // Update info
-            if (pageInfo) {
-                pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-            }
-
-            // Update prev button
-            if (prevBtn) {
-                const isDisabled = currentPage <= 1;
-                prevBtn.disabled = isDisabled;
-                prevBtn.classList.toggle('disabled', isDisabled);
-            }
-
-            // Update next button
-            if (nextBtn) {
-                const isDisabled = currentPage >= totalPages;
-                nextBtn.disabled = isDisabled;
-                nextBtn.classList.toggle('disabled', isDisabled);
-            }
-        }
-
-        // Fungsi untuk ganti halaman
-        function goToPage(page) {
-            if (page < 1 || page > totalPages || page === currentPage) {
-                return;
-            }
-            loadKontribusiData(page);
-        }
-
-        // ============================================================================
-        // FUNGSI MODAL - CREATE, EDIT, DELETE
-        // ============================================================================
-
-        // Modal Create
-        function showCreateModal() {
-            document.getElementById('createForm').reset();
-            document.getElementById('statusCreate').style.display = 'none';
-            document.getElementById('createModal').classList.add('show');
-
-            // Focus ke input setelah modal muncul
-            setTimeout(() => {
-                document.querySelector('#createForm input[name="nama_kontribusi"]').focus();
-            }, 300);
-        }
-
-        function hideCreateModal() {
-            document.getElementById('createModal').classList.remove('show');
-        }
-
-        // Modal Edit
-        async function showEditModal(kontribusiId) {
-            try {
-                const response = await fetch(`${API_ROUTES.detail}/${kontribusiId}`);
-                const result = await response.json();
-
-                if (result.success) {
-                    const kontribusi = result.data;
-
-                    // Isi form dengan data kontribusi
-                    document.getElementById('editKontribusiId').value = kontribusi.id;
-                    document.getElementById('editNamaKontribusi').value = kontribusi.nama_kontribusi;
-                    document.getElementById('editKeterangan').value = kontribusi.keterangan || '';
-                    document.getElementById('editIsAktif').value = kontribusi.is_aktif ? '1' : '0';
-
-                    // Tampilkan modal
-                    document.getElementById('editModal').classList.add('show');
-                } else {
-                    throw new Error(result.message);
+                    if (next) {
+                        next.disabled = State.currentPage >= State.totalPages;
+                        next.classList.toggle('disabled', State.currentPage >= State.totalPages);
+                    }
                 }
-            } catch (error) {
-                console.error('Error loading edit data:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        function hideEditModal() {
-            document.getElementById('editModal').classList.remove('show');
-        }
-
-        // Modal Delete
-        function showDeleteModal(kontribusiId, namaKontribusi) {
-            deleteId = kontribusiId;
-            document.getElementById('deleteItemName').textContent = namaKontribusi;
-            document.getElementById('deleteModal').classList.add('show');
-        }
-
-        function hideDeleteModal() {
-            deleteId = null;
-            document.getElementById('deleteModal').classList.remove('show');
-        }
-
-        // ============================================================================
-        // FUNGSI FORM - SUBMIT CREATE, EDIT, DELETE
-        // ============================================================================
-
-        // Submit Create Form
-        async function submitCreateForm() {
-            const form = document.getElementById('createForm');
-            const formData = new FormData(form);
-
-            // Konversi ke object
-            const data = {
-                nama_kontribusi: formData.get('nama_kontribusi'),
-                keterangan: formData.get('keterangan'),
-                is_aktif: true // Default true untuk create
             };
 
-            // Validasi sederhana
-            if (!data.nama_kontribusi) {
-                if (window.showToast) {
-                    window.showToast('Harap isi nama kategori', 'error');
+            // ============================================================================
+            // MODAL CONTROLS
+            // ============================================================================
+            const Modal = {
+                show(id) {
+                    document.getElementById(id)?.classList.add('show');
+                },
+
+                hide(id) {
+                    document.getElementById(id)?.classList.remove('show');
+                },
+
+                showCreate() {
+                    document.getElementById('createForm').reset();
+                    document.getElementById('statusCreate').style.display = 'none';
+                    this.show('createModal');
+
+                    // Focus ke input setelah modal muncul
+                    setTimeout(() => {
+                        document.querySelector('#createForm input[name="nama_kontribusi"]')?.focus();
+                    }, 300);
+                },
+
+                async showEdit(id) {
+                    const data = await Api.getDetail(id);
+                    if (!data) return;
+
+                    document.getElementById('editKontribusiId').value = data.id;
+                    document.getElementById('editNamaKontribusi').value = data.nama_kontribusi;
+                    document.getElementById('editKeterangan').value = data.keterangan || '';
+                    document.getElementById('editIsAktif').value = data.is_aktif ? '1' : '0';
+
+                    this.show('editModal');
+
+                    // Focus ke input setelah modal muncul
+                    setTimeout(() => {
+                        document.getElementById('editNamaKontribusi')?.focus();
+                    }, 300);
+                },
+
+                showDelete(id, name) {
+                    State.deleteId = id;
+                    document.getElementById('deleteItemName').textContent = name;
+                    this.show('deleteModal');
                 }
-                return;
-            }
-
-            try {
-                const response = await fetch(API_ROUTES.create, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    hideCreateModal();
-                    currentPage = 1; // Kembali ke halaman 1
-                    loadKontribusiData();
-                    if (window.showToast) {
-                        window.showToast('Data kontribusi berhasil ditambahkan', 'success');
-                    }
-                } else {
-                    throw new Error(result.message || 'Gagal menambahkan data');
-                }
-            } catch (error) {
-                console.error('Error creating kontribusi:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        // Submit Edit Form
-        async function submitEditForm() {
-            const kontribusiId = document.getElementById('editKontribusiId').value;
-            const form = document.getElementById('editForm');
-            const formData = new FormData(form);
-
-            // Konversi ke object
-            const data = {
-                nama_kontribusi: formData.get('nama_kontribusi'),
-                keterangan: formData.get('keterangan'),
-                is_aktif: formData.get('is_aktif') === '1'
             };
 
-            // Validasi sederhana
-            if (!data.nama_kontribusi) {
-                if (window.showToast) {
-                    window.showToast('Harap isi nama kategori', 'error');
-                }
-                return;
-            }
+            // ============================================================================
+            // FORM HANDLERS
+            // ============================================================================
+            const Form = {
+                getCreateData() {
+                    const form = document.getElementById('createForm');
+                    const formData = new FormData(form);
 
-            try {
-                const response = await fetch(`${API_ROUTES.update}/${kontribusiId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(data)
-                });
+                    return {
+                        nama_kontribusi: formData.get('nama_kontribusi')?.trim(),
+                        keterangan: formData.get('keterangan')?.trim() || '',
+                        is_aktif: true // Default true untuk create
+                    };
+                },
 
-                const result = await response.json();
+                getEditData() {
+                    return {
+                        nama_kontribusi: document.getElementById('editNamaKontribusi')?.value?.trim(),
+                        keterangan: document.getElementById('editKeterangan')?.value?.trim() || '',
+                        is_aktif: document.getElementById('editIsAktif')?.value === '1'
+                    };
+                },
 
-                if (result.success) {
-                    hideEditModal();
-                    loadKontribusiData(); // Reload data di halaman yang sama
-                    if (window.showToast) {
-                        window.showToast('Data kontribusi berhasil diupdate', 'success');
+                async submitCreate() {
+                    const data = this.getCreateData();
+
+                    if (!Helpers.validateForm(data)) return;
+
+                    try {
+                        const result = await Api.create(data);
+
+                        if (result.success) {
+                            Modal.hide('createModal');
+                            State.resetToFirstPage();
+                            await loadData();
+                            Helpers.showToast('Data kontribusi berhasil ditambahkan', 'success');
+                        } else {
+                            throw new Error(result.message || 'Gagal menambahkan data');
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
                     }
-                } else {
-                    throw new Error(result.message || 'Gagal mengupdate data');
-                }
-            } catch (error) {
-                console.error('Error updating kontribusi:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
+                },
 
-        // Submit Delete
-        async function confirmDelete() {
-            if (!deleteId) return;
+                async submitEdit() {
+                    const id = document.getElementById('editKontribusiId')?.value;
+                    const data = this.getEditData();
 
-            try {
-                const response = await fetch(`${API_ROUTES.destroy}/${deleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    if (!Helpers.validateForm(data, true)) return;
+
+                    try {
+                        const result = await Api.update(id, data);
+
+                        if (result.success) {
+                            Modal.hide('editModal');
+                            await loadData(); // Reload di halaman yang sama
+                            Helpers.showToast('Data kontribusi berhasil diupdate', 'success');
+                        } else {
+                            throw new Error(result.message || 'Gagal mengupdate data');
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
                     }
-                });
+                },
 
-                const result = await response.json();
+                async confirmDelete() {
+                    if (!State.deleteId) return;
 
-                if (result.success) {
-                    hideDeleteModal();
-                    loadKontribusiData();
-                    if (window.showToast) {
-                        window.showToast('Data kontribusi berhasil dihapus', 'success');
+                    try {
+                        const result = await Api.delete(State.deleteId);
+
+                        if (result.success) {
+                            Modal.hide('deleteModal');
+                            State.deleteId = null;
+                            await loadData();
+                            Helpers.showToast('Data kontribusi berhasil dihapus', 'success');
+                        } else {
+                            throw new Error(result.message || 'Gagal menghapus data');
+                        }
+                    } catch (error) {
+                        Helpers.showToast(error.message, 'error');
                     }
-                } else {
-                    throw new Error(result.message);
                 }
-            } catch (error) {
-                console.error('Error deleting kontribusi:', error);
-                if (window.showToast) {
-                    window.showToast(error.message, 'error');
-                }
-            }
-        }
-
-        // ============================================================================
-        // FUNGSI BANTU (HELPER FUNCTIONS)
-        // ============================================================================
-
-        // Escape HTML
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Loading state
-        function showLoadingState() {
-            const loadingState = document.getElementById('loadingState');
-            const emptyState = document.getElementById('emptyState');
-            if (loadingState) loadingState.style.display = 'block';
-            if (emptyState) emptyState.style.display = 'none';
-        }
-
-        function hideLoadingState() {
-            const loadingState = document.getElementById('loadingState');
-            if (loadingState) loadingState.style.display = 'none';
-        }
-
-        // ============================================================================
-        // EVENT LISTENERS & INITIALIZATION
-        // ============================================================================
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search dengan debounce
-            let searchTimeout;
-            document.getElementById('searchInput').addEventListener('input', function(e) {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    searchQuery = e.target.value.trim();
-                    currentPage = 1; // Reset ke halaman 1
-                    loadKontribusiData();
-                }, 500);
-            });
-
-            // Per page
-            document.getElementById('perPageSelect').addEventListener('change', function(e) {
-                perPage = parseInt(e.target.value) || 10;
-                currentPage = 1; // Reset ke halaman 1
-                loadKontribusiData();
-            });
-
-            // Pagination buttons
-            document.getElementById('prevPage').addEventListener('click', function() {
-                if (currentPage > 1) {
-                    goToPage(currentPage - 1);
-                }
-            });
-
-            document.getElementById('nextPage').addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    goToPage(currentPage + 1);
-                }
-            });
-
-            // Modal backdrop clicks
-            document.getElementById('createModal').addEventListener('click', function(e) {
-                if (e.target === this) hideCreateModal();
-            });
-
-            document.getElementById('editModal').addEventListener('click', function(e) {
-                if (e.target === this) hideEditModal();
-            });
-
-            document.getElementById('deleteModal').addEventListener('click', function(e) {
-                if (e.target === this) hideDeleteModal();
-            });
-        }
-
-        // Initialize aplikasi
-        async function initializeApp() {
-            setupEventListeners();
-            await loadKontribusiData(1); // Mulai dari halaman 1
-        }
-
-        // ============================================================================
-        // PUBLIC API (KontribusiApp)
-        // ============================================================================
-        const KontribusiApp = {
-            // Data & Table
-            reloadData() {
-                loadKontribusiData(1);
-            },
-            goToPage: goToPage,
-
-            // Modals
-            showCreateModal: showCreateModal,
-            hideCreateModal: hideCreateModal,
-            showEditModal: showEditModal,
-            hideEditModal: hideEditModal,
-            showDeleteModal: showDeleteModal,
-            hideDeleteModal: hideDeleteModal,
-
-            // Forms
-            submitCreateForm: submitCreateForm,
-            submitEditForm: submitEditForm,
-            confirmDelete: confirmDelete
-        };
-
-        // ============================================================================
-        // START APP
-        // ============================================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-
-            // Expose ke global scope
-            window.KontribusiApp = KontribusiApp;
-            window.showEditModal = showEditModal;
-            window.showDeleteModal = showDeleteModal;
-
-            // Debug
-            window.debugPagination = function() {
-                console.log('Pagination State:', {
-                    currentPage,
-                    totalPages,
-                    totalRecords,
-                    perPage,
-                    searchQuery
-                });
             };
-        });
+
+            // ============================================================================
+            // MAIN FUNCTION
+            // ============================================================================
+            async function loadData(page = null) {
+                if (page !== null) State.currentPage = page;
+
+                const result = await Api.getKontribusi();
+                if (result?.success) {
+                    State.updatePagination(result);
+                    UI.renderTable(result.data);
+                } else {
+                    UI.showEmpty();
+                }
+            }
+
+            // ============================================================================
+            // EVENT LISTENERS
+            // ============================================================================
+            function setupListeners() {
+                // Search debounce
+                let timeout;
+                document.getElementById('searchInput').addEventListener('input', function(e) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        State.searchQuery = e.target.value.trim();
+                        State.resetToFirstPage();
+                        loadData();
+                    }, CONFIG.debounceDelay);
+                });
+
+                // Per page
+                document.getElementById('perPageSelect').addEventListener('change', function(e) {
+                    State.perPage = parseInt(e.target.value) || CONFIG.defaultPerPage;
+                    State.resetToFirstPage();
+                    loadData();
+                });
+
+                // Pagination
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    if (State.currentPage > 1) loadData(State.currentPage - 1);
+                });
+
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    if (State.currentPage < State.totalPages) loadData(State.currentPage + 1);
+                });
+
+                // Modal backdrop clicks
+                ['createModal', 'editModal', 'deleteModal'].forEach(id => {
+                    document.getElementById(id)?.addEventListener('click', function(e) {
+                        if (e.target === this) Modal.hide(id);
+                    });
+                });
+
+                // Prevent form submission on Enter
+                const forms = ['createForm', 'editForm'];
+                forms.forEach(formId => {
+                    document.getElementById(formId)?.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                        }
+                    });
+                });
+            }
+
+            // ============================================================================
+            // INITIALIZE
+            // ============================================================================
+            async function init() {
+                setupListeners();
+                await loadData(1);
+
+                // Expose ke global
+                window.KontribusiApp = {
+                    // Data & Table
+                    reloadData: () => loadData(1),
+
+                    // Modals
+                    showCreateModal: () => Modal.showCreate(),
+                    hideCreateModal: () => Modal.hide('createModal'),
+                    showEditModal: (id) => Modal.showEdit(id),
+                    hideEditModal: () => Modal.hide('editModal'),
+                    showDeleteModal: (id, name) => Modal.showDelete(id, name),
+                    hideDeleteModal: () => Modal.hide('deleteModal'),
+
+                    // Forms
+                    submitCreateForm: () => Form.submitCreate(),
+                    submitEditForm: () => Form.submitEdit(),
+                    confirmDelete: () => Form.confirmDelete()
+                };
+
+                // Untuk inline onclick
+                window.showEditModal = (id) => Modal.showEdit(id);
+                window.showDeleteModal = (id, name) => Modal.showDelete(id, name);
+            }
+
+            // START!
+            document.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 @endpush

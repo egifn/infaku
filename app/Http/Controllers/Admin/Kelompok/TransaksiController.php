@@ -85,6 +85,7 @@ class TransaksiController extends Controller
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
 
+            $status = $request->get('is_aktif', 1);
             $search = $request->get('search', '');
 
             $query = DB::table('master_kontribusi')
@@ -97,7 +98,11 @@ class TransaksiController extends Controller
                 });
             }
 
-            $kontribusis = $query->select('id', 'kode_kontribusi', 'nama_kontribusi')
+            if ($status !== null) {
+                $query->where('is_aktif', $status);
+            }
+
+            $kontribusis = $query->select('id', 'kode_kontribusi', 'nama_kontribusi',)
                 ->orderBy('id')
                 ->get();
 
@@ -152,10 +157,12 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
+        DB::beginTransaction();
+
         try {
+
             $user = $request->session()->get('user');
-            $kelompokId = $user['wilayah_id'];
 
             $validated = $request->validate([
                 'jamaah_id' => 'required|exists:jamaah,jamaah_id',
@@ -165,89 +172,108 @@ class TransaksiController extends Controller
                 'keterangan' => 'nullable|string',
                 'bukti_bayar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'sub_kontribusi' => 'required|array',
-                'sub_kontribusi.*.sub_kat_id' => 'required|exists:sub_kontribusi,sub_kat_id',
+                'sub_kontribusi.*.sub_kat_id' => 'required',
                 'sub_kontribusi.*.input_value' => 'required|numeric|min:0'
             ]);
 
-            // Hitung total jumlah dari semua sub kontribusi
-            $totalJumlah = 0;
-            $subKontribusiData = [];
-
-            foreach ($validated['sub_kontribusi'] as $sub) {
-                $totalJumlah += $sub['input_value'];
-
-                // Ambil data sub kontribusi untuk disimpan ke JSON
-                $subDetail = DB::table('sub_kontribusi')
-                    ->where('id', $sub['id'])
-                    ->first();
-
-                $subKontribusiData[] = [
-                    'id' => $sub['id'],
-                    'nama_kontribusi' => $subDetail->nama_kontribusi,
-                    'jenis' => $subDetail->jenis,
-                    'value' => $subDetail->value,
-                    'input_value' => $sub['input_value']
-                ];
-            }
-
-            // Generate transaction IDs
+            //  Generate ID
             $transaksiId = 'TRX' . Str::upper(Str::random(10));
-            $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . Str::random(6);
+            $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . Str::upper(Str::random(6));
 
-            // Get kontribusi info untuk kategori_id
+
+            //    Ambil master kontribusi
             $kontribusi = DB::table('master_kontribusi')
-                ->where('master_kontribusi_id', $validated['master_kontribusi_id'])
+                ->where('id', $validated['master_kontribusi_id'])
                 ->first();
 
-            // Prepare data JSON
-            $dataJson = [
-                'master_kontribusi_id' => $validated['master_kontribusi_id'],
-                'nama_kontribusi' => $kontribusi->nama_kontribusi,
-                'kode_kontribusi' => $kontribusi->kode_kontribusi,
-                'sub_kontribusi' => $subKontribusiData,
-                'total_jumlah' => $totalJumlah,
-                'input_data' => [
-                    'tgl_transaksi' => $validated['tgl_transaksi'],
-                    'metode_bayar' => $validated['metode_bayar'],
-                    'keterangan' => $validated['keterangan'] ?? null
-                ]
-            ];
+            // Upload Bukti Bayar
+            $buktiPath = null;
 
-            $transaksiData = [
-                'transaksi_id' => $transaksiId,
-                'kode_transaksi' => $kodeTransaksi,
-                'tgl_transaksi' => $validated['tgl_transaksi'],
-                'jamaah_id' => $validated['jamaah_id'],
-                'kontribusi_id' => $kontribusi->kode_kontribusi,
-                'jumlah' => $totalJumlah,
-                'satuan' => 'IDR',
-                'keterangan' => $validated['keterangan'] ?? null,
-                'metode_bayar' => $validated['metode_bayar'],
-                'status' => 'VERIFIED',
-                'data_json' => json_encode($dataJson, JSON_PRETTY_PRINT),
-                'created_by' => $user['user_id'],
-                'created_at' => now()
-            ];
-
-            // Handle file upload if exists
             if ($request->hasFile('bukti_bayar')) {
+
                 $file = $request->file('bukti_bayar');
                 $filename = 'bukti_' . time() . '_' . $transaksiId . '.' . $file->getClientOriginalExtension();
                 $file->storeAs('public/bukti_bayar', $filename);
-                $transaksiData['bukti_bayar'] = 'bukti_bayar/' . $filename;
+                $buktiPath = 'bukti_bayar/' . $filename;
             }
 
-            DB::table('transaksi')->insert($transaksiData);
+            //  Simpan TRANSAKSI (HEADER)
+            DB::table('transaksi')->insert([
+                'transaksi_id' => $transaksiId,
+                'kode_transaksi' => $kodeTransaksi,
+                'kode_kontribusi' => $kontribusi->kode_kontribusi,
+                'tgl_transaksi' => $validated['tgl_transaksi'],
+                'jamaah_id' => $validated['jamaah_id'],
+                'metode_bayar' => $validated['metode_bayar'],
+                'bukti_bayar' => $buktiPath,
+                'status' => 'VERIFIED',
+                'keterangan' => $validated['keterangan'] ?? null,
+                'jumlah' => $valdidated['jumlah'] ?? 0,
+                'created_by' => $user['user_id'],
+                'created_at' => now()
+            ]);
 
-            // Log activity
+            /*  Simpan DETAIL KONTRIBUSI */
+            $detailJson = [];
+            $totalJumlah = 0;
+
+            foreach ($validated['sub_kontribusi'] as $sub) {
+
+                $subDetail = DB::table('sub_kontribusi')
+                    ->where('sub_kat_id', $sub['sub_kat_id'])
+                    ->first();
+
+                $jumlah = $sub['input_value'];
+
+                $totalJumlah += $jumlah;
+
+                /*  insert detail */
+                DB::table('transaksi_detail')->insert([
+                    'transaksi_id' => $transaksiId,
+                    'kode_kontribusi' => $kontribusi->kode_kontribusi,
+                    'sub_kontribusi_id' => $sub['sub_kat_id'],
+                    'jumlah' => $jumlah,
+                    'satuan' => 'IDR',
+                    'keterangan' => $validated['keterangan'] ?? null,
+                    'created_at' => now()
+                ]);
+
+                /*  json snapshot */
+                $detailJson[] = [
+                    'sub_kontribusi_id' => $sub['sub_kat_id'],
+                    'nama_kontribusi' => $subDetail->nama_kontribusi,
+                    'jumlah' => $jumlah
+                ];
+            }
+
+            /*  Simpan JSON Snapshot */
+            $dataJson = [
+                'master_kontribusi' => [
+                    'id' => $kontribusi->master_kontribusi_id,
+                    'nama' => $kontribusi->nama_kontribusi,
+                    'kode' => $kontribusi->kode_kontribusi
+                ],
+                'detail' => $detailJson,
+                'total' => $totalJumlah
+            ];
+
+            DB::table('transaksi')
+                ->where('transaksi_id', $transaksiId)
+                ->update([
+                    'data_json' => json_encode($dataJson)
+                ]);
+
+            /*  Activity Log */
             DB::table('activity_logs')->insert([
                 'user_id' => $user['user_id'],
                 'action' => 'ADD_TRANSAKSI',
-                'description' => 'Input pembayaran untuk jamaah: ' . $validated['jamaah_id'],
+                'description' => 'Input pembayaran jamaah ID: ' . $validated['jamaah_id'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->header('User-Agent'),
                 'created_at' => now()
             ]);
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -258,10 +284,14 @@ class TransaksiController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
+
+            DB::rollBack();
+
             Log::error('Error storing transaksi: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mencatat pembayaran: ' . $e->getMessage()
+                'message' => 'Gagal mencatat pembayaran'
             ], 500);
         }
     }

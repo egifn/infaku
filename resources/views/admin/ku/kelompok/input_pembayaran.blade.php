@@ -842,7 +842,7 @@
                                             class="bi-search dropdown-search-icon"></i>
                                         <div class="dropdown-options" id="jamaah_options"></div>
                                     </div>
-                                    <input type="hidden" id="jamaah_id" name="jamaah_id">
+                                    <input type="hidden" id="jamaah_id" name="jamaah_id" required>
                                 </div>
                                 <!-- INFO JAMAAH -->
                                 <div id="jamaahInfo" class="jamaah-info" style="display:none">
@@ -925,7 +925,7 @@
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="resetForm()">
                                     Reset</button>
-                                <button type="submit" class="btn btn-success" id="submitBtn" disabled>
+                                <button type="submit" class="btn btn-success" id="submitBtn">
                                     Simpan</button>
                             </div>
                         </form>
@@ -974,7 +974,9 @@
             const jamaah = document.getElementById('jamaah_id').value;
             const tgl = document.getElementById('tgl_transaksi').value;
             const metode = document.getElementById('metode_bayar').value;
-            document.getElementById('submitBtn').disabled = !(jamaah && tgl && metode);
+            const isReady = !!(jamaah && tgl && metode);
+            document.getElementById('submitBtn').classList.toggle('btn-secondary', !isReady);
+            document.getElementById('submitBtn').classList.toggle('btn-success', isReady);
         }
         /* SUBMIT */
         function handleSubmit(e) {
@@ -1033,6 +1035,7 @@
 
             const form = document.getElementById('pembayaranForm');
             const btn = document.getElementById('submitBtn');
+            const jamaahId = document.getElementById('jamaah_id').value;
 
             isSubmitting = true;
             btn.disabled = true;
@@ -1164,6 +1167,9 @@
             let t;
 
             s.addEventListener('input', e => {
+                document.getElementById('jamaah_id').value = '';
+                document.getElementById('jamaahInfo').style.display = 'none';
+                validateForm();
 
                 clearTimeout(t);
 
@@ -1174,6 +1180,7 @@
 
                 t = setTimeout(() => searchJamaah(e.target.value), 300);
             });
+
 
             document.addEventListener('click', e => {
                 if (!e.target.closest('.searchable-dropdown')) o.classList.remove('show');
@@ -1226,7 +1233,7 @@
             document.getElementById('jamaahInfo').style.display = 'none';
 
             document.getElementById('totalPembayaran').innerText = 'Rp 0';
-            document.getElementById('submitBtn').disabled = true;
+            validateForm();
 
             window.showToast('Form direset', 'info');
         }
