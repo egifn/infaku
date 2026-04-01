@@ -18,175 +18,6 @@
             --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Filter Section */
-        .filter-section {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 2;
-        }
-
-        .search-wrapper {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-            z-index: 3;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-            pointer-events: none;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.625rem 1rem 0.625rem 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 3;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(16, 90, 68, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: #aaa;
-            font-size: 0.875rem;
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            background: #f5f5f5;
-            padding: 0.25rem;
-            border-radius: 2rem;
-        }
-
-        .filter-tab {
-            padding: 0.5rem 1.25rem;
-            border: none;
-            background: transparent;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-tab:hover {
-            color: var(--primary-color);
-        }
-
-        .filter-tab.active {
-            background: white;
-            color: var(--primary-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-tab .badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.15rem 0.5rem;
-            border-radius: 2rem;
-            font-size: 0.7rem;
-        }
-
-        .filter-tab.active .badge {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .reset-filter {
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 1rem;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .reset-filter:hover {
-            background: #f5f5f5;
-            border-color: #999;
-        }
-
-        /* Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .stat-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.5rem;
-            background: var(--primary-light);
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .stat-info h6 {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-info .stat-number {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-
-        .stat-info .stat-detail {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
 
         /* Kontribusi List */
         .kontribusi-list {
@@ -257,12 +88,12 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 0.25rem;
+            /* margin-bottom: 0.25rem; */
             flex-wrap: wrap;
         }
 
         .item-title h4 {
-            font-size: 1rem;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-primary);
             margin: 0;
@@ -287,7 +118,7 @@
             display: flex;
             align-items: center;
             gap: 0.375rem;
-            font-size: 0.8rem;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
@@ -332,7 +163,7 @@
         }
 
         .item-price {
-            font-size: 1rem;
+            font-size: 12px;
             font-weight: 600;
             color: var(--primary-color);
             background: var(--primary-light);
@@ -350,7 +181,7 @@
             color: white;
             border: none;
             border-radius: 2rem;
-            font-size: 0.8rem;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -372,7 +203,7 @@
         }
 
         .select-btn i {
-            font-size: 0.875rem;
+            font-size: 12px;
         }
 
         /* Empty State */
@@ -391,37 +222,26 @@
         }
 
         .empty-state h5 {
-            font-size: 1rem;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 0.25rem;
         }
 
         .empty-state p {
-            font-size: 0.875rem;
+            font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 1rem;
         }
 
-        /* Loading State */
-        .loading-state {
-            text-align: center;
-            padding: 3rem 1.5rem;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1rem;
-            border: 3px solid var(--primary-light);
-            border-top-color: var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        /* Loading State (match master_kontribusi) */
+        .loading-animation {
+            height: 20px;
+            width: 200px;
+            margin: 0 auto 10px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
         }
 
         /* Loading Skeleton */
@@ -530,47 +350,35 @@
 @section('content')
     <div class="master-container">
         <div class="card">
-            <div class="card-header py-2">
+            <div class="card-header">
                 <h3 class="card-title fs-5">
-                    <i class="bi bi-grid-3x3-gap-fill me-2"></i>
-                    Pilih Master Kontribusi
+                    Transaksi
                 </h3>
             </div>
             <div class="card-body py-3">
-                <!-- Filter Section -->
-                <div class="filter-section">
-                    <div class="search-wrapper">
-                        <i class="bi bi-search search-icon"></i>
-                        <input type="text" class="search-input" id="searchInput" placeholder="Cari kontribusi..."
-                            autocomplete="off">
+                <!-- Filter Controls -->
+                <div class="table-controls">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="perPageSelect" class="form-select" style="width:auto; padding:5px 0px">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <select id="filterAktif" class="form-select" style="width: 150px;">
+                            <option value="">Semua Status</option>
+                            <option value="1">Aktif</option>
+                            <option value="0">Tidak Aktif</option>
+                        </select>
                     </div>
-
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" data-filter="all" onclick="PembayaranApp.filterData('all')">
-                            <i class="bi bi-list"></i>
-                            Semua
-                            <span class="badge" id="totalCount">0</span>
-                        </button>
-                        <button class="filter-tab" data-filter="active" onclick="PembayaranApp.filterData('active')">
-                            <i class="bi bi-check-circle"></i>
-                            Aktif
-                            <span class="badge" id="activeCount">0</span>
-                        </button>
-                        <button class="filter-tab" data-filter="inactive" onclick="PembayaranApp.filterData('inactive')">
-                            <i class="bi bi-x-circle"></i>
-                            Non-Aktif
-                            <span class="badge" id="inactiveCount">0</span>
-                        </button>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Cari kontribusi...">
+                        <i class="bi-search search-icon"></i>
                     </div>
-
-                    <button class="reset-filter" onclick="PembayaranApp.resetFilter()">
-                        <i class="bi bi-arrow-counterclockwise"></i>
-                        Reset Filter
-                    </button>
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="stats-container" id="statsContainer" style="display: none;">
+                {{-- <div class="stats-container" id="statsContainer" style="display: none;">
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="bi bi-cash-coin"></i>
@@ -601,13 +409,11 @@
                             <div class="stat-detail">Kontribusi non-aktif</div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Loading State -->
-                <div id="loadingState" class="loading-state" style="display: flex;">
-                    <div class="loading-spinner"></div>
-                    <h4 class="fs-6">Memuat Data</h4>
-                    <p class="text-muted small">Mohon tunggu...</p>
+                <div id="loadingState" class="empty-state">
+                    <div class="loading-animation"></div>
                 </div>
 
                 <!-- Kontribusi List -->
@@ -645,7 +451,7 @@
                 totalPages: 1,
                 totalRecords: 0,
                 searchQuery: '',
-                aktifFilter: 'all', // 'all', 'active', 'inactive'
+                aktifFilter: '',
                 perPage: CONFIG.defaultPerPage,
                 isLoading: false,
                 selectedId: null,
@@ -661,8 +467,7 @@
                 },
 
                 getStatusFilter() {
-                    if (this.aktifFilter === 'all') return '';
-                    return this.aktifFilter === 'active' ? '1' : '0';
+                    return this.aktifFilter;
                 }
             };
 
@@ -811,23 +616,22 @@
                 // Elements
                 elements: {
                     loadingState: document.getElementById('loadingState'),
-                    statsContainer: document.getElementById('statsContainer'),
+                    // statsContainer: document.getElementById('statsContainer'),
                     kontribusiList: document.getElementById('kontribusiList'),
                     emptyState: document.getElementById('emptyState'),
                     emptyMessage: document.getElementById('emptyMessage'),
                     searchInput: document.getElementById('searchInput'),
-                    totalCount: document.getElementById('totalCount'),
-                    activeCount: document.getElementById('activeCount'),
-                    inactiveCount: document.getElementById('inactiveCount'),
-                    statTotal: document.getElementById('statTotal'),
-                    statActive: document.getElementById('statActive'),
-                    statInactive: document.getElementById('statInactive')
+                    perPageSelect: document.getElementById('perPageSelect'),
+                    filterAktif: document.getElementById('filterAktif'),
+                    // statTotal: document.getElementById('statTotal'),
+                    // statActive: document.getElementById('statActive'),
+                    // statInactive: document.getElementById('statInactive')
                 },
 
                 // Show loading state
                 showLoading() {
-                    this.elements.loadingState.style.display = 'flex';
-                    this.elements.statsContainer.style.display = 'none';
+                    this.elements.loadingState.style.display = 'block';
+                    // this.elements.statsContainer.style.display = 'none';
                     this.elements.kontribusiList.style.display = 'none';
                     this.elements.emptyState.style.display = 'none';
                 },
@@ -840,7 +644,7 @@
                 // Show content
                 showContent() {
                     this.hideLoading();
-                    this.elements.statsContainer.style.display = 'grid';
+                    // this.elements.statsContainer.style.display = 'grid';
                 },
 
                 // Render table - SAMA DENGAN HALAMAN LAIN
@@ -851,7 +655,7 @@
                     }
 
                     this.hideLoading();
-                    this.elements.statsContainer.style.display = 'grid';
+                    // this.elements.statsContainer.style.display = 'grid';
                     this.elements.emptyState.style.display = 'none';
                     this.elements.kontribusiList.style.display = 'flex';
 
@@ -866,7 +670,7 @@
                 showEmpty() {
                     this.elements.kontribusiList.innerHTML = '';
                     this.elements.kontribusiList.style.display = 'none';
-                    this.elements.statsContainer.style.display = 'grid';
+                    // this.elements.statsContainer.style.display = 'grid';
                     this.elements.emptyState.style.display = 'block';
                     this.hideLoading();
 
@@ -875,7 +679,7 @@
 
                 // Update empty message
                 updateEmptyMessage() {
-                    if (State.searchQuery || State.aktifFilter !== 'all') {
+                    if (State.searchQuery || State.aktifFilter !== '') {
                         this.elements.emptyMessage.textContent =
                             'Tidak ditemukan kontribusi dengan kriteria tersebut.';
                     } else {
@@ -892,35 +696,26 @@
                     const aktif = data.aktif_count || 0;
                     const nonAktif = total - aktif;
 
-                    this.elements.totalCount.textContent = total;
-                    this.elements.activeCount.textContent = aktif;
-                    this.elements.inactiveCount.textContent = nonAktif;
+                    // Stats badges sudah dihapus pada filter baru, jadi hanya update jika elemen ada
+                    if (this.elements.totalCount) this.elements.totalCount.textContent = total;
+                    if (this.elements.activeCount) this.elements.activeCount.textContent = aktif;
+                    if (this.elements.inactiveCount) this.elements.inactiveCount.textContent = nonAktif;
 
-                    this.elements.statTotal.textContent = total;
-                    this.elements.statActive.textContent = aktif;
-                    this.elements.statInactive.textContent = nonAktif;
-                },
-
-                // Update filter tabs
-                updateFilterTabs() {
-                    document.querySelectorAll('.filter-tab').forEach(tab => {
-                        const filter = tab.getAttribute('data-filter');
-                        if (filter === State.aktifFilter) {
-                            tab.classList.add('active');
-                        } else {
-                            tab.classList.remove('active');
-                        }
-                    });
+                    // this.elements.statTotal.textContent = total;
+                    // this.elements.statActive.textContent = aktif;
+                    // this.elements.statInactive.textContent = nonAktif;
                 },
 
                 // Create list item HTML
                 createListItem(item, index) {
                     const no = Helpers.formatRowNumber(index);
-                    const statusClass = item.is_active ? 'active' : 'inactive';
-                    const statusText = item.is_active ? 'Aktif' : 'Non-Aktif';
+                    const statusClass = item.is_aktif ? 'active' : 'inactive';
+                    const statusText = item.is_aktif ? 'Aktif' : 'Non-Aktif';
                     const nominal = item.nominal_default ? Helpers.formatCurrency(item.nominal_default) : '-';
                     const iconClass = Helpers.getIconClass(item.kode_kontribusi);
                     const isSelected = State.selectedId === item.id ? 'active' : '';
+                    console.log(item);
+
 
                     return `
                 <div class="kontribusi-item ${isSelected}" data-id="${item.id}">
@@ -931,30 +726,28 @@
                         <div class="item-content">
                             <div class="item-title">
                                 <h4>${Helpers.escapeHtml(item.nama_kontribusi)}</h4>
-                                <span class="item-code">${Helpers.escapeHtml(item.kode_kontribusi)}</span>
-                                <span class="status-badge ${statusClass}">
-                                    <i class="bi bi-${item.is_active ? 'check-circle' : 'x-circle'}"></i>
-                                    ${statusText}
-                                </span>
+                                
                             </div>
                             <div class="item-details">
                                 ${item.deskripsi ? `
-                                        <div class="item-detail">
-                                            <i class="bi bi-info-circle"></i>
-                                            <span class="label">Deskripsi:</span>
-                                            <span class="value">${Helpers.truncateText(Helpers.escapeHtml(item.deskripsi))}</span>
-                                        </div>
-                                    ` : ''}
+                                                    <div class="item-detail">
+                                                        <i class="bi bi-info-circle"></i>
+                                                        <span class="label">Deskripsi:</span>
+                                                        <span class="value">${Helpers.truncateText(Helpers.escapeHtml(item.deskripsi))}</span>
+                                                    </div>
+                                                ` : ''}
                                 <div class="item-detail">
-                                    <i class="bi bi-tag"></i>
-                                    <span class="label">Default:</span>
-                                    <span class="value">${nominal}</span>
+                                    <span class="label">Kode:</span>
+                                    <span class="item-code">${Helpers.escapeHtml(item.kode_kontribusi)}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="item-right">
-                        <div class="item-price">${nominal}</div>
+                        <span class="status-badge ${statusClass}">
+                                    <i class="bi bi-${item.is_aktif ? 'check-circle' : 'x-circle'}"></i>
+                                    ${statusText}
+                                </span>
                         <button class="select-btn" onclick="PembayaranApp.selectKontribusi('${item.id}', this)">
                             <i class="bi bi-check-circle"></i>
                             <span>Pilih</span>
@@ -1015,14 +808,6 @@
                     }
                 },
 
-                // Filter data - PANGGIL API LAGI
-                filterData(filter) {
-                    State.aktifFilter = filter;
-                    State.resetToFirstPage();
-                    UI.updateFilterTabs();
-                    this.loadData();
-                },
-
                 // Search data - PANGGIL API LAGI (IN YANG BEDA!)
                 searchData(term) {
                     State.searchQuery = term;
@@ -1040,12 +825,12 @@
 
                 // Reset filter - PANGGIL API LAGI
                 resetFilter() {
-                    State.aktifFilter = 'all';
+                    State.aktifFilter = '';
                     State.searchQuery = '';
                     State.resetToFirstPage();
 
                     UI.resetSearchInput();
-                    UI.updateFilterTabs();
+                    if (UI.elements.filterAktif) UI.elements.filterAktif.value = '';
                     this.loadData();
                 },
 
@@ -1092,6 +877,8 @@
             // ============================================================================
             function setupEventListeners() {
                 const searchInput = document.getElementById('searchInput');
+                const perPageSelect = document.getElementById('perPageSelect');
+                const filterAktif = document.getElementById('filterAktif');
 
                 // Search dengan debounce - INI YAKIN AKAN MEMANGGIL API
                 searchInput.addEventListener('input', (e) => {
@@ -1104,6 +891,22 @@
                         e.preventDefault();
                     }
                 });
+
+                if (perPageSelect) {
+                    perPageSelect.addEventListener('change', (e) => {
+                        State.perPage = parseInt(e.target.value, 10) || CONFIG.defaultPerPage;
+                        State.resetToFirstPage();
+                        PembayaranApp.loadData();
+                    });
+                }
+
+                if (filterAktif) {
+                    filterAktif.addEventListener('change', (e) => {
+                        State.aktifFilter = e.target.value;
+                        State.resetToFirstPage();
+                        PembayaranApp.loadData();
+                    });
+                }
 
                 // Pagination buttons
                 document.getElementById('prevPage')?.addEventListener('click', function() {

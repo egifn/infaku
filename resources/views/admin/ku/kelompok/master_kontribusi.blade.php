@@ -42,6 +42,8 @@
                                     <th width="50">No</th>
                                     <th>Kode Kategori</th>
                                     <th>Nama Kategori</th>
+                                    <th>Jenis</th>
+                                    <th>Periode</th>
                                     <th>Kelompok</th>
                                     <th>Status</th>
                                     <th>Keterangan</th>
@@ -93,6 +95,45 @@
                         <div class="form-text">Nama lengkap kategori kontribusi</div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis *</label>
+                            <select class="form-select" name="jenis" id="createJenis" required>
+                                <option value="BILLING" selected>Setoran</option>
+                                <option value="SAVING">Tabungan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Periode *</label>
+                            <select class="form-select" name="periode" id="createPeriode" required>
+                                <option value="MONTHLY" selected>Bulanan</option>
+                                <option value="WEEKLY">Mingguan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="createPeriodeRange" class="form-row" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Tgl Mulai</label>
+                            <input type="date" class="form-control" name="tgl_mulai" id="createTglMulai">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tgl Selesai</label>
+                            <input type="date" class="form-control" name="tgl_selesai" id="createTglSelesai">
+                        </div>
+                    </div>
+
+                    <div id="createTargets" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Target Kontribusi</label>
+                            <div class="form-text">Isi daftar target tabungan (contoh: Sapi 4.500.000)</div>
+                        </div>
+                        <div id="createTargetList"></div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="KontribusiApp.addTargetRow('create')">
+                            <i class="bi-plus"></i> Tambah Target
+                        </button>
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Keterangan</label>
                         <textarea class="form-control" name="keterangan" rows="3"
@@ -131,6 +172,45 @@
                         <label class="form-label">Nama Kategori *</label>
                         <input type="text" class="form-control" id="editNamaKontribusi" name="nama_kontribusi"
                             maxlength="100" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Jenis *</label>
+                            <select class="form-select" name="jenis" id="editJenis" required>
+                                <option value="BILLING">Setoran</option>
+                                <option value="SAVING">Tabungan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Periode *</label>
+                            <select class="form-select" name="periode" id="editPeriode" required>
+                                <option value="MONTHLY">Bulanan</option>
+                                <option value="WEEKLY">Mingguan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="editPeriodeRange" class="form-row" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Tgl Mulai</label>
+                            <input type="date" class="form-control" name="tgl_mulai" id="editTglMulai">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tgl Selesai</label>
+                            <input type="date" class="form-control" name="tgl_selesai" id="editTglSelesai">
+                        </div>
+                    </div>
+
+                    <div id="editTargets" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Target Kontribusi</label>
+                            <div class="form-text">Isi daftar target tabungan (contoh: Sapi 4.500.000)</div>
+                        </div>
+                        <div id="editTargetList"></div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="KontribusiApp.addTargetRow('edit')">
+                            <i class="bi-plus"></i> Tambah Target
+                        </button>
                     </div>
 
                     <div class="form-group">
@@ -326,6 +406,17 @@
                         return false;
                     }
 
+                    if (data.jenis === 'SAVING') {
+                        if (!data.tgl_mulai || !data.tgl_selesai) {
+                            this.showToast('Tgl mulai & tgl selesai wajib untuk saving', 'error');
+                            return false;
+                        }
+                        if (!data.targets || data.targets.length === 0) {
+                            this.showToast('Target kontribusi wajib diisi untuk saving', 'error');
+                            return false;
+                        }
+                    }
+
                     return true;
                 },
 
@@ -360,6 +451,76 @@
                     }
 
                     return params.toString();
+                },
+
+                toggleSavingFields(prefix, isSaving) {
+                    const range = document.getElementById(prefix + 'PeriodeRange');
+                    const targets = document.getElementById(prefix + 'Targets');
+                    const periode = document.getElementById(prefix + 'Periode');
+
+                    if (isSaving) {
+                        if (range) range.style.display = 'grid';
+                        if (targets) targets.style.display = 'block';
+                        if (periode) periode.value = 'WEEKLY';
+                    } else {
+                        if (range) range.style.display = 'none';
+                        if (targets) targets.style.display = 'none';
+                        if (periode) periode.value = 'MONTHLY';
+                    }
+                },
+
+                targetRowHtml(prefix, nama = '', nominal = '') {
+                    return `
+                        <div class="form-row" data-target-row="1">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Nama target"
+                                    value="${this.escapeHtml(nama)}">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" class="form-control" placeholder="Nominal"
+                                    value="${nominal}">
+                            </div>
+                            <div class="form-group" style="display:flex; align-items:center;">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="KontribusiApp.removeTargetRow(this)">
+                                    <i class="bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                addTargetRow(prefix, nama = '', nominal = '') {
+                    const list = document.getElementById(prefix + 'TargetList');
+                    if (!list) return;
+                    list.insertAdjacentHTML('beforeend', this.targetRowHtml(prefix, nama, nominal));
+                },
+
+                resetTargets(prefix) {
+                    const list = document.getElementById(prefix + 'TargetList');
+                    if (list) list.innerHTML = '';
+                },
+
+                fillTargets(prefix, targets) {
+                    if (!targets || targets.length === 0) return;
+                    targets.forEach(t => {
+                        this.addTargetRow(prefix, t.nama_target || '', t.nominal_target || '');
+                    });
+                },
+
+                collectTargets(prefix) {
+                    const list = document.getElementById(prefix + 'TargetList');
+                    if (!list) return [];
+                    const rows = list.querySelectorAll('[data-target-row="1"]');
+                    const result = [];
+                    rows.forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        const nama = inputs[0]?.value?.trim() || '';
+                        const nominal = inputs[1]?.value ? parseFloat(inputs[1].value) : 0;
+                        if (nama) {
+                            result.push({ nama_target: nama, nominal_target: nominal });
+                        }
+                    });
+                    return result;
                 }
             };
 
@@ -394,7 +555,7 @@
                     try {
                         const res = await fetch(API.detail(id));
                         const result = await res.json();
-                        return result.success ? result.data : null;
+                        return result.success ? result : null;
                     } catch (error) {
                         console.error('Error:', error);
                         Helpers.showToast('Gagal memuat detail', 'error');
@@ -462,12 +623,19 @@
                             '<span class="badge badge-success">Aktif</span>' :
                             '<span class="badge badge-danger">Tidak Aktif</span>';
 
+                        const jenisBadge = item.jenis === 'SAVING' ?
+                            '<span class="badge badge-info">Tabungan</span>' :
+                            '<span class="badge badge-success">Setoran</span>';
+                        const periodeText = item.periode === 'WEEKLY' ? 'Mingguan' : 'Bulanan';
+
                         return `<tr>
                     <td>${no}</td>
                     <td>
                         <span class="code-badge">${item.kode_kontribusi || '-'}</span>
                     </td>
                     <td>${Helpers.escapeHtml(item.nama_kontribusi)}</td>
+                    <td>${jenisBadge}</td>
+                    <td>${periodeText}</td>
                     <td>
                         <span class="badge badge-info">${item.nama_kelompok || 'KELOMPOK'}</span>
                     </td>
@@ -530,6 +698,12 @@
                 showCreate() {
                     document.getElementById('createForm').reset();
                     document.getElementById('statusCreate').style.display = 'none';
+                    Helpers.resetTargets('create');
+                    Helpers.toggleSavingFields('create', false);
+                    document.getElementById('createJenis').value = 'BILLING';
+                    document.getElementById('createPeriode').value = 'MONTHLY';
+                    document.getElementById('createTglMulai').value = '';
+                    document.getElementById('createTglSelesai').value = '';
                     this.show('createModal');
 
                     // Focus ke input setelah modal muncul
@@ -539,13 +713,24 @@
                 },
 
                 async showEdit(id) {
-                    const data = await Api.getDetail(id);
-                    if (!data) return;
+                    const res = await Api.getDetail(id);
+                    if (!res) return;
+
+                    const data = res.data;
+                    const targets = res.targets || [];
 
                     document.getElementById('editKontribusiId').value = data.id;
                     document.getElementById('editNamaKontribusi').value = data.nama_kontribusi;
                     document.getElementById('editKeterangan').value = data.keterangan || '';
                     document.getElementById('editIsAktif').value = data.is_aktif ? '1' : '0';
+                    document.getElementById('editJenis').value = data.jenis || 'BILLING';
+                    document.getElementById('editPeriode').value = data.periode || 'MONTHLY';
+                    document.getElementById('editTglMulai').value = data.tgl_mulai || '';
+                    document.getElementById('editTglSelesai').value = data.tgl_selesai || '';
+
+                    Helpers.resetTargets('edit');
+                    Helpers.fillTargets('edit', targets);
+                    Helpers.toggleSavingFields('edit', (data.jenis === 'SAVING'));
 
                     this.show('editModal');
 
@@ -573,7 +758,12 @@
                     return {
                         nama_kontribusi: formData.get('nama_kontribusi')?.trim(),
                         keterangan: formData.get('keterangan')?.trim() || '',
-                        is_aktif: true // Default true untuk create
+                        is_aktif: true, // Default true untuk create
+                        jenis: formData.get('jenis') || 'BILLING',
+                        periode: formData.get('periode') || 'MONTHLY',
+                        tgl_mulai: formData.get('tgl_mulai') || null,
+                        tgl_selesai: formData.get('tgl_selesai') || null,
+                        targets: Helpers.collectTargets('create')
                     };
                 },
 
@@ -581,7 +771,12 @@
                     return {
                         nama_kontribusi: document.getElementById('editNamaKontribusi')?.value?.trim(),
                         keterangan: document.getElementById('editKeterangan')?.value?.trim() || '',
-                        is_aktif: document.getElementById('editIsAktif')?.value === '1'
+                        is_aktif: document.getElementById('editIsAktif')?.value === '1',
+                        jenis: document.getElementById('editJenis')?.value || 'BILLING',
+                        periode: document.getElementById('editPeriode')?.value || 'MONTHLY',
+                        tgl_mulai: document.getElementById('editTglMulai')?.value || null,
+                        tgl_selesai: document.getElementById('editTglSelesai')?.value || null,
+                        targets: Helpers.collectTargets('edit')
                     };
                 },
 
@@ -684,6 +879,15 @@
                     loadData();
                 });
 
+                // Toggle saving fields
+                document.getElementById('createJenis')?.addEventListener('change', function(e) {
+                    Helpers.toggleSavingFields('create', e.target.value === 'SAVING');
+                });
+
+                document.getElementById('editJenis')?.addEventListener('change', function(e) {
+                    Helpers.toggleSavingFields('edit', e.target.value === 'SAVING');
+                });
+
                 // Pagination
                 document.getElementById('prevPage').addEventListener('click', () => {
                     if (State.currentPage > 1) loadData(State.currentPage - 1);
@@ -734,7 +938,9 @@
                     // Forms
                     submitCreateForm: () => Form.submitCreate(),
                     submitEditForm: () => Form.submitEdit(),
-                    confirmDelete: () => Form.confirmDelete()
+                    confirmDelete: () => Form.confirmDelete(),
+                    addTargetRow: (prefix) => Helpers.addTargetRow(prefix),
+                    removeTargetRow: (btn) => btn.closest('[data-target-row="1"]')?.remove()
                 };
 
                 // Untuk inline onclick

@@ -41,7 +41,7 @@ body {
   background-color: #105a44;
   padding: 5px 14px;
   color: #ecf0f1;
-  z-index: 2;
+  z-index: 10;
 }
 
 .header-logo-frame {
@@ -71,6 +71,10 @@ body {
 .header-right {
   display: flex;
   align-items: center;
+}
+
+.user-name {
+  font-size: 12px;
 }
 
 /* Search */
@@ -118,14 +122,14 @@ body {
 
 .icon {
   margin-right: 10px;
-  font-size: 18px;
+  font-size: 14px;
   cursor: pointer;
   width: 15px;
   height: auto;
 }
 
 .logo {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .user-profile {
@@ -150,7 +154,7 @@ body {
   height: 100%;
   transition: all 0.3s;
   position: fixed;
-  top: 40px;
+  top: 37px;
   z-index: 1;
   overflow-y: auto;
   overflow: visible !important;
@@ -251,7 +255,7 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   margin: 5px;
   border-radius: 3px;
@@ -316,7 +320,6 @@ body {
 }
 
 .submenu .menu-item {
-  font-size: 12px;
   padding: 5px 8px 3px 36px;
   margin: 0px 0;
 }
@@ -339,7 +342,12 @@ body {
   font-size: 10px;
   color: #999;
   text-transform: uppercase;
-  transition: all 0.3s;
+  line-height: 1.2;
+  transition:
+    padding 0.3s,
+    margin 0.3s,
+    color 0.3s,
+    letter-spacing 0.3s;
 }
 
 .collapsed .menu-header {
@@ -352,7 +360,9 @@ body {
   width: 100%;
   text-align: center;
   letter-spacing: 1px;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .collapsed .menu-header .full-text {
@@ -390,13 +400,13 @@ body {
   justify-content: flex-end;
   position: fixed;
   transition: all 0.3s;
-  font-size: 15px;
+  font-size: 14px;
   padding: 0px 15px;
-  top: 40px;
+  top: 37px;
   left: 230px;
   right: 0;
   height: 43px;
-  z-index: 1;
+  z-index: 3;
 }
 
 .navbar-brand {
@@ -424,9 +434,9 @@ body {
 .navbar-toggle-btn {
   display: none;
   border: none;
-  font-size: 14px;
   cursor: pointer;
   color: #a1a1a1;
+  font-size: 16px;
   margin-right: 10px;
 }
 
@@ -489,7 +499,7 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 11px;
   margin: 1px;
 }
 
@@ -689,7 +699,7 @@ body {
 
 .dropdown-content a {
   color: black;
-  font-size: small;
+  font-size: 12px;
   padding: 7px 15px;
   text-decoration: none;
   display: flex;
@@ -806,7 +816,7 @@ body {
   background: none;
   border: none;
   color: #999;
-  font-size: 18px;
+  font-size: 14px;
   cursor: pointer;
   padding: 0 4px;
   margin-left: 12px;
@@ -1000,7 +1010,7 @@ body {
 
 .form-control-lg {
   padding: 8px 16px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .custom-checkbox,
@@ -1216,7 +1226,7 @@ body {
 }
 
 .loading-spinner i {
-  font-size: 24px;
+  font-size: 14px;
   color: #105a44;
   animation: spin 1s linear infinite;
 }
@@ -1294,7 +1304,7 @@ body {
 }
 
 .empty-state i {
-  font-size: 48px;
+  font-size: 32px;
   color: #ddd;
   margin-bottom: 15px;
 }
@@ -1348,7 +1358,7 @@ body {
 }
 
 .news-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   margin-bottom: 5px;
   color: #333;
@@ -1754,11 +1764,11 @@ body {
 .data-table th {
   background: #f8f9fa;
   color: #333;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .data-table tr {
-  font-size: small;
+  font-size: 11px;
 }
 
 .data-table tbody tr:hover {
@@ -2556,19 +2566,19 @@ body {
 
 @media (max-width: 576px) {
   h1 {
-    font-size: 20px;
+    font-size: 14px;
   }
   h2 {
-    font-size: 19px;
+    font-size: 14px;
   }
   h3 {
-    font-size: 18px;
+    font-size: 14px;
   }
   h4 {
-    font-size: 17px;
+    font-size: 14px;
   }
   h5 {
-    font-size: 16px;
+    font-size: 14px;
   }
   p {
     font-size: 12px;
@@ -2622,7 +2632,6 @@ body {
   }
 
   .sidebar .menu-item {
-    font-size: 12px;
     padding: 5px 18px;
     margin: 4px 0;
     border-radius: 0 20px 20px 0;
@@ -2662,7 +2671,7 @@ body {
   .navbar-toggle-btn {
     display: block !important;
     margin-right: 10px;
-    font-size: 22px;
+    font-size: 14px;
     color: #333;
     background: none;
     border: none;

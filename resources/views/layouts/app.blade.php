@@ -11,10 +11,11 @@
     <link rel="stylesheet" href="https://egifn.github.io/got-style/icon.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Internal CSS Files -->
     <link rel="stylesheet" href="{{ asset('css/mystyle.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/base.css') }}"> --}}
 
     @stack('styles')
 </head>
@@ -139,7 +140,7 @@
                     class="menu-item {{ request()->routeIs('admin.kelompok.input-pembayaran.*') ? 'active' : '' }}"
                     title="Input Pembayaran">
                     <i class="bi bi-wallet2"></i>
-                    <span class="menu-text">Input Pembayaran</span>
+                    <span class="menu-text">Input Transaksi</span>
                 </a>
 
                 <a href="{{ route('admin.kelompok.riwayat-transaksi.index') }}"

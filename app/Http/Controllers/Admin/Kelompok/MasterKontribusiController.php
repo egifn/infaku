@@ -134,7 +134,11 @@ class MasterKontribusiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $kontribusi
+                'data' => $kontribusi,
+                'targets' => DB::table('kontribusi_target')
+                    ->where('master_kontribusi_id', $id)
+                    ->orderBy('urutan')
+                    ->get()
             ]);
         } catch (\Exception $e) {
             Log::error('Error showing master kontribusi: ' . $e->getMessage());
@@ -152,7 +156,14 @@ class MasterKontribusiController extends Controller
             $validator = Validator::make($request->all(), [
                 'nama_kontribusi' => 'required|string|max:100',
                 'keterangan' => 'nullable|string',
-                'is_aktif' => 'required|boolean'
+                'is_aktif' => 'required|boolean',
+                'jenis' => 'required|in:BILLING,SAVING',
+                'periode' => 'required|in:MONTHLY,WEEKLY',
+                'tgl_mulai' => 'nullable|date',
+                'tgl_selesai' => 'nullable|date',
+                'targets' => 'nullable|array',
+                'targets.*.nama_target' => 'required_with:targets|string|max:100',
+                'targets.*.nominal_target' => 'required_with:targets|numeric|min:0'
             ]);
 
             if ($validator->fails()) {
@@ -215,6 +226,10 @@ class MasterKontribusiController extends Controller
             $data = [
                 'kode_kontribusi' => strtoupper($nomorKontribusi),
                 'nama_kontribusi' => strtoupper($request->nama_kontribusi),
+                'jenis' => $request->jenis,
+                'periode' => $request->periode,
+                'tgl_mulai' => $request->tgl_mulai,
+                'tgl_selesai' => $request->tgl_selesai,
                 'keterangan' => $request->keterangan,
                 'created_by' => $kelompokId,
                 'is_aktif' => $request->is_aktif,
@@ -223,6 +238,7 @@ class MasterKontribusiController extends Controller
 
             // Insert data
             $masterId = DB::table('master_kontribusi')->insertGetId($data);
+            $this->syncTargets($masterId, $request->targets ?? []);
 
             return response()->json([
                 'success' => true,
@@ -248,7 +264,14 @@ class MasterKontribusiController extends Controller
             $validator = Validator::make($request->all(), [
                 'nama_kontribusi' => 'required|string|max:100',
                 'keterangan' => 'nullable|string',
-                'is_aktif' => 'required|boolean'
+                'is_aktif' => 'required|boolean',
+                'jenis' => 'required|in:BILLING,SAVING',
+                'periode' => 'required|in:MONTHLY,WEEKLY',
+                'tgl_mulai' => 'nullable|date',
+                'tgl_selesai' => 'nullable|date',
+                'targets' => 'nullable|array',
+                'targets.*.nama_target' => 'required_with:targets|string|max:100',
+                'targets.*.nominal_target' => 'required_with:targets|numeric|min:0'
             ]);
 
             if ($validator->fails()) {
@@ -262,6 +285,10 @@ class MasterKontribusiController extends Controller
             // Prepare update data
             $data = [
                 'nama_kontribusi' => strtoupper($request->nama_kontribusi),
+                'jenis' => $request->jenis,
+                'periode' => $request->periode,
+                'tgl_mulai' => $request->tgl_mulai,
+                'tgl_selesai' => $request->tgl_selesai,
                 'keterangan' => $request->keterangan,
                 'is_aktif' => $request->is_aktif,
                 'updated_at' => DB::raw('NOW()')
@@ -278,6 +305,8 @@ class MasterKontribusiController extends Controller
                     'message' => 'Data master kontribusi tidak ditemukan'
                 ], 404);
             }
+
+            $this->syncTargets($id, $request->targets ?? []);
 
             return response()->json([
                 'success' => true,
@@ -346,6 +375,30 @@ class MasterKontribusiController extends Controller
                 'success' => false,
                 'message' => 'Gagal menghapus master kontribusi'
             ], 500);
+        }
+    }
+
+    private function syncTargets(int $masterId, array $targets): void
+    {
+        DB::table('kontribusi_target')->where('master_kontribusi_id', $masterId)->delete();
+
+        $rows = [];
+        $urut = 1;
+        foreach ($targets as $t) {
+            if (empty($t['nama_target'])) {
+                continue;
+            }
+            $rows[] = [
+                'master_kontribusi_id' => $masterId,
+                'nama_target' => strtoupper($t['nama_target']),
+                'nominal_target' => $t['nominal_target'] ?? 0,
+                'urutan' => $urut++,
+                'created_at' => DB::raw('NOW()')
+            ];
+        }
+
+        if (!empty($rows)) {
+            DB::table('kontribusi_target')->insert($rows);
         }
     }
 }

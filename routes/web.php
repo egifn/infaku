@@ -113,6 +113,8 @@ Route::middleware(['auth.session'])->group(function () {
             Route::get('/transaksi', [TransaksiController::class, 'index'])->name('input-pembayaran.index');
             Route::get('/input-pembayaran', [TransaksiController::class, 'create'])->name('input-pembayaran.create');
             Route::post('/input-pembayaran', [TransaksiController::class, 'store'])->name('input-pembayaran.store');
+            Route::get('/transaksi/{id}/bill', [TransaksiController::class, 'printBill'])->name('transaksi.bill');
+            Route::post('/transaksi/{id}/send-wa', [TransaksiController::class, 'sendBillWhatsapp'])->name('transaksi.send-wa');
 
             // API Routes for Input Pembayaran
             Route::prefix('api/input-pembayaran')->name('api.input-pembayaran.')->group(function () {

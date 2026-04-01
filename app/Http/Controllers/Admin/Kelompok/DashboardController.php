@@ -208,7 +208,7 @@ class DashboardController extends Controller
 
         return $activities->map(function ($item) {
             return [
-                'type' => $item->tipe_kategori === 'PEMASUKAN' ? 'payment' : 'transaction',
+                'type' => 'payment',
                 'description' => $item->nama_lengkap . ' - ' . $item->nama_kontribusi . ' (Rp ' . number_format($item->jumlah, 0, ',', '.') . ')',
                 'created_at' => $item->created_at
             ];

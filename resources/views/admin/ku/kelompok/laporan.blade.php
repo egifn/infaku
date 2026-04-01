@@ -341,7 +341,7 @@
         }
 
         .detail-value {
-            font-size: 14px;
+            font-size: 12px;
             color: #333;
             font-weight: 500;
         }
@@ -376,48 +376,6 @@
             background: #f8f9fa;
         }
 
-        /* Grid System for Forms */
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-left: -8px;
-            margin-right: -8px;
-        }
-
-        .form-col {
-            flex: 1 1 0;
-            min-width: 220px;
-            max-width: 100%;
-            padding-left: 8px;
-            padding-right: 8px;
-            box-sizing: border-box;
-        }
-
-        .form-col-2 {
-            flex: 0 0 50%;
-            max-width: 50%;
-        }
-
-        .form-col-3 {
-            flex: 0 0 33.3333%;
-            max-width: 33.3333%;
-        }
-
-        .form-col-4 {
-            flex: 0 0 25%;
-            max-width: 25%;
-        }
-
-        @media (max-width: 900px) {
-
-            .form-col-2,
-            .form-col-3,
-            .form-col-4 {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-        }
-
         @media (max-width: 768px) {
             .filter-row {
                 grid-template-columns: 1fr;
@@ -443,6 +401,10 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .form-actions {
+                align-items: stretch;
+            }
         }
     </style>
 @endpush
@@ -460,91 +422,6 @@
                     <button class="btn btn-primary" onclick="showCreateForm()">
                         <i class="bi-plus-circle"></i> Buat Laporan Baru
                     </button>
-                </div>
-
-                <!-- Form Buat Laporan Baru -->
-                <div class="form-section" id="createForm">
-                    <div class="form-title">
-                        <i class="bi-file-earmark-plus"></i> Buat Laporan Baru
-                    </div>
-                    <form onsubmit="event.preventDefault(); previewLaporan();">
-                        <div class="form-row">
-                            <div class="form-col form-col-2">
-                                <div class="form-group">
-                                    <label class="form-label required">Judul Laporan</label>
-                                    <input type="text" class="form-control" id="judul_laporan"
-                                        placeholder="Contoh: Laporan Bulanan Januari 2024">
-                                </div>
-                            </div>
-                            <div class="form-col form-col-2">
-                                <div class="form-group">
-                                    <label class="form-label required">Tipe Laporan</label>
-                                    <select class="form-control" id="tipe_laporan">
-                                        <option value="BULANAN">Bulanan</option>
-                                        <option value="MINGGUAN">Mingguan</option>
-                                        <option value="HARIAN">Harian</option>
-                                        <option value="TAHUNAN">Tahunan</option>
-                                        <option value="KHUSUS">Khusus</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col form-col-2">
-                                <div class="form-group">
-                                    <label class="form-label required">Tanggal Awal</label>
-                                    <input type="date" class="form-control" id="tgl_awal" value="{{ date('Y-m-01') }}">
-                                </div>
-                            </div>
-                            <div class="form-col form-col-2">
-                                <div class="form-group">
-                                    <label class="form-label required">Tanggal Akhir</label>
-                                    <input type="date" class="form-control" id="tgl_akhir" value="{{ date('Y-m-t') }}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col form-col-2">
-                                <div class="form-group">
-                                    <label class="form-label">Filter Master Kontribusi</label>
-                                    <select class="form-control" id="filter_master_kontribusi">
-                                        <option value="">Semua Kontribusi</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="hideCreateForm()">
-                                <i class="bi-x"></i> Batal
-                            </button>
-                            <button type="button" class="btn btn-info" onclick="previewLaporan()">
-                                <i class="bi-eye"></i> Preview
-                            </button>
-                            <button type="button" class="btn btn-success" onclick="createLaporan()">
-                                <i class="bi-check"></i> Buat Laporan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Preview Section -->
-                <div class="preview-section" id="previewSection">
-                    <div class="form-title">
-                        <i class="bi-eye"></i> Preview Laporan
-                    </div>
-
-                    <div class="preview-grid" id="previewGrid">
-                        <!-- Preview data akan dimuat di sini -->
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="hidePreview()">
-                            <i class="bi-x"></i> Tutup Preview
-                        </button>
-                        <button class="btn btn-success" onclick="createLaporan()">
-                            <i class="bi-check"></i> Konfirmasi & Buat Laporan
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Filter Existing Laporan -->
@@ -643,6 +520,83 @@
         </div>
     </div>
 
+    <!-- Create Laporan Modal -->
+    <div class="modal" id="createModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Buat Laporan Baru</h3>
+                <button class="modal-close" onclick="hideCreateForm()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm" onsubmit="event.preventDefault(); previewLaporan();">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Judul Laporan</label>
+                            <input type="text" class="form-control" id="judul_laporan"
+                                placeholder="Contoh: Laporan Bulanan Januari 2024">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Tipe Laporan</label>
+                            <select class="form-control" id="tipe_laporan">
+                                <option value="BULANAN">Bulanan</option>
+                                <option value="MINGGUAN">Mingguan</option>
+                                <option value="HARIAN">Harian</option>
+                                <option value="TAHUNAN">Tahunan</option>
+                                <option value="KHUSUS">Khusus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Tanggal Awal</label>
+                            <input type="date" class="form-control" id="tgl_awal" value="{{ date('Y-m-01') }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Tanggal Akhir</label>
+                            <input type="date" class="form-control" id="tgl_akhir" value="{{ date('Y-m-t') }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Kontribusi</label>
+                            <select class="form-control" id="filter_master_kontribusi">
+                                <option value="">Semua Kontribusi</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="preview-section" id="previewSection">
+                    <div class="modal-title" style="margin-bottom: 10px;">
+                        <i class="bi-eye"></i> Preview Laporan
+                    </div>
+
+                    <div class="preview-grid" id="previewGrid">
+                        <!-- Preview data akan dimuat di sini -->
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="hidePreview()">
+                            <i class="bi-x"></i> Tutup Preview
+                        </button>
+                        <button class="btn btn-success" onclick="createLaporan()">
+                            <i class="bi-check"></i> Konfirmasi & Buat Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="hideCreateForm()">Batal</button>
+                <button class="btn btn-info" onclick="previewLaporan()">
+                    <i class="bi-eye"></i> Preview
+                </button>
+                <button class="btn btn-success" onclick="createLaporan()">
+                    <i class="bi-check"></i> Buat Laporan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Detail Modal -->
     <div class="modal" id="detailModal">
         <div class="modal-dialog">
@@ -704,6 +658,7 @@
         }
 
         function loadMasterKontribusiOptions() {
+
             fetch("{{ route('admin.kelompok.api.sub-kontribusi.master-options') }}")
                 .then(response => response.json())
                 .then(data => {
@@ -712,7 +667,7 @@
                     if (data.success && data.data) {
                         data.data.forEach(item => {
                             const opt = document.createElement('option');
-                            opt.value = item.master_kontribusi_id;
+                            opt.value = item.nama_kontribusi;
                             opt.textContent = item.nama_kontribusi;
                             select.appendChild(opt);
                         });
@@ -721,12 +676,13 @@
         }
 
         function showCreateForm() {
-            document.getElementById('createForm').classList.add('show');
+            document.getElementById('createModal').classList.add('show');
             hidePreview();
         }
 
         function hideCreateForm() {
-            document.getElementById('createForm').classList.remove('show');
+            document.getElementById('createModal').classList.remove('show');
+            hidePreview();
         }
 
         function hidePreview() {
@@ -738,6 +694,7 @@
             const tipe = document.getElementById('tipe_laporan').value;
             const tglAwal = document.getElementById('tgl_awal').value;
             const tglAkhir = document.getElementById('tgl_akhir').value;
+            const masterKontribusiId = document.getElementById('filter_master_kontribusi').value;
 
             if (!judul || !tglAwal || !tglAkhir) {
                 alert('Harap lengkapi semua field yang diperlukan');
@@ -748,7 +705,8 @@
                 const params = new URLSearchParams({
                     tgl_awal: tglAwal,
                     tgl_akhir: tglAkhir,
-                    tipe_laporan: tipe
+                    tipe_laporan: tipe,
+                    master_kontribusi_id: masterKontribusiId || ''
                 });
 
                 const response = await fetch(`{{ route('admin.kelompok.laporan.api.preview') }}?${params}`);
@@ -819,6 +777,7 @@
             const tipe = document.getElementById('tipe_laporan').value;
             const tglAwal = document.getElementById('tgl_awal').value;
             const tglAkhir = document.getElementById('tgl_akhir').value;
+            const masterKontribusiId = document.getElementById('filter_master_kontribusi').value;
 
             if (!judul || !tglAwal || !tglAkhir) {
                 alert('Harap lengkapi semua field yang diperlukan');
@@ -836,7 +795,8 @@
                         judul_laporan: judul,
                         tgl_awal: tglAwal,
                         tgl_akhir: tglAkhir,
-                        tipe_laporan: tipe
+                        tipe_laporan: tipe,
+                        master_kontribusi_id: masterKontribusiId || null
                     })
                 });
 
@@ -878,8 +838,10 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    renderLaporanTable(data.data);
-                    updatePagination(data);
+                    const payload = data.data ?? {};
+                    const items = Array.isArray(payload) ? payload : (payload.data || []);
+                    renderLaporanTable(items);
+                    updatePagination(payload, data);
                 } else {
                     throw new Error(data.message);
                 }
@@ -933,10 +895,10 @@
                             <i class="bi-pencil"></i>
                         </button>
                         ${item.status_laporan !== 'PUBLISHED' ? `
-                                                                                                                            <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
-                                                                                                                                <i class="bi-trash"></i>
-                                                                                                                            </button>
-                                                                                                                        ` : ''}
+                                                                                                                                                                <button class="btn btn-danger btn-sm" onclick="deleteLaporan(${item.laporan_id}, '${escapeHtml(item.judul_laporan)}')" title="Hapus">
+                                                                                                                                                                    <i class="bi-trash"></i>
+                                                                                                                                                                </button>
+                                                                                                                                                            ` : ''}
                     </div>
                 `;
 
@@ -964,9 +926,11 @@
             }).join('');
         }
 
-        function updatePagination(data) {
-            currentPage = data.current_page;
-            totalPages = data.last_page;
+        function updatePagination(primary, fallback) {
+            const current = primary?.current_page ?? fallback?.current_page ?? 1;
+            const last = primary?.last_page ?? fallback?.last_page ?? 1;
+            currentPage = current;
+            totalPages = last;
 
             document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
             document.getElementById('prevPage').disabled = currentPage === 1;
@@ -1083,7 +1047,7 @@
                         subItems = kategori.subs.map(sub => `
                             <div style="margin-bottom: 5px;">
                                 <strong>${escapeHtml(sub.sub_kontribusi)}</strong><br>
-                                <small>${sub.count} transaksi • Rp ${formatNumber(sub.total)}</small>
+                                <small>${sub.count} transaksi &bull; Rp ${formatNumber(sub.total)}</small>
                             </div>
                         `).join('');
                     }
@@ -1272,10 +1236,15 @@
             if (e.target === this) hideDetailModal();
         });
 
+        document.getElementById('createModal').addEventListener('click', function(e) {
+            if (e.target === this) hideCreateForm();
+        });
+
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 hideDetailModal();
+                hideCreateForm();
             }
         });
     </script>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class LaporanController extends Controller
 {
@@ -93,6 +94,17 @@ class LaporanController extends Controller
             $tglAwal = $request->get('tgl_awal');
             $tglAkhir = $request->get('tgl_akhir');
             $tipeLaporan = $request->get('tipe_laporan', 'BULANAN');
+            $masterKontribusiId = $request->get('master_kontribusi_id');
+
+            $masterKontribusi = null;
+            $kodeKontribusi = null;
+            if (!empty($masterKontribusiId)) {
+                $masterKontribusi = DB::table('master_kontribusi')
+                    ->where('id', $masterKontribusiId)
+                    ->where('created_by', $kelompokId)
+                    ->first();
+                $kodeKontribusi = $masterKontribusi ? $masterKontribusi->kode_kontribusi : null;
+            }
 
             if (!$tglAwal || !$tglAkhir) {
                 return response()->json([
@@ -109,6 +121,9 @@ class LaporanController extends Controller
                 ->where('j.kelompok_id', $kelompokId)
                 ->where('t.status', 'VERIFIED')
                 ->whereBetween('t.tgl_transaksi', [$tglAwal, $tglAkhir])
+                ->when($kodeKontribusi, function ($q) use ($kodeKontribusi) {
+                    return $q->where('t.kode_kontribusi', $kodeKontribusi);
+                })
                 ->select(
                     't.*',
                     'j.nama_lengkap as nama_jamaah',
@@ -177,17 +192,35 @@ class LaporanController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $user = $request->session()->get('user');
             $kelompokId = $user['wilayah_id'];
 
-            $validated = $request->validate([
+            $request->merge([
+                'master_kontribusi_id' => $request->input('master_kontribusi_id') ?: null
+            ]);
+
+            $validator = Validator::make($request->all(), [
                 'judul_laporan' => 'required|string|max:255',
                 'tgl_awal' => 'required|date',
                 'tgl_akhir' => 'required|date',
                 'tipe_laporan' => 'required|in:HARIAN,MINGGUAN,BULANAN,TAHUNAN,KHUSUS',
-                'catatan' => 'nullable|string'
+                'catatan' => 'nullable|string',
+                'master_kontribusi_id' => 'nullable'
             ]);
+            if ($validator->fails()) {
+                Log::error('Validation failed on store laporan', [
+                    'errors' => $validator->errors()->toArray(),
+                    'payload' => $request->all()
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            $validated = $validator->validated();
 
             // Generate kode laporan
             $lastLaporan = DB::table('laporan_keuangan')
@@ -199,11 +232,24 @@ class LaporanController extends Controller
             $kodeLaporan = 'LAP-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             // Hitung data transaksi
+            $masterKontribusi = null;
+            $kodeKontribusi = null;
+            if (!empty($validated['master_kontribusi_id'])) {
+                $masterKontribusi = DB::table('master_kontribusi')
+                    ->where('id', $validated['master_kontribusi_id'])
+                    ->where('created_by', $kelompokId)
+                    ->first();
+                $kodeKontribusi = $masterKontribusi ? $masterKontribusi->kode_kontribusi : null;
+            }
+
             $transaksi = DB::table('transaksi as t')
                 ->join('jamaah as j', 't.jamaah_id', '=', 'j.jamaah_id')
                 ->where('j.kelompok_id', $kelompokId)
                 ->where('t.status', 'VERIFIED')
                 ->whereBetween('t.tgl_transaksi', [$validated['tgl_awal'], $validated['tgl_akhir']])
+                ->when($kodeKontribusi, function ($q) use ($kodeKontribusi) {
+                    return $q->where('t.kode_kontribusi', $kodeKontribusi);
+                })
                 ->get();
 
             $totalPemasukan = $transaksi->sum('jumlah');
@@ -217,6 +263,7 @@ class LaporanController extends Controller
                 'tgl_awal' => $validated['tgl_awal'],
                 'tgl_akhir' => $validated['tgl_akhir'],
                 'tipe_laporan' => $validated['tipe_laporan'],
+                'tipe_kontribusi' => $masterKontribusi ? $masterKontribusi->jenis : 'BILLING',
                 'total_pemasukan' => $totalPemasukan,
                 'total_transaksi' => $totalTransaksi,
                 'total_pengeluaran' => 0, // Default 0, bisa diisi nanti
