@@ -6,80 +6,131 @@
 
 
 @section('content')
-<div class="dashboard-container">
-    <!-- Welcome Banner -->
-    <div class="welcome-banner" id="welcomeBanner">
-        <h1>Assalamu'alaikum</h1>
-        <p>Selamat datang di Dashboard Kelompok - Kelola keuangan dan aktivitas jamaah dengan mudah</p>
-    </div>
+    <div class="dashboard-container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner" id="welcomeBanner">
+            <h1>Assalamu'alaikum</h1>
+            <p>Selamat datang di Dashboard Kelompok - Kelola keuangan dan aktivitas jamaah dengan mudah</p>
+        </div>
 
-    <div>
-        <h2>Dashboard</h3>
-            <p style="margin-bottom: 12px">{{ $user['nama_kelompok'] }}</p>
-    </div>
+        <div class="dashboard-title">
+            <h2>Dashboard</h2>
+            <p>{{ $user['nama_kelompok'] }}</p>
+        </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid" id="statsGrid">
-        <!-- Skeleton Loading -->
-        <div class="stat-card loading-skeleton">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="bi-graph-up"></i></div>
-                <h3 class="stat-title">Total Kas</h3>
-            </div>
-            <div class="stat-value">Loading...</div>
-            <div class="stat-subtitle">Sedang memuat data</div>
-        </div>
-        <div class="stat-card loading-skeleton">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="bi-cash-coin"></i></div>
-                <h3 class="stat-title">Kas Bulan Ini</h3>
-            </div>
-            <div class="stat-value">Loading...</div>
-            <div class="stat-subtitle">Sedang memuat data</div>
-        </div>
-        <div class="stat-card loading-skeleton">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="bi-heart"></i></div>
-                <h3 class="stat-title">Total Sodaqoh</h3>
-            </div>
-            <div class="stat-value">Loading...</div>
-            <div class="stat-subtitle">Sedang memuat data</div>
-        </div>
-        <div class="stat-card loading-skeleton">
-            <div class="stat-header">
-                <div class="stat-icon"><i class="bi-receipt"></i></div>
-                <h3 class="stat-title">Transaksi Bulan Ini</h3>
-            </div>
-            <div class="stat-value">Loading...</div>
-            <div class="stat-subtitle">Sedang memuat data</div>
-        </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="chart-container">
-        <div class="chart-header">
-            <h3 class="chart-title">Statistik Kontribusi 6 Bulan Terakhir</h3>
-        </div>
-        <canvas id="contributionChart" height="100"></canvas>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="recent-activity">
-        <div class="chart-header">
-            <h3 class="chart-title">Aktivitas Transaksi Terbaru</h3>
-        </div>
-        <div id="recentActivities">
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid">
             <!-- Skeleton Loading -->
-            <div class="activity-item loading-skeleton">
-                <div class="activity-icon"><i class="bi-clock"></i></div>
-                <div class="activity-content">
-                    <div class="activity-title">Memuat aktivitas...</div>
-                    <div class="activity-time">-</div>
+            <div class="stat-card loading-skeleton">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="bi-graph-up"></i></div>
+                    <h3 class="stat-title">Total Kas</h3>
+                </div>
+                <div class="stat-value">Loading...</div>
+                <div class="stat-subtitle">Sedang memuat data</div>
+            </div>
+            <div class="stat-card loading-skeleton">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="bi-cash-coin"></i></div>
+                    <h3 class="stat-title">Kas Bulan Ini</h3>
+                </div>
+                <div class="stat-value">Loading...</div>
+                <div class="stat-subtitle">Sedang memuat data</div>
+            </div>
+            <div class="stat-card loading-skeleton">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="bi-heart"></i></div>
+                    <h3 class="stat-title">Total Sodaqoh</h3>
+                </div>
+                <div class="stat-value">Loading...</div>
+                <div class="stat-subtitle">Sedang memuat data</div>
+            </div>
+            <div class="stat-card loading-skeleton">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="bi-receipt"></i></div>
+                    <h3 class="stat-title">Transaksi Bulan Ini</h3>
+                </div>
+                <div class="stat-value">Loading...</div>
+                <div class="stat-subtitle">Sedang memuat data</div>
+            </div>
+        </div>
+
+        <div class="insight-strip">
+            <div class="insight-card">
+                <div class="insight-title">Pertumbuhan Bulan Ini</div>
+                <div class="insight-value" id="growthValue">+0%</div>
+                <div class="mini-progress"><span id="growthBar" style="width: 0%;"></span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Saldo Bersih</div>
+                <div class="insight-value" id="saldoValue">Rp 0</div>
+                <div class="mini-progress"><span style="width: 58%;"></span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Tingkat Verifikasi</div>
+                <div class="insight-value" id="verifValue">0%</div>
+                <div class="mini-progress"><span id="verifBar" style="width: 0%;"></span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Rata-rata Harian</div>
+                <div class="insight-value" id="avgValue">Rp 0</div>
+                <div class="mini-progress"><span style="width: 66%;"></span></div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Statistik Kontribusi 6 Bulan Terakhir</h3>
+                    <div class="chart-subtitle">Target vs Realisasi</div>
+                </div>
+                <canvas id="contributionChart" height="100"></canvas>
+            </div>
+
+            <div class="recent-activity">
+                <div class="chart-header">
+                    <h3 class="chart-title">Aktivitas Transaksi Terbaru</h3>
+                </div>
+                <div class="activity-filter">
+                    <span class="chip">Semua</span>
+                    <span class="chip">Kontribusi</span>
+                    <span class="chip">Jamaah</span>
+                </div>
+                <div id="recentActivities">
+                    <!-- Skeleton Loading -->
+                    <div class="activity-item loading-skeleton">
+                        <div class="activity-icon"><i class="bi-clock"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">Memuat aktivitas...</div>
+                            <div class="activity-time">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-grid-2">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Komposisi Kontribusi</h3>
+                    <div class="chart-subtitle">Distribusi per kategori</div>
+                </div>
+                <canvas id="categoryChart" height="140"></canvas>
+            </div>
+            <div class="recent-activity">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Kontribusi</h3>
+                    <div class="chart-subtitle">Kategori utama bulan ini</div>
+                </div>
+                <div class="top-list" id="topKontribusiList">
+                    <div class="top-item">
+                        <div class="top-label">Memuat data...</div>
+                        <div class="top-value">-</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -87,6 +138,7 @@
     <script>
         // Global variables
         let contributionChart;
+        let categoryChart;
 
         // Load dashboard data
         function loadDashboardData() {
@@ -96,6 +148,7 @@
                 .then(data => {
                     if (data.success) {
                         updateStatsGrid(data.stats);
+                        updateInsights(data.stats);
                     } else {
                         showError('Gagal memuat data statistik');
                     }
@@ -178,6 +231,22 @@
         `).join('');
         }
 
+        function updateInsights(stats) {
+            const growth = Math.max(0, Math.min(100, stats.growth_bulan_ini || 0));
+            const verif = Math.max(0, Math.min(100, stats.verifikasi_rate || 0));
+            const avg = Math.round((stats.kas_bulan_ini || 0) / 30);
+
+            document.getElementById('growthValue').textContent = `+${growth}%`;
+            document.getElementById('growthBar').style.width = `${growth}%`;
+
+            document.getElementById('saldoValue').textContent = 'Rp ' + formatNumber(stats.total_kas || 0);
+
+            document.getElementById('verifValue').textContent = `${verif}%`;
+            document.getElementById('verifBar').style.width = `${verif}%`;
+
+            document.getElementById('avgValue').textContent = 'Rp ' + formatNumber(avg);
+        }
+
         // Render contribution chart
         function renderContributionChart(chartData) {
             const ctx = document.getElementById('contributionChart').getContext('2d');
@@ -187,16 +256,25 @@
             }
 
             contributionChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: chartData.labels,
                     datasets: [{
-                        label: 'Jumlah Kontribusi (Rp)',
+                        label: 'Realisasi',
                         data: chartData.data,
-                        backgroundColor: '#105a44',
-                        borderColor: '#0d8b66',
-                        borderWidth: 1,
-                        borderRadius: 4
+                        backgroundColor: 'rgba(16, 90, 68, 0.12)',
+                        borderColor: '#105a44',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3
+                    }, {
+                        label: 'Target',
+                        data: chartData.data.map(v => Math.round(v * 1.15)),
+                        borderColor: '#f0b429',
+                        borderDash: [6, 4],
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 0
                     }]
                 },
                 options: {
@@ -207,7 +285,7 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function (context) {
+                                label: function(context) {
                                     return 'Rp ' + formatNumber(context.raw);
                                 }
                             }
@@ -216,15 +294,90 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            grid: {
+                                color: '#eef2f0'
+                            },
                             ticks: {
-                                callback: function (value) {
+                                callback: function(value) {
                                     return 'Rp ' + formatNumber(value);
                                 }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
                             }
                         }
                     }
                 }
             });
+
+            renderCategoryChart(chartData);
+            updateTopKontribusi(chartData);
+        }
+
+        function renderCategoryChart(chartData) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChart) categoryChart.destroy();
+
+            const labels = chartData.labels || [];
+            const data = chartData.data || [];
+            const colors = ['#105a44', '#1b7a5d', '#2ea37c', '#7ec6a7', '#f0b429', '#95a7a3'];
+
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels.slice(0, 6),
+                    datasets: [{
+                        data: data.slice(0, 6),
+                        backgroundColor: colors,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                boxHeight: 10,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function updateTopKontribusi(chartData) {
+            const list = document.getElementById('topKontribusiList');
+            const labels = chartData.labels || [];
+            const data = chartData.data || [];
+            if (!labels.length) {
+                list.innerHTML = `
+                    <div class="top-item">
+                        <div class="top-label">Tidak ada data</div>
+                        <div class="top-value">-</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const items = labels.map((label, idx) => ({
+                label,
+                value: data[idx] || 0
+            })).sort((a, b) => b.value - a.value).slice(0, 4);
+
+            list.innerHTML = items.map(item => `
+                <div class="top-item">
+                    <div class="top-label">${item.label}</div>
+                    <div class="top-value">Rp ${formatNumber(item.value)}</div>
+                </div>
+            `).join('');
         }
 
         // Update recent activities
@@ -297,7 +450,7 @@
             <div class="toast-message">${message}</div>
         </div>
         <button class="toast-close" onclick="this.parentElement.classList.remove('show')">&times;</button>
-    `;
+      `;
             toastContainer.appendChild(toast);
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -306,10 +459,10 @@
         }
 
         // Initialize dashboard when page loads
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
             // Hide welcome banner after 5 seconds
-            setTimeout(function () {
+            setTimeout(function() {
                 var banner = document.getElementById('welcomeBanner');
                 if (banner) {
                     banner.style.display = 'none';
@@ -318,6 +471,5 @@
             // Refresh data every 30 seconds
             setInterval(loadDashboardData, 30000);
         });
-
     </script>
 @endpush
