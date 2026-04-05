@@ -25,13 +25,39 @@ class DashboardController extends Controller
         $kelompokId = $user['wilayah_id'];
 
         try {
+            $totalKas = $this->getTotalKas($kelompokId);
+            $currentMonthKas = $this->getKasBulanIni($kelompokId);
+            $previousMonthKas = $this->getKasBulanLalu($kelompokId);
+            $verifiedTransactions = $this->getTransaksiBulanIni($kelompokId);
+            $allTransactionsThisMonth = $this->getTotalTransaksiSemuaStatusBulanIni($kelompokId);
+            $daysInMonth = now()->daysInMonth;
+            $elapsedDays = now()->day;
+            $averageDaily = $daysInMonth > 0 ? round($currentMonthKas / $daysInMonth) : 0;
+            $currentRunRate = $elapsedDays > 0 ? ($currentMonthKas / $elapsedDays) : 0;
+            $lastMonthDays = now()->copy()->subMonth()->daysInMonth;
+            $previousRunRate = $lastMonthDays > 0 ? ($previousMonthKas / $lastMonthDays) : 0;
+            $growth = $previousMonthKas > 0
+                ? round((($currentMonthKas - $previousMonthKas) / $previousMonthKas) * 100, 1)
+                : ($currentMonthKas > 0 ? 100 : 0);
+            $verificationRate = $allTransactionsThisMonth > 0
+                ? round(($verifiedTransactions / $allTransactionsThisMonth) * 100)
+                : 0;
+            $avgDailyProgress = $previousRunRate > 0
+                ? min(100, round(($currentRunRate / $previousRunRate) * 100))
+                : ($currentRunRate > 0 ? 100 : 0);
+
             $stats = [
-                'total_kas' => $this->getTotalKas($kelompokId),
-                'kas_bulan_ini' => $this->getKasBulanIni($kelompokId),
+                'total_kas' => $totalKas,
+                'kas_bulan_ini' => $currentMonthKas,
                 'total_sodaqoh' => $this->getTotalSodaqoh($kelompokId),
                 'total_jamaah' => $this->getTotalJamaah($kelompokId),
                 'total_keluarga' => $this->getTotalKeluarga($kelompokId),
-                'transaksi_bulan_ini' => $this->getTransaksiBulanIni($kelompokId),
+                'transaksi_bulan_ini' => $verifiedTransactions,
+                'growth_bulan_ini' => $growth,
+                'verifikasi_rate' => $verificationRate,
+                'rata_harian_bulan_ini' => $averageDaily,
+                'saldo_progress' => min(100, $currentMonthKas > 0 ? round(($currentMonthKas / max($totalKas, 1)) * 100) : 0),
+                'avg_harian_progress' => $avgDailyProgress,
             ];
 
             return response()->json([
@@ -126,6 +152,20 @@ class DashboardController extends Controller
             ->sum('transaksi.jumlah') ?? 0;
     }
 
+    private function getKasBulanLalu($kelompokId)
+    {
+        $lastMonth = now()->copy()->subMonth();
+
+        return DB::table('transaksi')
+            ->join('jamaah', 'transaksi.jamaah_id', '=', 'jamaah.jamaah_id')
+            ->join('master_kontribusi', 'transaksi.kode_kontribusi', '=', 'master_kontribusi.kode_kontribusi')
+            ->where('jamaah.kelompok_id', $kelompokId)
+            ->where('transaksi.status', 'VERIFIED')
+            ->whereMonth('transaksi.tgl_transaksi', $lastMonth->month)
+            ->whereYear('transaksi.tgl_transaksi', $lastMonth->year)
+            ->sum('transaksi.jumlah') ?? 0;
+    }
+
     private function getTotalSodaqoh($kelompokId)
     {
         return DB::table('transaksi')
@@ -163,15 +203,24 @@ class DashboardController extends Controller
             ->count();
     }
 
+    private function getTotalTransaksiSemuaStatusBulanIni($kelompokId)
+    {
+        return DB::table('transaksi')
+            ->join('jamaah', 'transaksi.jamaah_id', '=', 'jamaah.jamaah_id')
+            ->where('jamaah.kelompok_id', $kelompokId)
+            ->whereMonth('transaksi.tgl_transaksi', now()->month)
+            ->whereYear('transaksi.tgl_transaksi', now()->year)
+            ->count();
+    }
+
     private function getChartDataForKelompok($kelompokId)
     {
         $months = [];
-        $data = [];
+        $monthlyTotals = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $monthYear = $date->format('M Y');
-            $months[] = $monthYear;
+            $months[] = $date->translatedFormat('M Y');
 
             $total = DB::table('transaksi')
                 ->join('jamaah', 'transaksi.jamaah_id', '=', 'jamaah.jamaah_id')
@@ -182,12 +231,38 @@ class DashboardController extends Controller
                 ->whereYear('transaksi.tgl_transaksi', $date->year)
                 ->sum('transaksi.jumlah') ?? 0;
 
-            $data[] = $total;
+            $monthlyTotals[] = (float) $total;
         }
 
+        $categoryItems = DB::table('transaksi')
+            ->join('jamaah', 'transaksi.jamaah_id', '=', 'jamaah.jamaah_id')
+            ->join('master_kontribusi', 'transaksi.kode_kontribusi', '=', 'master_kontribusi.kode_kontribusi')
+            ->where('jamaah.kelompok_id', $kelompokId)
+            ->where('transaksi.status', 'VERIFIED')
+            ->whereBetween('transaksi.tgl_transaksi', [now()->copy()->subDays(30)->startOfDay(), now()->endOfDay()])
+            ->groupBy('master_kontribusi.nama_kontribusi')
+            ->selectRaw('master_kontribusi.nama_kontribusi as label, SUM(transaksi.jumlah) as total, COUNT(transaksi.transaksi_id) as transactions')
+            ->orderByDesc('total')
+            ->limit(6)
+            ->get();
+
         return [
-            'labels' => $months,
-            'data' => $data
+            'monthly' => [
+                'labels' => $months,
+                'totals' => $monthlyTotals,
+                'average' => count($monthlyTotals) > 0 ? round(array_sum($monthlyTotals) / count($monthlyTotals), 2) : 0,
+            ],
+            'categories' => [
+                'labels' => $categoryItems->pluck('label')->values(),
+                'totals' => $categoryItems->pluck('total')->map(fn($value) => (float) $value)->values(),
+                'items' => $categoryItems->map(function ($item) {
+                    return [
+                        'label' => $item->label,
+                        'total' => (float) $item->total,
+                        'transactions' => (int) $item->transactions,
+                    ];
+                })->values(),
+            ],
         ];
     }
 
@@ -210,7 +285,8 @@ class DashboardController extends Controller
             return [
                 'type' => 'payment',
                 'description' => $item->nama_lengkap . ' - ' . $item->nama_kontribusi . ' (Rp ' . number_format($item->jumlah, 0, ',', '.') . ')',
-                'created_at' => $item->created_at
+                'created_at' => $item->created_at,
+                'amount' => (float) $item->jumlah,
             ];
         })->toArray();
     }
