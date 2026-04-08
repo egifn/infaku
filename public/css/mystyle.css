@@ -1708,6 +1708,46 @@ body {
   .insight-strip {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .welcome-banner {
+    padding: 16px;
+  }
+
+  .dashboard-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .activity-item {
+    align-items: center;
+  }
+
+  .top-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
 }
 
 /* Card Status Grid (untuk dashboard) */
